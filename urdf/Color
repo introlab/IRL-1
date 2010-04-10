@@ -1,0 +1,3 @@
+Pour trouver les couleurs disponibles, en ajouter ou en modifier, il faut modifier le fichier  :
+
+ros/stacks/simulator_gazebo/gazebo/gazebo/share/gazebo/Media/materials/scripts/Gazebo.material

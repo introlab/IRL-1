@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="head" params="name parent">
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_link"/>
+			<origin xyz="0 0.02 0.2228115" rpy="0 0 0" />
+		</joint>
+
+		<link name="${name}_link">
+
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 0" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_visual_geom">
+					<box size="0.04 0.04 0.066413" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_collision_geom">
+					<box size="0.04 0.04 0.066413" />
+				</geometry>
+			</collision>
+		</link>
+		
+		<joint name="${name}_revolute_joint_tmp" type="revolute">
+			<parent link="${name}_link"/>
+			<child link="${name}_head_link_tmp"/>
+			<origin xyz="0 -0.02 0.0966715" rpy="0 0 0" />
+			<axis xyz="1 0 0" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
+
+			<calibration reference_position="0.0"/>
+		</joint>
+
+		<link name="${name}_head_link_tmp">
+
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_head_tmp_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_tmp_visual_geom">
+					<sphere radius="0.001" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_head_tmp_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_tmp_collision_geom">
+					<sphere radius="0.001" />
+				</geometry>
+			</collision>
+		</link>	
+
+		<joint name="${name}_revolute_joint" type="revolute">
+			<parent link="${name}_head_link_tmp"/>
+			<child link="${name}_head_link"/>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
+
+			<calibration reference_position="0.0"/>
+		</joint>
+
+		<link name="${name}_head_link">
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 0" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_head_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_visual_geom">
+					<box size="0.17418 0.16268 0.12693" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_head_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_collision_geom">
+					<box size="0.17418 0.16268 0.12693" />
+				</geometry>
+			</collision>
+		</link>		
+
+		<gazebo reference="${name}_link">
+			<material>Gazebo/Green</material>
+		</gazebo>
+
+		<gazebo reference="${name}_head_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+
+	</xacro:macro>
+
+
+</robot>

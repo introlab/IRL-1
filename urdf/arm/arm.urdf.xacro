@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       name="arm">
+
+	<include filename="$(find johnny_0_description)/urdf/arm/ADE_roll/ADE_roll.urdf.xacro" />
+	<include filename="$(find johnny_0_description)/urdf/arm/ADE_pitch_shoulder/ADE_pitch_shoulder.urdf.xacro" />
+	<include filename="$(find johnny_0_description)/urdf/arm/ADE_pitch_elbow/ADE_pitch_elbow.urdf.xacro" />
+	<include filename="$(find johnny_0_description)/urdf/arm/forearm/forearm.urdf.xacro" />
+	<include filename="$(find johnny_0_description)/urdf/arm/hand/hand.urdf.xacro" />
+
+	<xacro:macro name="arm" params="side reflect parent">
+		
+		<xacro:ADE_roll side="${side}" reflect="${reflect}" parent="${parent}"/>
+		<xacro:ADE_pitch_shoulder side="${side}" reflect="${reflect}" parent="ADE_roll${side}_link"/>
+		<xacro:ADE_pitch_elbow side="${side}" reflect="${reflect}" parent="ADE_pitch_shoulder${side}_box"/>
+		<xacro:forearm side="${side}" reflect="${reflect}" parent="ADE_pitch_elbow${side}_link"/>
+		<xacro:hand side="${side}" reflect="${reflect}" parent="forearm${side}"/>
+		
+	</xacro:macro>
+</robot>
