@@ -1,4 +1,0 @@
-<launch>
-    <!-- send brasADE urdf to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find johnny_0_description)/robots/Johnny_0.urdf.xacro'" />
-</launch>

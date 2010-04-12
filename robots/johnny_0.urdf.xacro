@@ -3,7 +3,7 @@
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
-       name="brasADE" >
+       name="johnny_0" >
 
 	<!-- The following included files set up definitions of parts of the robot body -->
 	<include filename="$(find johnny_0_description)/urdf/common.xacro" />
@@ -34,7 +34,7 @@
        is the world frame). For more, see http://www.ros.org/wiki/xacro -->
 	   
 	   
-	<xacro:base name="base" parent="world"/>
+	<xacro:base name="base" />
 	
 	<xacro:wheel side="R" reflectSide="-1" face="B" reflectFace="-1" parent="base_link"/>
 
