@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ============================   Arm   ============================ -->
+
+  <!-- ADE roll shoulder -->
+  <xacro:macro name="johnny_0_ADE_roll_shoulder_transmission" params="side" >
+    <transmission type="SimpleTransmission" name="${side}_ADE_roll_shoulder_trans">
+      <actuator name="${side}_ADE_roll_shoulder_motor" />
+      <joint name="ADE_roll${side}_revolute_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+  
+  <!-- ADE pitch shoulder -->
+  <xacro:macro name="johnny_0_ADE_pitch_shoulder_transmission" params="side" >
+    <transmission type="SimpleTransmission" name="${side}_ADE_pitch_shoulder_trans">
+      <actuator name="${side}_ADE_pitch_shoulder_motor" />
+      <joint name="ADE_pitch_shoulder${side}_revolute_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+
+  <!--  ADE pitch elbow -->
+  <xacro:macro name="johnny_0_ADE_pitch_elbow_transmission" params="side" >
+    <transmission type="SimpleTransmission" name="${side}_ADE_pitch_elbow_trans">
+      <actuator name="${side}_ADE_pitch_elbow_motor" />
+      <joint name="ADE_pitch_elbow${side}_revolute_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+  
+</robot>

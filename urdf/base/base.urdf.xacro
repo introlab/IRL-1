@@ -3,8 +3,12 @@
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Include files for extansions -->
+	<include filename="$(find johnny_0_description)/urdf/base/base.gazebo.xacro" />
 
-  <property name="base_collision_size_z" value="0.04" />
+	<property name="base_collision_size_z" value="0.04" />
+	
 	<xacro:macro name="base" params="name">
 		<!-- Suppression of the link between the world and the base -->
 		<!--joint name="${name}_fixed_joint" type="fixed">
@@ -37,6 +41,12 @@
 		  </collision>
 		</link>
 
+		<joint name="${name}_footprint_joint" type="fixed">
+		  <origin xyz="0 0 0.251" rpy="0 0 0" />
+		  <child link="${name}_link" />
+		  <parent link="${name}_footprint"/>
+		</joint>
+		
 		<!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin,
 			navigation stack dedpends on this frame -->
 		<link name="${name}_footprint">
@@ -63,17 +73,14 @@
 			</geometry>
 		  </collision>
 		</link>
-
-		<joint name="${name}_footprint_joint" type="fixed">
-		  <origin xyz="0 0 0.251" rpy="0 0 0" />
-		  <child link="${name}_link" />
-		  <parent link="${name}_footprint"/>
-		</joint>
-	
+		
+		<!-- gazebo extensions -->
+		<xacro:johnny_0_base_gazebo name="${name}" />
+		
 		<gazebo reference="${name}_link">
 			<material>Gazebo/Blue</material>
 		</gazebo>
-
+		
 	</xacro:macro>
 
 

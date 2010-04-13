@@ -18,7 +18,7 @@
 	<include filename="$(find johnny_0_description)/urdf/camera/camera.urdf.xacro" />	
 	
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
-	<!--include filename="$(find johnny_0_description)/gazebo/gazebo.urdf.xacro" /-->
+	<include filename="$(find johnny_0_description)/gazebo/gazebo.urdf.xacro" />
 	<!-- materials for visualization -->
 	<include filename="$(find johnny_0_description)/urdf/materials.urdf.xacro" />	
 	
@@ -54,7 +54,7 @@
 	
 	<xacro:head name="head" parent="torso_link"/>
 	
-	<xacro:camera name="camera" parent="head_head_link"/>
+	<!--xacro:camera name="camera" parent="head_head_link"/-->
 
 	
 	

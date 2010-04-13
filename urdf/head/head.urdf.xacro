@@ -4,6 +4,8 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<include filename="$(find johnny_0_description)/urdf/head/head.transmission.xacro" />
+  
 	<xacro:macro name="head" params="name parent">
 		<joint name="${name}_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
@@ -35,7 +37,7 @@
 			</collision>
 		</link>
 		
-		<joint name="${name}_revolute_joint_tmp" type="revolute">
+		<joint name="${name}_tilt_joint" type="revolute">
 			<parent link="${name}_link"/>
 			<child link="${name}_head_link_tmp"/>
 			<origin xyz="0 -0.02 0.0966715" rpy="0 0 0" />
@@ -69,7 +71,7 @@
 			</collision>
 		</link>	
 
-		<joint name="${name}_revolute_joint" type="revolute">
+		<joint name="${name}_pan_joint" type="revolute">
 			<parent link="${name}_head_link_tmp"/>
 			<child link="${name}_head_link"/>
 			<origin xyz="0 0 0" rpy="0 0 0" />
@@ -101,6 +103,10 @@
 				</geometry>
 			</collision>
 		</link>		
+
+		<!-- extansions -->
+		<xacro:johnny_0_head_tilt_transmission />
+		<xacro:johnny_0_head_pan_transmission />
 
 		<gazebo reference="${name}_link">
 			<material>Gazebo/Green</material>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--  wheel transmission   -->
+  <xacro:macro name="johnny_0_wheel_transmission" params="side face">
+    <transmission type="SimpleTransmission" name="${side}_${face}_wheel_trans">
+      <actuator name="${side}_${face}_wheel_motor" />
+      <joint name="wheel${side}${face}_wheel_continuous_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+
+  <!-- ADE transmission only -->
+  <xacro:macro name="johnny_0_ADE_transmission" params="side face">
+    <transmission type="SimpleTransmission" name="${side}_${face}_rotation_trans">
+      <actuator name="ADE_${side}_${face}_revolute_motor" />
+      <joint name="wheel${side}${face}_revolute_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+</robot>

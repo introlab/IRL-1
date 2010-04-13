@@ -4,6 +4,8 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<include filename="$(find johnny_0_description)/urdf/arm/arm.transmission.xacro" />
+	
 	<xacro:macro name="ADE_pitch_shoulder" params="side reflect parent">
 
 		<joint name="ADE_pitch_shoulder${side}_fixed_1_joint" type="fixed">
@@ -99,6 +101,9 @@
 				</geometry>
 			</collision>
 		</link>
+		
+		<!-- extensions -->
+		<xacro:johnny_0_ADE_pitch_shoulder_transmission side="${side}" />
 		
 		<gazebo reference="ADE_pitch_shoulder${side}_link">
 			<material>Gazebo/Red</material>

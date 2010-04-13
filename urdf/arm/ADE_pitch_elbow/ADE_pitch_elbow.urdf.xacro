@@ -4,6 +4,8 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<include filename="$(find johnny_0_description)/urdf/arm/arm.transmission.xacro" />
+	
 	<xacro:macro name="ADE_pitch_elbow" params="side reflect parent">
 
 		<link name="ADE_pitch_elbow${side}_box">
@@ -100,6 +102,9 @@
 			<child link="ADE_pitch_elbow${side}_link"/>
 			<origin xyz="0.0235 0 0" rpy="0 0 0" />
 		</joint>
+		
+		<!-- extensions -->
+		<xacro:johnny_0_ADE_pitch_elbow_transmission side="${side}" />
 		
 		<gazebo reference="ADE_pitch_elbow${side}_box">
 			<material>Gazebo/Green</material>

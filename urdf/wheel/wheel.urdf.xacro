@@ -3,6 +3,10 @@
        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Include files for extansions -->
+	<include filename="$(find johnny_0_description)/urdf/wheel/wheel.gazebo.xacro" />
+	<include filename="$(find johnny_0_description)/urdf/wheel/wheel.transmission.xacro" />
 
 	<xacro:macro name="wheel" params="side reflectSide face reflectFace parent">
 		
@@ -130,6 +134,11 @@
 				</geometry>
 			</collision>
 		</link>
+		
+		<!-- extensions -->
+		<xacro:johnny_0_wheel_gazebo side="${side}" face="${face}" />
+		<xacro:johnny_0_wheel_transmission side="${side}" face="${face}" />
+		<xacro:johnny_0_ADE_transmission side="${side}" face="${face}" />
 		
 		<gazebo reference="wheel${side}${face}_link">
 			<material>Gazebo/Red</material>
