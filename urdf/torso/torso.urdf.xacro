@@ -23,14 +23,14 @@
 			<visual name="${name}_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="${name}_visual_geom">
-					<box size="0.270 0.21583 0.37921" />
+					<box size="0.21583 0.270 0.37921" />
 				</geometry>
 			</visual>
 
 			<collision name="${name}_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="${name}_collision_geom">
-					<box size="0.270 0.21583 0.37921" />
+					<box size="0.21583 0.270 0.37921" />
 				</geometry>
 			</collision>
 		</link>

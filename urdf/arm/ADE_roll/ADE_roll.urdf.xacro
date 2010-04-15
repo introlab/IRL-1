@@ -11,29 +11,29 @@
 		<joint name="ADE_roll${side}_fixed_origine_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="ADE_roll${side}_box"/>
-			<origin xyz="${reflect*0.1} 0 0.1" rpy="0 0 ${(reflect-1)*M_PI/2}" />
+			<origin xyz="0 ${reflect*0.09} 0.1" rpy="0 0 ${(reflect-1)*M_PI/2+M_PI/2}" />
 		</joint>
 
 		<link name="ADE_roll${side}_box">
 			<inertial>
 				<mass value="1.105" />
 				<origin xyz="0 0 0" rpy="0 0 0"/> 
-        <inertia  ixx="0.002790566518" ixy="0.00"  ixz="0.00"
-                  iyy="0.002862829183" iyz="0.00"
-                  izz="0.001375984901" />
+				<inertia  ixx="0.002790566518" ixy="0.00"  ixz="0.00"
+						  iyy="0.002862829183" iyz="0.00"
+						  izz="0.001375984901" />
 			</inertial>
 
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="ADE_roll${side}_box_visual_geom">
-					<box size="0.088678 0.084137 0.1524" />
+					<box size="0.084137 0.088678 0.1524" />
 				</geometry>
 			</visual>
 
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0 " />
 				<geometry name="ADE_roll${side}_box_collision_geom">
-					<box size="0.088678 0.084137 0.1524" />
+					<box size="0.084137 0.088678 0.1524" />
 				</geometry>
 			</collision>
 		</link>
