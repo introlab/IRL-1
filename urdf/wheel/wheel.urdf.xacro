@@ -13,7 +13,7 @@
 		<joint name="wheel${side}${face}_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="wheel${side}${face}_link"/>
-			<origin xyz="${reflectSide*0.17} ${reflectFace*0.17} -0.133645" rpy="0 0 ${reflectFace*(M_PI/4+(1-reflectSide)*M_PI/4)}" />
+			<origin xyz="${reflectFace*0.17} ${reflectSide*0.17} -0.133645" rpy="0 0 ${reflectSide*(M_PI/4+(1-reflectFace)*M_PI/4)}" />
 		</joint>
 
 		<link name="wheel${side}${face}_link">
@@ -107,7 +107,7 @@
 		<joint name="wheel${side}${face}_wheel_continuous_joint" type="continuous">
 			<parent link="wheel${side}${face}_ADE2_link"/>
 			<child link="wheel${side}${face}_wheel_link"/>
-			<origin xyz="0.07492 0 0" rpy="0 ${M_PI/2} 0" />
+			<origin xyz="0.07492 0 0" rpy="0 ${-M_PI/2} 0" />
 			<axis xyz="0 0 1"/>
 		</joint>
 
