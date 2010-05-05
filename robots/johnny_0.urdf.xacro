@@ -9,6 +9,7 @@
 	<include filename="$(find johnny_0_description)/urdf/common.xacro" />
 	
 	<!-- Description files -->
+	<include filename="$(find johnny_0_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
 	<include filename="$(find johnny_0_description)/urdf/base/base.urdf.xacro" />
 	<include filename="$(find johnny_0_description)/urdf/wheel/wheel.urdf.xacro" />
 	<include filename="$(find johnny_0_description)/urdf/baseTorsoLink/baseTorsoLink.urdf.xacro" />
