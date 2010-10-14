@@ -12,11 +12,6 @@
 	<include filename="$(find johnny_0_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
 	<include filename="$(find johnny_0_description)/urdf/base/base.urdf.xacro" />
 	<include filename="$(find johnny_0_description)/urdf/wheel/wheel.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/baseTorsoLink/baseTorsoLink.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/torso/torso.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/arm/arm.urdf.xacro" />	
-	<include filename="$(find johnny_0_description)/urdf/head/head.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/camera/bumblebee.urdf.xacro" />	
 	
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
 	<include filename="$(find johnny_0_description)/gazebo/gazebo.urdf.xacro" />
@@ -45,18 +40,6 @@
 	
 	<xacro:wheel side="L" reflectSide="1" face="F" reflectFace="1" parent="base_link"/>
 
-	<xacro:baseTorsoLink name="baseTorsoLink" parent="base_link"/>
-	
-	<xacro:torso name="torso" parent="baseTorsoLink_link"/>
-	
-	<xacro:arm side="R" reflect="-1" parent="torso_link"/>
-	
-	<xacro:arm side="L" reflect="1" parent="torso_link"/>
-	
-	<xacro:head name="head" parent="torso_link">
-		<origin xyz="0.04 0 ${torso_size_z/2}" />
-	</xacro:head>
-	
 	<!--xacro:bumblebee name="bumblebee" parent="head_head_link">
 		<origin xyz="0.06 0 ${head_size_z/2 + bumblebee_size_z/2}" />
 	</xacro:bumblebee-->

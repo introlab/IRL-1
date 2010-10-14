@@ -4,6 +4,9 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
+
+	<property name="torso_size_z" value="0.37921" />
+
 	<xacro:macro name="torso" params="name parent">
 		<joint name="${name}_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
@@ -23,14 +26,14 @@
 			<visual name="${name}_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="${name}_visual_geom">
-					<box size="0.21583 0.270 0.37921" />
+					<box size="0.21583 0.270 ${torso_size_z}" />
 				</geometry>
 			</visual>
 
 			<collision name="${name}_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="${name}_collision_geom">
-					<box size="0.21583 0.270 0.37921" />
+					<box size="0.21583 0.270 ${torso_size_z}" />
 				</geometry>
 			</collision>
 		</link>

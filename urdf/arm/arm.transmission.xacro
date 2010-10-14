@@ -8,7 +8,7 @@
 
   <!-- ADE roll shoulder -->
   <xacro:macro name="johnny_0_ADE_roll_shoulder_transmission" params="side" >
-    <transmission type="SimpleTransmission" name="${side}_ADE_roll_shoulder_trans">
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_ADE_roll_shoulder_trans">
       <actuator name="${side}_ADE_roll_shoulder_motor" />
       <joint name="ADE_roll${side}_revolute_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
@@ -17,7 +17,7 @@
   
   <!-- ADE pitch shoulder -->
   <xacro:macro name="johnny_0_ADE_pitch_shoulder_transmission" params="side" >
-    <transmission type="SimpleTransmission" name="${side}_ADE_pitch_shoulder_trans">
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_ADE_pitch_shoulder_trans">
       <actuator name="${side}_ADE_pitch_shoulder_motor" />
       <joint name="ADE_pitch_shoulder${side}_revolute_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
@@ -26,7 +26,7 @@
 
   <!--  ADE pitch elbow -->
   <xacro:macro name="johnny_0_ADE_pitch_elbow_transmission" params="side" >
-    <transmission type="SimpleTransmission" name="${side}_ADE_pitch_elbow_trans">
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_ADE_pitch_elbow_trans">
       <actuator name="${side}_ADE_pitch_elbow_motor" />
       <joint name="ADE_pitch_elbow${side}_revolute_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>

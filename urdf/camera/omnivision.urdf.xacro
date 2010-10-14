@@ -4,11 +4,12 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-<xacro:macro name="camera" params="name parent">
+<xacro:macro name="omnivision" params="name parent *origin">
 		<joint name="${name}_fixed_joint" type="fixed">
 				<parent link="${parent}"/>
 				<child link="${name}_link"/>
-				<origin xyz="0 -0.06009 0.078965" rpy="0 0 0" />
+				<insert_block name="origin" />
+				<!--origin xyz="0.13 0 0.38" rpy="0 0 0" /-->
 		</joint>
 
 		<link name="${name}_link">
@@ -23,14 +24,14 @@
 		  <visual name="${name}_visual">
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry name="${name}_visual_geom">
-				<box size="0.152 0.0425 0.031" />
+				<box size="0.10 0.055 0.06" />
 			</geometry>
 		  </visual>
 
 		  <collision name="${name}_collision">
 			<origin xyz="0 0 0" rpy="0 0 0" />
 			<geometry name="${name}_collision_geom">
-				<box size="0.152 0.0425 0.031" />
+				<box size="0.10 0.055 0.06" />
 			</geometry>
 		  </collision>
 		</link>

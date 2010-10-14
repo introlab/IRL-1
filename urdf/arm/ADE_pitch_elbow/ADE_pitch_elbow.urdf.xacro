@@ -94,7 +94,7 @@
 			<axis xyz="0 1 0" rpy="0 0 0"/>
 			<limit effort="100" velocity="0.1" lower="0" upper="1.5708" />
 
-			<calibration reference_position="0.0"/>
+			<!-- calibration reference_position="0.0"/ -->
 		</joint>
 
 		<joint name="ADE_pitch_elbow${side}_fixed_2_joint" type="fixed">

@@ -76,7 +76,7 @@
 			<axis xyz="0 0 1" rpy="0 0 0"/>
 			<limit effort="30" velocity="0.1" lower="-2.8" upper="2.8" />
 
-			<calibration reference_position="0.0"/>
+			<!-- calibration reference_position="0.0"/ -->
 		</joint>
 
 		<link name="ADE_roll${side}_link">

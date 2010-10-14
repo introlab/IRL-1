@@ -6,7 +6,7 @@
 
   <!--  wheel transmission   -->
   <xacro:macro name="johnny_0_wheel_transmission" params="side face">
-    <transmission type="SimpleTransmission" name="${side}_${face}_wheel_trans">
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_${face}_wheel_trans">
       <actuator name="${side}_${face}_wheel_motor" />
       <joint name="wheel${side}${face}_wheel_continuous_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
@@ -15,7 +15,7 @@
 
   <!-- ADE transmission only -->
   <xacro:macro name="johnny_0_ADE_transmission" params="side face">
-    <transmission type="SimpleTransmission" name="${side}_${face}_rotation_trans">
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_${face}_rotation_trans">
       <actuator name="ADE_${side}_${face}_revolute_motor" />
       <joint name="wheel${side}${face}_revolute_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
