@@ -49,7 +49,7 @@
 		<link name="wheel${side}${face}_ADE_link">
 
 			<inertial>
-				<mass value="0.5" />
+				<mass value="5.0" />
 				<origin xyz="0 0 0" />
 				<inertia ixx="0" ixy="0" ixz="0"
 						 iyy="0" iyz="0" izz="0" />
@@ -75,7 +75,8 @@
 			<child link="wheel${side}${face}_ADE2_link"/>
 			<origin xyz="0 0 -0.12708" rpy="0 0 0" />
 			<axis xyz="0 0 1" rpy="0 0 0"/>
-			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
+			<!-- See az3.cfg for max velocity value. -->
+			<limit effort="100" velocity="1.7442" lower="-1.5708" upper="1.5708" />
 
 			<!-- calibration reference_position="0.0"/ -->
 		</joint>
@@ -109,12 +110,14 @@
 			<child link="wheel${side}${face}_wheel_link"/>
 			<origin xyz="0.07492 0 0" rpy="0 ${-M_PI/2} 0" />
 			<axis xyz="0 0 1"/>
+			<!-- See az3.cfg for max velocity value. -->
+			<limit effort="100" velocity="9.8837"/>
 		</joint>
 
 		<link name="wheel${side}${face}_wheel_link">
 
 			<inertial>
-				<mass value="0.5" />
+				<mass value="1.0" />
 				<origin xyz="0 0 0" />
 				<inertia ixx="0" ixy="0" ixz="0"
 						 iyy="0" iyz="0" izz="0" />
