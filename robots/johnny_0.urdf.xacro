@@ -57,9 +57,9 @@
 		<origin xyz="0.04 0 ${torso_size_z/2}" />
 	</xacro:head>
 	
-	<!--xacro:bumblebee name="bumblebee" parent="head_head_link">
+	<xacro:bumblebee name="head_camera" parent="head_head_link">
 		<origin xyz="0.06 0 ${head_size_z/2 + bumblebee_size_z/2}" />
-	</xacro:bumblebee-->
+	</xacro:bumblebee>
 
 
 
