@@ -62,9 +62,8 @@
 	</xacro:bumblebee>
 
 
-
-	
-	
-	
+	<xacro:bumblebee name="kinect_camera" parent="torso_link">
+		<origin xyz="0.17 0 ${torso_size_z/2 + bumblebee_size_z/2}" />
+	</xacro:bumblebee>
 	
 </robot>
