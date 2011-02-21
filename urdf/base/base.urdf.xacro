@@ -9,15 +9,6 @@
 
 	<property name="base_collision_size_z" value="0.04" />
 	
-	<!-- Warning: eye-balled values for the laser position. -->
-	<property name="base_laser_x" value="0.150" />
-	<property name="base_laser_y" value="0.055" />
-	<property name="base_laser_z" value="0.200" />
-	<property name="base_laser_size_x" value="0.06" />
-	<property name="base_laser_size_y" value="0.06" />
-	<property name="base_laser_size_z" value="0.03" />
-	<property name="base_laser_collision_offset_z" value="0.023" />
-
 	<xacro:macro name="base" params="name">
 		<joint name="${name}_fixed_joint" type="fixed">
 				<parent link="${name}_footprint"/>

@@ -29,6 +29,15 @@
        the origin block defines where the component is w.r.t its parent (in this case the parent 
        is the world frame). For more, see http://www.ros.org/wiki/xacro -->
 	   
+	<!-- Warning: eye-balled values for the laser position. -->
+	<property name="base_laser_x" value="0.150" />
+	<property name="base_laser_y" value="0.055" />
+	<property name="base_laser_z" value="0.200" />
+	<property name="base_laser_size_x" value="0.06" />
+	<property name="base_laser_size_y" value="0.06" />
+	<property name="base_laser_size_z" value="0.03" />
+	<property name="base_laser_collision_offset_z" value="0.023" />
+
 	   
 	<xacro:base name="base" />
 	
