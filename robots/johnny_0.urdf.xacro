@@ -36,8 +36,8 @@
        is the world frame). For more, see http://www.ros.org/wiki/xacro -->
 	   
 	<!-- Warning: eye-balled values for the laser position. -->
-	<property name="base_laser_x" value="0.150" />
-	<property name="base_laser_y" value="0.055" />
+	<property name="base_laser_x" value="0.10" />
+	<property name="base_laser_y" value="-0.04" />
 	<property name="base_laser_z" value="0.200" />
 	<property name="base_laser_size_x" value="0.06" />
 	<property name="base_laser_size_y" value="0.06" />
