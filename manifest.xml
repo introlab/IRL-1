@@ -1,0 +1,16 @@
+<package>
+  <description brief="irl_common_description">
+
+     Common URDF files and meshes for IntRoLab robots.
+
+  </description>
+  <author>François Ferland</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/irl_common_description</url>
+  <depend package="xacro"/>
+  <depend package="urdf"/>
+
+</package>
+
+
