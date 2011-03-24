@@ -13,7 +13,7 @@
 	<property name="dY0" value="0.18194605" />
 	<property name="dZ0" value="-0.06282066" />
 	
-	<!-- Distance between base and linkWheel -->
+	<!-- Distance between linkWheel and prop wheel joint -->
 	<property name="dX1" value="0.08748000" />
 	
 	<!-- Properties of the link between the base and the wheel -->
@@ -48,7 +48,7 @@
 			<child link="wheel${side}${face}_linkWheel_link"/>
 			<origin xyz="${reflectFace*dX0} ${reflectSide*dY0} ${dZ0}" rpy="0 0 ${reflectSide*(M_PI/4+(1-reflectFace)*M_PI/4)}" />
 			<axis xyz="0 0 1" rpy="0 0 0"/>
-			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
+			<limit effort="100" velocity="1.7442" lower="-1.5708" upper="1.5708" />
 		</joint>
 		
 		<link name="wheel${side}${face}_linkWheel_link">
