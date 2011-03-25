@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Include files for extensions -->
+	<include filename="$(find irl_common_description)/urdf/az3_base/base.gazebo.xacro" />
+
+	<property name="base_collision_size_z" value="0.04" />
+	
+	<!-- Warning: eye-balled values for the laser position. -->
+	<property name="base_laser_x" value="0.15" />
+	<property name="base_laser_y" value="0.0" />
+	<property name="base_laser_z" value="0.4" />
+	<property name="base_laser_size_x" value="0.06" />
+	<property name="base_laser_size_y" value="0.06" />
+	<property name="base_laser_size_z" value="0.03" />
+	<property name="base_laser_collision_offset_z" value="0.023" />
+
+	<!-- Properties of the base -->
+	<property name="base_mass" value="26.576444" />
+	<property name="base_cg_x" value="0.001534" />
+	<property name="base_cg_y" value="0.000052" />
+	<property name="base_cg_z" value="0.029541" />
+	<property name="base_ixx" value="1" />
+	<property name="base_ixy" value="0" />
+	<property name="base_ixz" value="0" />
+	<property name="base_iyy" value="1" />
+	<property name="base_iyz" value="0" />
+	<property name="base_izz" value="1" />
+
+	
+	
+	<xacro:macro name="az3_base" params="name">
+		<!-- Suppression of the link between the world and the base -->
+		<!--joint name="${name}_fixed_joint" type="fixed">
+				<parent link="${parent}"/>
+				<child link="${name}_link"/>
+				<origin xyz="0 0 0.22" rpy="0 0 0" />
+		</joint-->
+
+		<link name="${name}_link">
+
+		  <inertial>
+			<mass value="${base_mass}" />
+			<origin xyz="${base_cg_x} ${base_cg_y} ${base_cg_z}" />
+			<inertia ixx="${base_ixx}" ixy="${base_ixy}" ixz="${base_ixz}"
+					 iyy="${base_iyy}" iyz="${base_iyz}" izz="${base_izz}" />
+		  </inertial>
+
+		  <visual name="${name}_visual">
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry name="${name}_visual_geom">
+				<mesh filename="package://irl_common_description/meshes/az3_base/base.stl"  />
+				<!--box size="0.3638921 0.3638921 0.25" /-->
+			</geometry>
+		  </visual>
+
+		  <collision name="${name}_collision">
+		  <!-- 0.01 can we remove this ? -->
+			<origin xyz="0 0 0.01" rpy="0 0 0" />
+			<geometry name="${name}_collision_geom">
+				<mesh filename="package://irl_common_description/meshes/az3_base/base.stl"  />
+				<!--box size="0.3638921 0.3638921 0.25" /-->
+			</geometry>
+		  </collision>
+		</link>
+
+		<joint name="${name}_footprint_joint" type="fixed">
+		  <origin xyz="0 0 0.251" rpy="0 0 0" />
+		  <child link="${name}_link" />
+		  <parent link="${name}_footprint"/>
+		</joint>
+		
+		<!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin,
+			navigation stack dedpends on this frame -->
+		<link name="${name}_footprint">
+		  <inertial>
+			<mass value="1.0" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.01" ixy="0.0" ixz="0.0"
+					iyy="0.01" iyz="0.0" izz="0.01" />
+		  </inertial>
+		  <visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+			  <box size="0.01 0.01 0.01" />
+			</geometry>
+			
+			<material name="Green" />
+		  </visual>
+		  <collision>
+			<!-- represent base collision with a simple rectangular model, positioned by base_size_z s.t. top
+				surface of the collision box matches the top surface of the AZ3 base -->
+			<origin xyz="0 0 ${0.251+base_collision_size_z/2}" rpy="0 0 0" />
+			<geometry>
+			  <box size="0.001 0.001 0.001" />
+			</geometry>
+		  </collision>
+		</link>
+
+		<!-- front laser -->
+		<xacro:hokuyo_lx04_laser_v0 name="${name}_laser" parent="${name}"
+			ros_topic="/sensors/base_scan" update_rate="20" min_angle="-2.2689"
+			max_angle="2.2689" >
+			<origin xyz="${base_laser_x} ${base_laser_y} ${base_laser_z}" 
+			rpy="0 0 0" />
+		</xacro:hokuyo_lx04_laser_v0>
+		
+		<!-- gazebo extensions -->
+		<xacro:az3_base_gazebo name="${name}" />
+		
+		<gazebo reference="${name}_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+		
+	</xacro:macro>
+
+
+</robot>
