@@ -6,40 +6,8 @@
 	
 	<!-- Include files for extensions -->
 	<include filename="$(find irl_common_description)/urdf/az3_base/base.gazebo.xacro" />
-
-	<property name="base_collision_size_z" value="0.04" />
-	
-	<!-- Warning: eye-balled values for the laser position. -->
-	<property name="base_laser_x" value="0.15" />
-	<property name="base_laser_y" value="0.0" />
-	<property name="base_laser_z" value="0.4" />
-	<property name="base_laser_size_x" value="0.06" />
-	<property name="base_laser_size_y" value="0.06" />
-	<property name="base_laser_size_z" value="0.03" />
-	<property name="base_laser_collision_offset_z" value="0.023" />
-
-	<!-- Properties of the base -->
-	<property name="base_mass" value="26.576444" />
-	<property name="base_cg_x" value="0.001534" />
-	<property name="base_cg_y" value="0.000052" />
-	<property name="base_cg_z" value="0.029541" />
-	<property name="base_ixx" value="1" />
-	<property name="base_ixy" value="0" />
-	<property name="base_ixz" value="0" />
-	<property name="base_iyy" value="1" />
-	<property name="base_iyz" value="0" />
-	<property name="base_izz" value="1" />
-
-	
 	
 	<xacro:macro name="az3_base" params="name">
-		<!-- Suppression of the link between the world and the base -->
-		<!--joint name="${name}_fixed_joint" type="fixed">
-				<parent link="${parent}"/>
-				<child link="${name}_link"/>
-				<origin xyz="0 0 0.22" rpy="0 0 0" />
-		</joint-->
-
 		<link name="${name}_link">
 
 		  <inertial>

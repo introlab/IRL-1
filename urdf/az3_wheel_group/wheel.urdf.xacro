@@ -8,39 +8,6 @@
 	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.gazebo.xacro" />
 	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.transmission.xacro" />
 
-	<!-- Distance between base and linkWheel -->
-	<property name="dX0" value="0.18194605" />
-	<property name="dY0" value="0.18194605" />
-	<property name="dZ0" value="-0.06282066" />
-	
-	<!-- Distance between linkWheel and prop wheel joint -->
-	<property name="dX1" value="0.08748000" />
-	
-	<!-- Properties of the link between the base and the wheel -->
-	<property name="linkWheel_mass" value="0.935764" />
-	<property name="linkWheel_cg_x" value="0.048556" />
-	<property name="linkWheel_cg_y" value="0.000041" />
-	<property name="linkWheel_cg_z" value="0.014578" />
-	<property name="linkWheel_ixx" value="0.001359" />
-	<property name="linkWheel_ixy" value="0.000002" />
-	<property name="linkWheel_ixz" value="0.000154" />
-	<property name="linkWheel_iyy" value="0.004142" />
-	<property name="linkWheel_iyz" value="0.000001" />
-	<property name="linkWheel_izz" value="0.003414" />
-
-	
-	<!-- Properties of the link between the wheel -->
-	<property name="wheel_mass" value="0.940025" />
-	<property name="wheel_cg_x" value="0.006637" />
-	<property name="wheel_cg_y" value="0.000000" />
-	<property name="wheel_cg_z" value="-0.000004" />
-	<property name="wheel_ixx" value="0.002007" />
-	<property name="wheel_ixy" value="0.000000" />
-	<property name="wheel_ixz" value="0.000000" />
-	<property name="wheel_iyy" value="0.001169" />
-	<property name="wheel_iyz" value="0.000000" />
-	<property name="wheel_izz" value="0.001169" />
-	
 	<xacro:macro name="az3_wheel_group" params="side reflectSide face reflectFace parent">
 		
 		<joint name="wheel${side}${face}_revolute_joint" type="revolute">
