@@ -15,7 +15,7 @@
 			<child link="wheel${side}${face}_linkWheel_link"/>
 			<origin xyz="${reflectFace*dX0} ${reflectSide*dY0} ${dZ0}" rpy="0 0 ${reflectSide*(M_PI/4+(1-reflectFace)*M_PI/4)}" />
 			<axis xyz="0 0 1" rpy="0 0 0"/>
-			<limit effort="100" velocity="1.7442" lower="-1.5708" upper="1.5708" />
+			<limit effort="100" velocity="1.8" lower="${-M_PI/2-0.1}" upper="${M_PI/2+0.1}" />
 		</joint>
 		
 		<link name="wheel${side}${face}_linkWheel_link">
