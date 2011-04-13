@@ -1,5 +1,0 @@
-<launch>
-    <!-- send johnny_0 urdf to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find
-	johnny_0_description)/robots/azimut_3.urdf.xacro'" />
-</launch>

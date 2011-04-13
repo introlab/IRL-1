@@ -6,23 +6,24 @@
        name="johnny_0" >
 
 	<!-- The following included files set up definitions of parts of the robot body -->
-	<include filename="$(find johnny_0_description)/urdf/common.xacro" />
+	<include filename="$(find jn0_description)/urdf/common.xacro" />
 	
 	<!-- Description files -->
-	<include filename="$(find johnny_0_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/base/base.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/wheel/wheel.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/baseTorsoLink/baseTorsoLink.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/torso/torso.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/arm/arm.urdf.xacro" />	
-	<include filename="$(find johnny_0_description)/urdf/head/head.urdf.xacro" />
-	<include filename="$(find johnny_0_description)/urdf/camera/bumblebee.urdf.xacro" />	
-	<include filename="$(find johnny_0_description)/urdf/camera/kinect.urdf.xacro" />	
+	<include filename="$(find jn0_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
+	<!--include filename="$(find jn0_description)/urdf/base/base.urdf.xacro" /-->
+	<!--include filename="$(find jn0_description)/urdf/wheel/wheel.urdf.xacro" /-->
+	<include filename="$(find jn0_description)/urdf/baseTorsoLink/baseTorsoLink.urdf.xacro" />
+	<include filename="$(find jn0_description)/urdf/torso/torso.urdf.xacro" />
+	<include filename="$(find jn0_description)/urdf/arm/arm.urdf.xacro" />
+	<include filename="$(find jn0_description)/urdf/head/head.urdf.xacro" />
+	<include filename="$(find jn0_description)/urdf/camera/bumblebee.urdf.xacro" />
+	<include filename="$(find jn0_description)/urdf/camera/kinect.urdf.xacro" />
 	
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
-	<include filename="$(find johnny_0_description)/gazebo/gazebo.urdf.xacro" />
+	<include filename="$(find jn0_description)/gazebo/gazebo.urdf.xacro" />
 	<!-- materials for visualization -->
-	<include filename="$(find johnny_0_description)/urdf/materials.urdf.xacro" />	
+	<!-- FIXME  Materials from azimut -->
+	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
 	
 	
 	<!-- Now we can start using the macros included above to define the actual PR2 -->
@@ -43,16 +44,10 @@
 	<property name="base_laser_size_y" value="0.06" />
 	<property name="base_laser_size_z" value="0.03" />
 	<property name="base_laser_collision_offset_z" value="0.023" />
-	   
-	<xacro:base name="base" />
 	
-	<xacro:wheel side="R" reflectSide="-1" face="B" reflectFace="-1" parent="base_link"/>
+	<!--xacro:base name="base" /-->
 
-	<xacro:wheel side="R" reflectSide="-1" face="F" reflectFace="1" parent="base_link"/>
-	
-	<xacro:wheel side="L" reflectSide="1" face="B" reflectFace="-1" parent="base_link"/>
-	
-	<xacro:wheel side="L" reflectSide="1" face="F" reflectFace="1" parent="base_link"/>
+	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
 
 	<xacro:baseTorsoLink name="baseTorsoLink" parent="base_link"/>
 	
