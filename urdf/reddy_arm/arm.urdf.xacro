@@ -5,13 +5,13 @@
        xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        name="arm">
 
-	<include filename="$(find jn0_description)/urdf/arm/ADE_roll/ADE_roll.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/arm/ADE_pitch_shoulder/ADE_pitch_shoulder.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/arm/ADE_pitch_elbow/ADE_pitch_elbow.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/arm/forearm/forearm.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/arm/hand/hand.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/ADE_roll/ADE_roll.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/ADE_pitch_shoulder/ADE_pitch_shoulder.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/ADE_pitch_elbow/ADE_pitch_elbow.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/forearm/forearm.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/hand/hand.urdf.xacro" />
 
-	<xacro:macro name="arm" params="side reflect parent">
+	<xacro:macro name="reddy_arm" params="side reflect parent">
 		
 		<xacro:ADE_roll side="${side}" reflect="${reflect}" parent="${parent}"/>
 		<xacro:ADE_pitch_shoulder side="${side}" reflect="${reflect}" parent="ADE_roll${side}_link"/>

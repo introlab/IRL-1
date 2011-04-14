@@ -7,12 +7,55 @@
 
 	<property name="torso_size_z" value="0.37921" />
 
-	<xacro:macro name="torso" params="name parent">
-		<joint name="${name}_fixed_joint" type="fixed">
+	<xacro:macro name="jn0_torso_box" params="name parent">
+
+		<!--
+			"Stand", the bar supporting the torso
+		-->
+
+		<joint name="${name}_stand_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
+			<child link="${name}_stand_link"/>
+			<origin xyz="0 0 0.3089" rpy="0 0 0" />
+		</joint>
+
+		<link name="${name}_stand_link">
+
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 0" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_stand_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_stand_visual_geom">
+					<box size="0.038 0.038 0.37038" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_stand_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_stand_collision_geom">
+					<box size="0.038 0.038 0.37038" />
+				</geometry>
+			</collision>
+		</link>
+
+		<gazebo reference="${name}_stand_link">
+			<material>Gazebo/Grey</material>
+		</gazebo>
+
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${name}_stand_link"/>
 			<child link="${name}_link"/>
 			<origin xyz="0 0 0.374795" rpy="0 0 0" />
 		</joint>
+
+		<!--
+			Actual torso represented by a box
+		-->
 
 		<link name="${name}_link">
 
