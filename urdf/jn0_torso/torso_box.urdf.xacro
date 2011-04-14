@@ -5,85 +5,45 @@
        xmlns:xacro="http://ros.org/wiki/xacro">
 
 
-	<property name="torso_size_z" value="0.37921" />
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	
+	<xacro:macro name="jn0_torso_box" params="name parent xyz stand_width stand_height chest_width chest_height chest_length">
 
-	<xacro:macro name="jn0_torso_box" params="name parent">
-
-		<!--
-			"Stand", the bar supporting the torso
-		-->
+		<!-- "Stand", the bar supporting the torso -->
 
 		<joint name="${name}_stand_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="${name}_stand_link"/>
-			<origin xyz="0 0 0.3089" rpy="0 0 0" />
+			<origin xyz="${xyz}" rpy="0 0 0" />
 		</joint>
 
-		<link name="${name}_stand_link">
-
-			<inertial>
-				<mass value="0.5" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_stand_visual">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_stand_visual_geom">
-					<box size="0.038 0.038 0.37038" />
-				</geometry>
-			</visual>
-
-			<collision name="${name}_stand_collision">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_stand_collision_geom">
-					<box size="0.038 0.038 0.37038" />
-				</geometry>
-			</collision>
-		</link>
-
-		<gazebo reference="${name}_stand_link">
-			<material>Gazebo/Grey</material>
-		</gazebo>
+		<xacro:simple_box
+			name = "${name}_stand_link"
+			lwh  = "${stand_width} ${stand_width} ${stand_height}"
+			xyz  = "0 0 0"
+			rpy  = "0 0 0"
+			mass = "0.5"
+			rviz_rgba = "0.5 0.5 0.5 1"
+			material  = "Gazebo/Grey"
+		/>
 
 		<joint name="${name}_fixed_joint" type="fixed">
 			<parent link="${name}_stand_link"/>
 			<child link="${name}_link"/>
-			<origin xyz="0 0 0.374795" rpy="0 0 0" />
+			<origin xyz="0 0 ${stand_height}" rpy="0 0 0" />
 		</joint>
 
-		<!--
-			Actual torso represented by a box
-		-->
+		<!-- Actual torso represented by a box -->
 
-		<link name="${name}_link">
-
-			<inertial>
-				<mass value="0.5" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_visual">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_visual_geom">
-					<box size="0.21583 0.270 ${torso_size_z}" />
-				</geometry>
-			</visual>
-
-			<collision name="${name}_collision">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_collision_geom">
-					<box size="0.21583 0.270 ${torso_size_z}" />
-				</geometry>
-			</collision>
-		</link>
-
-		<gazebo reference="${name}_link">
-			<material>Gazebo/Red</material>
-		</gazebo>
+		<xacro:simple_box
+			name = "${name}_link"
+			lwh  = "${chest_length} ${chest_width} ${chest_height}"
+			xyz  = "0 0 0"
+			rpy  = "0 0 0"
+			mass = "0.5"
+			rviz_rgba = "1 0 0 1"
+			material  = "Gazebo/Red"
+		/>
 
 	</xacro:macro>
 
