@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="hand" params="side reflect parent">
+
+		<link name="hand${side}">
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+        <inertia  ixx="0.00" ixy="0.00"  ixz="0.00"
+                  iyy="0.00" iyz="0.00"
+                  izz="0.00" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="hand${side}_visual_geom">
+					<sphere radius="0.015" />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="hand${side}_collision_geom">
+					<sphere radius="0.015" />
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="hand${side}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="hand${side}"/>
+			<origin xyz="0 0 0.11" rpy="0 0 0" />
+		</joint>
+
+		<gazebo reference="hand${side}">
+			<material>Gazebo/Grey</material>
+		</gazebo>
+
+	</xacro:macro>
+
+</robot>

@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<include filename="$(find jn0_description)/urdf/head/head.transmission.xacro" />
+  
+	<property name="pan_size_z" value="0.05" />
+	<property name="head_size_z" value="0.17" />
+
+	<xacro:macro name="head" params="name parent *origin">
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_pan_link"/>
+			<insert_block name="origin" /> 
+			<!--origin xyz="0.02 0 0.2228115" rpy="0 0 0" /-->
+		</joint>
+
+		<link name="${name}_pan_link">
+
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 ${pan_size_z/2}" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_pan_visual">
+				<origin xyz="0 0 ${pan_size_z/2}" rpy="0 0 0" />
+				<geometry name="${name}_pan_visual_geom">
+					<box size="0.04 0.04 ${pan_size_z}" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_pan_collision">
+				<origin xyz="0 0 ${pan_size_z/2}" rpy="0 0 0" />
+				<geometry name="${name}_pan_collision_geom">
+					<box size="0.04 0.04 ${pan_size_z}" />
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="${name}_pan_joint" type="revolute">
+			<parent link="${name}_pan_link"/>
+			<child link="${name}_tilt_link"/>
+			<origin xyz="0 0 ${pan_size_z}" rpy="0 0 0" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
+
+			<!-- calibration reference_position="0.0"/ -->
+		</joint>
+
+		<link name="${name}_tilt_link">
+
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0.023" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_tilt_visual">
+				<origin xyz="0 0 0.023" rpy="0 0 0" />
+				<geometry name="${name}_tilt_visual_geom">
+					<box size="0.04 0.04 0.046" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_tilt_collision">
+				<origin xyz="0 0 0.023" rpy="0 0 0" />
+				<geometry name="${name}_tilt_collision_geom">
+					<box size="0.04 0.04 0.046" />
+				</geometry>
+			</collision>
+		</link>	
+
+		<joint name="${name}_tilt_joint" type="revolute">
+			<parent link="${name}_tilt_link"/>
+			<child link="${name}_neck_link"/>
+			<!-- distance between tilt axis and beginning of the head plus the half of the head height-->
+			<origin xyz="0 0 0.046" rpy="0 0 0" />
+			<axis xyz="0 1 0" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
+
+			<!-- calibration reference_position="0.0"/ -->
+		</joint>
+
+		<link name="${name}_neck_link">
+
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0.04" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_neck_visual">
+				<origin xyz="0 0 0.04" rpy="0 0 0" />
+				<geometry name="${name}_neck_visual_geom">
+					<box size="0.04 0.04 0.08" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_neck_collision">
+				<origin xyz="0 0 0.04" rpy="0 0 0" />
+				<geometry name="${name}_neck_collision_geom">
+					<box size="0.04 0.04 0.08" />
+				</geometry>
+			</collision>
+		</link>	
+
+		<joint name="${name}_neck_joint" type="fixed">
+			<parent link="${name}_neck_link"/>
+			<child link="${name}_head_link"/>
+			<!-- distance between tilt axis and beginning of the head plus the half of the head height-->
+			<origin xyz="0 0 ${0.06 + head_size_z/2}" rpy="0 0 0" />
+
+			<!-- calibration reference_position="0.0"/ -->
+		</joint>
+
+		<link name="${name}_head_link">
+			<inertial>
+				<mass value="0.5" />
+				<origin xyz="0 0 0" />
+				<inertia ixx="0" ixy="0" ixz="0"
+						 iyy="0" iyz="0" izz="0" />
+			</inertial>
+
+			<visual name="${name}_head_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_visual_geom">
+					<box size="0.17 0.19 ${head_size_z}" />
+				</geometry>
+			</visual>
+
+			<collision name="${name}_head_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_head_collision_geom">
+					<box size="0.17 0.19 ${head_size_z}" />
+				</geometry>
+			</collision>
+		</link>		
+
+		<!-- extansions -->
+		<xacro:jn0_head_tilt_transmission />
+		<xacro:jn0_head_pan_transmission />
+
+		<gazebo reference="${name}_link">
+			<material>Gazebo/Green</material>
+		</gazebo>
+
+		<gazebo reference="${name}_head_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+
+	</xacro:macro>
+
+
+</robot>

@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+	   
+	<include filename="$(find jn0_description)/urdf/arm/arm.transmission.xacro" />
+
+	<xacro:macro name="ADE_roll" params="side reflect parent">
+
+		<joint name="ADE_roll${side}_fixed_origine_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="ADE_roll${side}_box"/>
+			<origin xyz="0 ${reflect*0.09} 0.1" rpy="0 0 ${(reflect-1)*M_PI/2+M_PI/2}" />
+		</joint>
+
+		<link name="ADE_roll${side}_box">
+			<inertial>
+				<mass value="1.105" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				<inertia  ixx="0.002790566518" ixy="0.00"  ixz="0.00"
+						  iyy="0.002862829183" iyz="0.00"
+						  izz="0.001375984901" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="ADE_roll${side}_box_visual_geom">
+					<box size="0.084137 0.088678 0.1524" />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="ADE_roll${side}_box_collision_geom">
+					<box size="0.084137 0.088678 0.1524" />
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="ADE_roll${side}_fixed_joint" type="fixed">
+			<parent link="ADE_roll${side}_box"/>
+			<child link="ADE_roll${side}_cylinder"/>
+			<origin xyz="0.0500285 0 0.0491765" rpy="0 1.5708 0" />
+		</joint>
+
+		<link name="ADE_roll${side}_cylinder">
+			<inertial>
+				<mass value="0.117" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				 <inertia  ixx="0.00" ixy="0.00"  ixz="0.00"
+									 iyy="0.00" iyz="0.00"
+									 izz="0.00" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="ADE_roll${side}_cylinder_visual_geom">
+					<cylinder radius="0.0270235" length="0.011379"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="ADE_roll${side}_cylinder_collision_geom">
+					<cylinder radius="0.0270235" length="0.011379"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- On peut ajouter safety_controller -->
+		<joint name="ADE_roll${side}_revolute_joint" type="revolute">
+			<parent link="ADE_roll${side}_cylinder"/>
+			<child link="ADE_roll${side}_link"/>
+			<origin xyz="0 0 0.013" rpy="0 0 0" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="30" velocity="0.1" lower="-2.8" upper="2.8" />
+
+			<!-- calibration reference_position="0.0"/ -->
+		</joint>
+
+		<link name="ADE_roll${side}_link">
+			<inertial>
+				<mass value="0.1" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				 <inertia  ixx="0.00" ixy="0.00"  ixz="0.00"
+									 iyy="0.00" iyz="0.00"
+									 izz="0.00" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="ADE_roll${side}_link_visual_geom">
+					<cylinder radius="0.015" length="0.015847"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="ADE_roll${side}_link_collision_geom">
+					<cylinder radius="0.015" length="0.015847"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- extensions -->
+		<xacro:jn0_ADE_roll_shoulder_transmission side="${side}" />
+	
+		<gazebo reference="ADE_roll${side}_box">
+			<material>Gazebo/Blue</material>
+		</gazebo>
+
+		<gazebo reference="ADE_roll${side}_cylinder">
+			<material>Gazebo/Blue</material>
+		</gazebo>
+
+		<gazebo reference="ADE_roll${side}_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+	</xacro:macro>
+
+</robot>

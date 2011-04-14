@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ============================   Head   ============================ -->
+  
+  <!-- Head pan (or yaw) -->
+  <xacro:macro name="jn0_head_pan_transmission" >
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="head_pan_trans">
+      <actuator name="head_pan_motor" />
+      <joint name="head_pan_joint" />
+      <mechanicalReduction>6.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+  
+  <!-- Head tilt (or roll) -->
+  <xacro:macro name="jn0_head_tilt_transmission" >
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="head_tilt_trans">
+      <actuator name="head_tilt_motor" />
+      <joint name="head_tilt_joint" />
+      <mechanicalReduction>6.0</mechanicalReduction>
+    </transmission>
+  </xacro:macro>
+  
+</robot>
