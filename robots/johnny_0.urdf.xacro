@@ -9,15 +9,11 @@
 	<include filename="$(find jn0_description)/urdf/common.xacro" />
 	
 	<!-- Description files -->
-	<include filename="$(find jn0_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
-	<!--include filename="$(find jn0_description)/urdf/base/base.urdf.xacro" /-->
-	<!--include filename="$(find jn0_description)/urdf/wheel/wheel.urdf.xacro" /-->
 	<include filename="$(find jn0_description)/urdf/baseTorsoLink/baseTorsoLink.urdf.xacro" />
 	<include filename="$(find jn0_description)/urdf/torso/torso.urdf.xacro" />
 	<include filename="$(find jn0_description)/urdf/arm/arm.urdf.xacro" />
 	<include filename="$(find jn0_description)/urdf/head/head.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/camera/bumblebee.urdf.xacro" />
-	<include filename="$(find jn0_description)/urdf/camera/kinect.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
 	
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
 	<include filename="$(find jn0_description)/gazebo/gazebo.urdf.xacro" />
@@ -26,27 +22,7 @@
 	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
 	
 	
-	<!-- Now we can start using the macros included above to define the actual PR2 -->
-
-	<!-- The first use of a macro.
-       A macro like this will expand to a set of link and joint definitions, and to additional
-       Gazebo-related extensions (sensor plugins, etc).  The macro takes an argument, name, 
-       that equals "base", and uses it to generate names for its component links and joints 
-       (e.g., base_link).  The included origin block is also an argument to the macro.  By convention, 
-       the origin block defines where the component is w.r.t its parent (in this case the parent 
-       is the world frame). For more, see http://www.ros.org/wiki/xacro -->
-	   
-	<!-- Warning: eye-balled values for the laser position. -->
-	<property name="base_laser_x" value="0.10" />
-	<property name="base_laser_y" value="-0.04" />
-	<property name="base_laser_z" value="0.200" />
-	<property name="base_laser_size_x" value="0.06" />
-	<property name="base_laser_size_y" value="0.06" />
-	<property name="base_laser_size_z" value="0.03" />
-	<property name="base_laser_collision_offset_z" value="0.023" />
-	
-	<!--xacro:base name="base" /-->
-
+	<!-- Base Azimut 3 + Laser -->
 	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
 
 	<xacro:baseTorsoLink name="baseTorsoLink" parent="base_link"/>
@@ -60,14 +36,12 @@
 	<xacro:head name="head" parent="torso_link">
 		<origin xyz="0.04 0 ${torso_size_z/2}" />
 	</xacro:head>
-	
-	<xacro:bumblebee name="head_camera" parent="head_head_link">
-		<origin xyz="0.06 0 ${head_size_z/2 + bumblebee_size_z/2}" />
-	</xacro:bumblebee>
 
-
-	<xacro:kinect name="openni_camera" parent="torso_link">
-		<origin xyz="0.17 0 ${torso_size_z/2 + kinect_size_z/2}" rpy="0 -0.35 0"/>
-	</xacro:kinect>
+	<xacro:kinect_static
+		name="openni"
+		parent="torso_link"
+		xyz="0.17 0 ${torso_size_z/2}" rpy="0 0 0"
+		angle="-0.35"
+		/>
 	
 </robot>
