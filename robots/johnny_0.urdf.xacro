@@ -21,16 +21,22 @@
 	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
 
 	<!-- TODO screenshots in irl_common_description ? -->
-	<!-- TODO macro names, ask for version -->
-	<!-- TODO parametrize mat -->
-	<!-- TODO macro to set materials for both rviz and gazebo -->
 	
 	<!-- Base Azimut 3 + Laser -->
 	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
 
-	<!--xacro:baseTorsoLink name="baseTorsoLink" parent="base_link"/-->
-	
-	<xacro:jn0_torso_box name="torso" parent="base_link"/>
+	<property name="torso_size_z" value="0.37921" />
+
+	<xacro:jn0_torso_box
+		name="torso"
+		parent="base_link"
+		xyz = "0 0 0.3089"
+		stand_width  = "0.038"
+		stand_height = "0.37038"
+		chest_width  = "0.270"
+		chest_length = "0.21583"
+		chest_height = "${torso_size_z}"
+		/>
 	
 	<xacro:reddy_arm side="R" reflect="-1" parent="torso_link"/>
 	<xacro:reddy_arm side="L" reflect="1" parent="torso_link"/>
