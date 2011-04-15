@@ -9,7 +9,7 @@
 	<include filename="$(find irl_common_description)/urdf/common.xacro" />
 	
 	<!-- Description files -->
-	<include filename="$(find irl_common_description)/urdf/jn0_torso/torso_box.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/jn0_torso/reddy_torso.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
@@ -21,34 +21,52 @@
 	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
 
 	<!-- TODO screenshots in irl_common_description ? -->
+	<!-- TODO ticket wg like robot package
+		 {xxx}_common
+		   {xxx}_description (urdf, robots, gazebo, meshes)
+		   {xxx}_machine
+		   {xxx}_msgs
+		 -->
 	
 	<!-- Base Azimut 3 + Laser -->
 	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
 
-	<property name="torso_size_z" value="0.37921" />
+	<property name="base_height"  value="0.17" />
+	<property name="torso_height" value="0.55" />
 
-	<xacro:jn0_torso_box
+	<!--xacro:box_torso
 		name="torso"
 		parent="base_link"
-		xyz = "0 0 0.3089"
+		xyz = "0 0 ${base_height}"
+		height       = "${torso_height}"
 		stand_width  = "0.038"
-		stand_height = "0.37038"
 		chest_width  = "0.270"
 		chest_length = "0.21583"
-		chest_height = "${torso_size_z}"
-		/>
+		chest_height = "0.37921"
+		/-->
+
+	<xacro:reddy_torso name="torso" parent="base_link" />
+
+	<xacro:macro name="arm" params="side reflect">
+		<xacro:reddy_arm
+			name="${side}_arm"
+			reflect="${reflect}"
+			parent="torso_link"
+			offset_y="0.09"
+			offset_z="${torso_height}"
+			/>
+	</xacro:macro>
+	<xacro:arm side="r" reflect="-1"/>
+	<xacro:arm side="l" reflect="1"/>
 	
-	<xacro:reddy_arm side="R" reflect="-1" parent="torso_link"/>
-	<xacro:reddy_arm side="L" reflect="1" parent="torso_link"/>
-	
-	<xacro:head name="head" parent="torso_link">
-		<origin xyz="0.04 0 ${torso_size_z/2}" />
-	</xacro:head>
+	<xacro:jn0_head name="head" parent="torso_link">
+		<origin xyz="0.04 0 ${torso_height}" />
+	</xacro:jn0_head>
 
 	<xacro:kinect_static
 		name="openni"
 		parent="torso_link"
-		xyz="0.17 0 ${torso_size_z/2}" rpy="0 0 0"
+		xyz="0.17 0 ${torso_height}" rpy="0 0 0"
 		angle="-0.35"
 		/>
 	
