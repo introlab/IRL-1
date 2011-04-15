@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.transmission.xacro" />
+
+	<xacro:macro name="pan_tilt_ptu46175" params="name parent offset_x offset_y offset_z">
+
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_tilt_link"/>
+			<origin xyz="${offset_x-0.03} ${offset_y+0.03} ${offset_z}" rpy="0 0 0" />
+		</joint>
+
+		<link name="${name}_tilt_link">
+			<xacro:simple_inertial mass="0.2" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 -${M_PI/2}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/tilt.dae"  />
+				</geometry>
+			</visual>
+			<collision name="${name}_collision">
+				<origin xyz="0 0 0" rpy="0 0 -${M_PI/2}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/tilt.stl"  />
+				</geometry>
+			</collision>
+		</link>
+		
+		<joint name="${name}_tilt_joint" type="revolute">
+			<parent link="${name}_tilt_link"/>
+			<child link="${name}_pan_link"/>
+			<origin xyz="0 -0.014 0.045" rpy="0 0 -${M_PI/2}" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
+		</joint>
+
+		<link name="${name}_pan_link">
+			<xacro:simple_inertial mass="0.001" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/pan.dae"  />
+				</geometry>
+			</visual>
+			<collision name="${name}_head_tmp_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/pan.stl"  />
+				</geometry>
+			</collision>
+		</link>	
+
+		<joint name="${name}_pan_joint" type="revolute">
+			<parent link="${name}_pan_link"/>
+			<child link="${name}_bracket_link"/>
+			<origin xyz="-0.01 0.08 0.04" rpy="${M_PI/2} 0 0" />
+			<axis xyz="1 0 0" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
+		</joint>
+
+		<link name="${name}_bracket_link">
+			<xacro:simple_inertial mass="0.001" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/bracket.dae"  />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/bracket.stl"  />
+				</geometry>
+			</collision>
+		</link>
+
+		<xacro:pan_tilt_ptu46175_tilt_transmission name="${name}_tilt_trans"/>
+		<xacro:pan_tilt_ptu46175_pan_transmission name="${name}_pan_trans"/>
+
+	</xacro:macro>
+
+
+</robot>

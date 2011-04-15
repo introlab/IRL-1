@@ -4,259 +4,69 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/jn0_head/head.transmission.xacro" />
-  
-	<xacro:macro name="jn0_head" params="name parent">
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+
+	<!-- TODO Parametrize right/left eyes -->
+
+	<xacro:macro name="jn0_head" params="name parent offset_x offset_y offset_z">
+
 		<joint name="${name}_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="${name}_link"/>
-			<!--origin xyz="0.02 0 0.2228115" rpy="0 0 0" /-->
-			<origin xyz="-0.02 0.03 0.545" rpy="0 0 0" />
+			<!--origin xyz="0.03 0.15 0" rpy="0 ${M_PI} 0" /-->
+			<origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0 ${M_PI} 0" />
 		</joint>
 
 		<link name="${name}_link">
-
-			<inertial>
-				<mass value="0.2" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_visual">
-				<origin xyz="0 0 0" rpy="0 0 -${M_PI/2}" />
-				<!--origin xyz="0 0 0" rpy="0 0 0" /-->
-				<geometry name="${name}_visual_geom">
-					<!--box size="0.04 0.04 0.066413" /-->
-					<mesh filename="package://irl_common_description/meshes/jn0_head/neckTilt.dae"  />
-				</geometry>
-			</visual>
-
-			<collision name="${name}_collision">
-				<origin xyz="0 0 0" rpy="0 0 -${M_PI/2}" />
-				<geometry name="${name}_collision_geom">
-					<!--box size="0.04 0.04 0.066413" /-->
-					<mesh filename="package://irl_common_description/meshes/jn0_head/neckTilt.STL"  />
-				</geometry>
-			</collision>
-		</link>
-		
-		<joint name="${name}_tilt_joint" type="revolute">
-			<parent link="${name}_link"/>
-			<child link="${name}_head_link_tmp"/>
-			<!--origin xyz="-0.02 0 0.0966715" rpy="0 0 0" /-->
-			<origin xyz="0 -0.014 0.045" rpy="0 0 -${M_PI/2}" />
-			<axis xyz="0 0 1" rpy="0 0 0"/>
-			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
-		</joint>
-
-		<link name="${name}_head_link_tmp">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_head_tmp_visual">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_tmp_visual_geom">
-					<mesh filename="package://irl_common_description/meshes/jn0_head/neckpan.dae"  />
-					<!--sphere radius="0.001" /-->
-				</geometry>
-			</visual>
-
-			<collision name="${name}_head_tmp_collision">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_tmp_collision_geom">
-					<mesh filename="package://irl_common_description/meshes/jn0_head/neckpan.STL"  />
-				</geometry>
-			</collision>
-		</link>	
-
-		<!--joint name="${name}_pan_joint" type="revolute"-->
-		<joint name="${name}_pan_joint" type="fixed">
-			<parent link="${name}_head_link_tmp"/>
-			<child link="${name}_head_link_tmp2"/>
-			<origin xyz="-0.01 0.08 0.04" rpy="${M_PI/2} 0 0" />
-			<!--axis xyz="1 0 0" rpy="0 0 0"/-->
-			<!--limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" /-->
-		</joint>
-
-		<link name="${name}_head_link_tmp2">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_head_tmp2_visual">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_tmp2_visual_geom">
-					<mesh filename="package://irl_common_description/meshes/jn0_head/panBraket.dae"  />
-					<!--sphere radius="0.001" /-->
-				</geometry>
-			</visual>
-
-			<collision name="${name}_head_tmp2_collision">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_tmp2_collision_geom">
-					<mesh filename="package://irl_common_description/meshes/jn0_head/panBraket.STL"  />
-				</geometry>
-			</collision>
-		</link>
-
-		<joint name="${name}_fixed_joint_head" type="fixed">
-			<parent link="${name}_head_link_tmp2"/>
-			<child link="${name}_head_link"/>
-			<origin xyz="0.03 0.15 0" rpy="0 ${M_PI} 0" />
-		</joint>
-
-		<link name="${name}_head_link">
-			<inertial>
-				<mass value="0.5" />
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
+			<xacro:simple_inertial mass="0.5"/>
 			<visual name="${name}_head_visual">
-				<!--origin xyz="0.03 0 0.03" rpy="${M_PI/2} 0 ${M_PI/2}" /-->
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_visual_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/head.dae"  />
-					<!--box size="0.16268 0.17418 0.12693" /-->
 				</geometry>
 			</visual>
-
-			<collision name="${name}_head_collision">
-				<!--origin xyz="0.03 0 0.03" rpy="${M_PI/2} 0 ${M_PI/2}" /-->
+			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_head_collision_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/head.STL"  />
-					<!--box size="0.16268 0.17418 0.12693" /-->
 				</geometry>
 			</collision>
-		</link>		
+		</link>
 
-
-
-
-
-
-
-
-
-
-
-
-		<!--joint name="${name}_right_eye" type="revolute"-->
 		<joint name="${name}_right_eye" type="fixed">
-			<parent link="${name}_head_link"/>
+			<parent link="${name}_link"/>
 			<child link="${name}_right_eye_link"/>
 			<origin xyz="0.02 -0.01 0.02" rpy="0 0 0" />
-			<!--axis xyz="1 0 0" rpy="0 0 0"/-->
-			<!--limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" /-->
+		</joint>
+
+		<joint name="${name}_left_eye" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_left_eye_link"/>
+			<origin xyz="-0.06 -0.01 0.02" rpy="0 0 0" />
 		</joint>
 
 		<link name="${name}_right_eye_link">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_right_eye_visual">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_eye_visual_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eye.dae"  />
-					<!--sphere radius="0.001" /-->
 				</geometry>
 			</visual>
 
 			<collision name="${name}_right_eye_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_eye_collision_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eye.STL"  />
 				</geometry>
 			</collision>
 		</link>
-		
-		<joint name="${name}_right_black_eye" type="fixed">
-			<parent link="${name}_right_eye_link"/>
-			<child link="${name}_right_black_eye_link"/>
-			<origin xyz="0.02 0.02 0.02" rpy="0 0 0" />
-		</joint>
-
-		<link name="${name}_right_black_eye_link">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_right_black_eye_visual">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_black_eye_visual_geom">
-					<cylinder radius="0.01" length="0.01"/>
-				</geometry>
-			</visual>
-
-			<collision name="${name}_right_black_eye_collision">
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_black_eye_collision_geom">
-					<cylinder radius="0.05" length="0.05"/>
-				</geometry>
-			</collision>
-		</link>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		<!--joint name="${name}_left_eye" type="revolute"-->
-		<joint name="${name}_left_eye" type="fixed">
-			<parent link="${name}_head_link"/>
-			<child link="${name}_left_eye_link"/>
-			<origin xyz="-0.06 -0.01 0.02" rpy="0 0 0" />
-			<!--axis xyz="1 0 0" rpy="0 0 0"/-->
-			<!--limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" /-->
-		</joint>
 
 		<link name="${name}_left_eye_link">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_left_eye_visual">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_eye_visual_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eye.dae"  />
 					<!--sphere radius="0.001" /-->
 				</geometry>
@@ -264,11 +74,18 @@
 
 			<collision name="${name}_left_eye_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_right_eye_collision_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eye.STL"  />
 				</geometry>
 			</collision>
 		</link>
+
+
+		<joint name="${name}_right_black_eye" type="fixed">
+			<parent link="${name}_right_eye_link"/>
+			<child link="${name}_right_black_eye_link"/>
+			<origin xyz="0.02 0.02 0.02" rpy="0 0 0" />
+		</joint>
 
 		<joint name="${name}_left_black_eye" type="fixed">
 			<parent link="${name}_left_eye_link"/>
@@ -276,58 +93,57 @@
 			<origin xyz="0.02 0.02 0.02" rpy="0 0 0" />
 		</joint>
 
-		<link name="${name}_left_black_eye_link">
 
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_left_black_eye_visual">
+		<link name="${name}_right_black_eye_link">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_left_black_eye_visual_geom">
+				<geometry>
 					<cylinder radius="0.01" length="0.01"/>
 				</geometry>
 			</visual>
-
-			<collision name="${name}_left_black_eye_collision">
+			<collision name="${name}_right_black_eye_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_left_black_eye_collision_geom">
+				<geometry>
 					<cylinder radius="0.05" length="0.05"/>
 				</geometry>
 			</collision>
 		</link>
 
+		<link name="${name}_left_black_eye_link">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder radius="0.01" length="0.01"/>
+				</geometry>
+			</visual>
+			<collision name="${name}_left_black_eye_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder radius="0.05" length="0.05"/>
+				</geometry>
+			</collision>
+		</link>
 
-
-
-
-
-
-
-		<!--joint name="${name}_left_eyebrow" type="revolute"-->
 		<joint name="${name}_left_eyebrow" type="fixed">
-			<parent link="${name}_head_link"/>
+			<parent link="${name}_link"/>
 			<child link="${name}_left_eyebrow_link"/>
 			<origin xyz="-0.07 0.035 0.045" rpy="0 0 0" />
-			<!--axis xyz="1 0 0" rpy="0 0 0"/-->
-			<!--limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" /-->
 		</joint>
 
+		<joint name="${name}_right_eyebrow" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_right_eyebrow_link"/>
+			<origin xyz="0.07 0.035 0.045" rpy="0 0 0" />
+		</joint>
+
+
 		<link name="${name}_left_eyebrow_link">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_left_eyebrow_visual">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_left_eyebrow_visual_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eyebrow.dae"  />
 					<!--sphere radius="0.001" /-->
 				</geometry>
@@ -335,34 +151,17 @@
 
 			<collision name="${name}_left_eyebrow_collision">
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_left_eyebrow_collision_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eyebrow.STL"  />
 				</geometry>
 			</collision>
 		</link>
 
-
-		<!--joint name="${name}_right_eyebrow" type="revolute"-->
-		<joint name="${name}_right_eyebrow" type="fixed">
-			<parent link="${name}_head_link"/>
-			<child link="${name}_right_eyebrow_link"/>
-			<origin xyz="0.07 0.035 0.045" rpy="0 0 0" />
-			<!--axis xyz="1 0 0" rpy="0 0 0"/-->
-			<!--limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" /-->
-		</joint>
-
 		<link name="${name}_right_eyebrow_link">
-
-			<inertial>
-				<mass value="0.001" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_right_eyebrow_visual">
+			<xacro:simple_inertial mass="0.001"/>
+			<visual>
 				<origin xyz="0 0 0" rpy="0 ${M_PI} 0" />
-				<geometry name="${name}_right_eyebrow_visual_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eyebrow.dae"  />
 					<!--sphere radius="0.001" /-->
 				</geometry>
@@ -370,37 +169,11 @@
 
 			<collision name="${name}_right_eyebrow_collision">
 				<origin xyz="0 0 0" rpy="0 ${M_PI} 0" />
-				<geometry name="${name}_right_eyebrow_collision_geom">
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_head/eyebrow.STL"  />
 				</geometry>
 			</collision>
 		</link>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		<!-- extansions -->
-		<xacro:johnny_0_head_tilt_transmission />
-		<xacro:johnny_0_head_pan_transmission />
-
-
 
 
 		<gazebo reference="${name}_right_black_eye_link">
@@ -423,7 +196,7 @@
 			<material>Gazebo/Green</material>
 		</gazebo-->
 
-		<!--gazebo reference="${name}_head_link">
+		<!--gazebo reference="${name}_link">
 			<material>Gazebo/Red</material>
 		</gazebo-->
 
