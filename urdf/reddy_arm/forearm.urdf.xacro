@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+
+	<xacro:macro name="forearm" params="name reflect parent">
+
+		<xacro:simple_cylinder
+			name = "${name}"
+			radius = "0.02"
+			length = "0.2032"
+			xyz  = "0 0 0"
+			rpy  = "0 0 0"
+			mass = "1.0"
+			rviz_rgba = "0 0 1 1"
+			material  = "Gazebo/Blue"
+		/>
+
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}"/>
+			<origin xyz="0.1251 0 0" rpy="0 1.5708 0" />
+		</joint>
+
+	</xacro:macro>
+
+</robot>

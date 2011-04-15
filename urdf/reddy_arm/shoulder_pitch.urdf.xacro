@@ -6,15 +6,15 @@
 
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.transmission.xacro" />
 	
-	<xacro:macro name="ADE_pitch_shoulder" params="side reflect parent">
+	<xacro:macro name="reddy_arm_shoulder_pitch" params="name reflect parent">
 
-		<joint name="ADE_pitch_shoulder${side}_fixed_1_joint" type="fixed">
+		<joint name="${name}_fixed_1_joint" type="fixed">
 			<parent link="${parent}"/>
-			<child link="ADE_pitch_shoulder${side}_link"/>
+			<child link="${name}_link"/>
 			<origin xyz="0 0 0.03" rpy="0 -1.5708 0" />
 		</joint>
 
-		<link name="ADE_pitch_shoulder${side}_link">
+		<link name="${name}_link">
 			<inertial>
 				<mass value="0.045" />
 				<origin xyz="0 0 0" rpy="0 0 0"/> 
@@ -25,22 +25,22 @@
 
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="ADE_pitch_shoulder${side}_link_visual_geom">
+				<geometry name="${name}_link_visual_geom">
 					<box size="0.047 0.01 0.01" />
 				</geometry>
 			</visual>
 
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0 " />
-				<geometry name="ADE_pitch_shoulder${side}_link_collision_geom">
+				<geometry name="${name}_link_collision_geom">
 					<box size="0.047 0.01 0.01" />
 				</geometry>
 			</collision>
 		</link>
 
-		<joint name="ADE_pitch_shoulder${side}_revolute_joint" type="revolute">
-			<parent link="ADE_pitch_shoulder${side}_link"/>
-			<child link="ADE_pitch_shoulder${side}_fixation"/>
+		<joint name="${name}_revolute_joint" type="revolute">
+			<parent link="${name}_link"/>
+			<child link="${name}_fixation"/>
 			<origin xyz="0.0235 0 0" rpy="0 0 0" />
 			<axis xyz="0 1 0" rpy="0 0 0"/>
 			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
@@ -48,7 +48,7 @@
 			<!-- calibration reference_position="0.0"/ -->
 		</joint>
 
-		<link name="ADE_pitch_shoulder${side}_fixation">
+		<link name="${name}_fixation">
 			<inertial>
 				<mass value="0.001" />
 				<origin xyz="0 0 0" rpy="0 0 0"/> 
@@ -59,26 +59,26 @@
 
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="ADE_pitch_shoulder${side}_fixation_visual_geom">
+				<geometry name="${name}_fixation_visual_geom">
 					<sphere radius="0.001" />
 				</geometry>
 			</visual>
 
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0 " />
-				<geometry name="ADE_pitch_shoulder${side}_fixation_collision_geom">
+				<geometry name="${name}_fixation_collision_geom">
 					<sphere radius="0.001" />
 				</geometry>
 			</collision>
 		</link>
 
-		<joint name="ADE_pitch_shoulder${side}_fixed_2_joint" type="fixed">
-			<parent link="ADE_pitch_shoulder${side}_fixation"/>
-			<child link="ADE_pitch_shoulder${side}_box"/>
+		<joint name="${name}_fixed_2_joint" type="fixed">
+			<parent link="${name}_fixation"/>
+			<child link="${name}_box"/>
 			<origin xyz="0.05 0 -0.03" rpy="0 -0.7854 0" />
 		</joint>
 
-		<link name="ADE_pitch_shoulder${side}_box">
+		<link name="${name}_box">
 			<inertial>
 				<mass value="1.105" />
 				<origin xyz="0 0 0" rpy="0 0 0"/> 
@@ -89,27 +89,30 @@
 
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="ADE_pitch_shoulder${side}_box_visual_geom">
+				<geometry name="${name}_box_visual_geom">
 					<box size="0.088678 0.084137 0.1524" />
 				</geometry>
+				<material name="${name}_color">
+					<color rgba="0 0 1 1"/>
+				</material>
 			</visual>
 
 			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0 " />
-				<geometry name="ADE_pitch_shoulder${side}_box_collision_geom">
+				<geometry name="${name}_box_collision_geom">
 					<box size="0.088678 0.084137 0.1524" />
 				</geometry>
 			</collision>
 		</link>
 		
 		<!-- extensions -->
-		<xacro:jn0_ADE_pitch_shoulder_transmission side="${side}" />
+		<xacro:reddy_arm_shoulder_pitch_transmission name="${name}_trans" />
 		
-		<gazebo reference="ADE_pitch_shoulder${side}_link">
+		<gazebo reference="${name}_link">
 			<material>Gazebo/Red</material>
 		</gazebo>
 
-		<gazebo reference="ADE_pitch_shoulder${side}_box">
+		<gazebo reference="${name}_box">
 			<material>Gazebo/Blue</material>
 		</gazebo>
 		

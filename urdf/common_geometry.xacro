@@ -15,7 +15,8 @@
 			<mass value="${mass}" />
 			<inertia
 				ixx="0.001" ixy="0.0" ixz="0.0"
-				iyy="0.001" iyz="0.0" izz="0.001" />
+				iyy="0.001" iyz="0.0"
+				izz="0.001" />
 			</inertial>
 	</xacro:macro>
 
@@ -33,12 +34,14 @@
 		</material>
 	</xacro:macro>
 
-	<xacro:macro name="simple_box" params="name lwh xyz rpy mass rviz_rgba material">
+	<!-- Generic shape -->
+
+	<xacro:macro name="simple_shape" params="name xyz rpy mass rviz_rgba material *shape">
 		<link name="${name}">
 			<visual>
 				<origin xyz="${xyz}" rpy="${rpy}" />
 				<geometry>
-					<box size="${lwh}" />
+					<xacro:insert_block name="shape" />
 				</geometry>
 				<material name="${name}_color">
 					<color rgba="${rviz_rgba}"/>
@@ -47,12 +50,38 @@
 			<collision>
 				<origin xyz="${xyz}" rpy="${rpy}" />
 				<geometry>
-					<box size="${lwh}" />
+					<xacro:insert_block name="shape" />
 				</geometry>
 			</collision>
 			<xacro:simple_inertial mass="${mass}" />
 		</link>
 		<xacro:simple_gazebo name="${name}" material="${material}" />
+	</xacro:macro>
+
+	<!-- Shapes specializations -->
+
+	<xacro:macro name="simple_box" params="lwh name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<box size="${lwh}" />
+		</xacro:simple_shape>
+	</xacro:macro>
+
+	<xacro:macro name="simple_cylinder" params="radius length name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<cylinder radius="${radius}" length="${length}" />
+		</xacro:simple_shape>
+	</xacro:macro>
+
+	<xacro:macro name="simple_sphere" params="radius name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<sphere radius="${radius}" />
+		</xacro:simple_shape>
 	</xacro:macro>
 
 </robot>

@@ -7,21 +7,21 @@
   <!-- ============================   Head   ============================ -->
   
   <!-- Head pan (or yaw) -->
-  <xacro:macro name="jn0_head_pan_transmission" >
+  <!--xacro:macro name="johnny_0_head_pan_transmission" >
     <transmission type="pr2_mechanism_model/SimpleTransmission" name="head_pan_trans">
       <actuator name="head_pan_motor" />
       <joint name="head_pan_joint" />
       <mechanicalReduction>6.0</mechanicalReduction>
     </transmission>
-  </xacro:macro>
+  </xacro:macro-->
   
   <!-- Head tilt (or roll) -->
-  <xacro:macro name="jn0_head_tilt_transmission" >
+  <!--xacro:macro name="johnny_0_head_tilt_transmission" >
     <transmission type="pr2_mechanism_model/SimpleTransmission" name="head_tilt_trans">
       <actuator name="head_tilt_motor" />
       <joint name="head_tilt_joint" />
       <mechanicalReduction>6.0</mechanicalReduction>
     </transmission>
-  </xacro:macro>
+  </xacro:macro-->
   
 </robot>

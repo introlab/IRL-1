@@ -6,8 +6,8 @@
 
 
 	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
-	
-	<xacro:macro name="jn0_torso_box" params="name parent xyz stand_width stand_height chest_width chest_height chest_length">
+
+	<xacro:macro name="box_torso" params="name parent xyz height stand_width chest_width chest_height chest_length">
 
 		<!-- "Stand", the bar supporting the torso -->
 
@@ -19,8 +19,8 @@
 
 		<xacro:simple_box
 			name = "${name}_stand_link"
-			lwh  = "${stand_width} ${stand_width} ${stand_height}"
-			xyz  = "0 0 0"
+			lwh  = "${stand_width} ${stand_width} ${height - chest_height}"
+			xyz  = "0 0 ${(height - chest_height) / 2}"
 			rpy  = "0 0 0"
 			mass = "0.5"
 			rviz_rgba = "0.5 0.5 0.5 1"
@@ -28,9 +28,9 @@
 		/>
 
 		<joint name="${name}_fixed_joint" type="fixed">
-			<parent link="${name}_stand_link"/>
+			<parent link="${parent}"/>
 			<child link="${name}_link"/>
-			<origin xyz="0 0 ${stand_height}" rpy="0 0 0" />
+			<origin xyz="${xyz}" rpy="0 0 0" />
 		</joint>
 
 		<!-- Actual torso represented by a box -->
@@ -38,7 +38,7 @@
 		<xacro:simple_box
 			name = "${name}_link"
 			lwh  = "${chest_length} ${chest_width} ${chest_height}"
-			xyz  = "0 0 0"
+			xyz  = "0 0 ${height - chest_height/2}"
 			rpy  = "0 0 0"
 			mass = "0.5"
 			rviz_rgba = "1 0 0 1"
