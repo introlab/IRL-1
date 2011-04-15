@@ -68,7 +68,7 @@
 		offset_z="${torso_height}"
 		/>
 
-	<xacro:jn0_head
+	<!--xacro:jn0_head
 		name="head"
 		parent="neck_bracket_link"
 		offset_x = "0"
@@ -81,6 +81,6 @@
 		parent="torso_link"
 		xyz="0.17 0 ${torso_height}" rpy="0 0 0"
 		angle="-0.35"
-		/>
+		/-->
 	
 </robot>
