@@ -11,6 +11,7 @@
 	<!-- Description files -->
 	<include filename="$(find irl_common_description)/urdf/jn0_torso/reddy_torso.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
 	
@@ -58,10 +59,22 @@
 	</xacro:macro>
 	<xacro:arm side="r" reflect="-1"/>
 	<xacro:arm side="l" reflect="1"/>
-	
-	<xacro:jn0_head name="head" parent="torso_link">
-		<origin xyz="0.04 0 ${torso_height}" />
-	</xacro:jn0_head>
+
+	<xacro:pan_tilt_ptu46175
+		name="neck"
+		parent="torso_link"
+		offset_x="0.03"
+		offset_y="0"
+		offset_z="${torso_height}"
+		/>
+
+	<xacro:jn0_head
+		name="head"
+		parent="neck_bracket_link"
+		offset_x = "0"
+		offset_y = "0"
+		offset_z = "0"
+		/>
 
 	<xacro:kinect_static
 		name="openni"
