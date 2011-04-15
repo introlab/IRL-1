@@ -35,10 +35,10 @@
 							<color>0.00000 0.00000 0.00000 1</color>
 						</emission>
 						<ambient>
-							<color>0.00000 0.00000 0.00000 1</color>
+							<color>0.28000 0.28000 0.28000 1</color>
 						</ambient>
 						<diffuse>
-							<color>0.00000 0.00000 0.00000 1</color>
+							<color>0.56000 0.56000 0.56000 1</color>
 						</diffuse>
 						<specular>
 							<color>0.50000 0.50000 0.50000 1</color>
