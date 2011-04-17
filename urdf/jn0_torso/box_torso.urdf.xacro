@@ -33,7 +33,7 @@
 			<origin xyz="${xyz}" rpy="0 0 0" />
 		</joint>
 
-		<!-- Actual torso represented by a box -->
+		<!-- Chest represented by a box -->
 
 		<xacro:simple_box
 			name = "${name}_link"
@@ -43,9 +43,15 @@
 			mass = "0.5"
 			rviz_rgba = "1 0 0 1"
 			material  = "Gazebo/Red"
-		/>
+			/>
+
+		<joint name="${name}_top_frame_fixed" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_top_frame"/>
+			<origin xyz="0 0 ${height}" rpy="0 0 0" />
+		</joint>
+		<link name="${name}_top_frame" />
 
 	</xacro:macro>
-
 
 </robot>

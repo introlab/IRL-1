@@ -7,24 +7,11 @@
 	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
 	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.transmission.xacro" />
 
-	<!-- (private) Generic pan tilt link -->
-	<xacro:macro name="_pan_tilt_ptu46175_link" params="name xyz rpy mesh mass">
-		<link name="${name}">
-			<xacro:simple_inertial mass="${mass}" />
-			<visual>
-				<origin xyz="${xyz}" rpy="${rpy}" />
-				<geometry>
-					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/${mesh}.dae"  />
-				</geometry>
-			</visual>
-			<collision>
-				<origin xyz="${xyz}" rpy="${rpy}" />
-				<geometry>
-					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/${mesh}.stl"  />
-				</geometry>
-			</collision>
-		</link>
-	</xacro:macro>
+	<!--
+		Directed Perception pan tilt PTU 46-17-5
+		origin : intersection between the bottom place and the tilt axis
+		${name}_top_frame parallel to origin when all angle are 0
+	-->
 
 	<xacro:macro name="pan_tilt_ptu46175" params="name parent offset_x offset_y offset_z">
 
@@ -61,30 +48,48 @@
 		<joint name="${name}_pan_joint" type="revolute">
 			<parent link="${name}_pan_link"/>
 			<child link="${name}_bracket_link"/>
-			<origin xyz="${0.025/2} ${0.065/2} 0.04" rpy="${M_PI/2} 0 ${-M_PI/2}" />
-			<axis xyz="1 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 0.04" rpy="0 0 0" />
+			<axis xyz="0 1 0" rpy="0 0 0"/>
 			<limit effort="100" velocity="0.1" lower="-0.7854" upper="0.7854" />
 		</joint>
 
 		<xacro:_pan_tilt_ptu46175_link
 			name="${name}_bracket_link"
-			xyz="0 0 0"
-			rpy="0 0 0"
+			xyz="${0.025/2} ${0.065/2} -0.01"
+			rpy="${M_PI/2} 0 ${-M_PI/2}"
 			mass="0.001"
 			mesh="bracket"
 			/>
 
-		<joint name="${name}_top_fixed_joint" type="fixed">
+		<joint name="${name}_top_frame_fixed" type="fixed">
 			<parent link="${name}_bracket_link"/>
-			<child link="${name}_top"/>
+			<child link="${name}_top_frame"/>
 			<origin xyz="0 0 0.05" rpy="0 0 0" />
 		</joint>
-		<link name="${name}_top" />
+		<link name="${name}_top_frame" />
 
 		<xacro:pan_tilt_ptu46175_tilt_transmission name="${name}_tilt_trans"/>
 		<xacro:pan_tilt_ptu46175_pan_transmission name="${name}_pan_trans"/>
 
 	</xacro:macro>
 
+	<!-- (private) Generic pan tilt link -->
+	<xacro:macro name="_pan_tilt_ptu46175_link" params="name xyz rpy mesh mass">
+		<link name="${name}">
+			<xacro:simple_inertial mass="${mass}" />
+			<visual>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/${mesh}.dae"  />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/actuators/pan_tilt_ptu46175/${mesh}.stl"  />
+				</geometry>
+			</collision>
+		</link>
+	</xacro:macro>
 
 </robot>

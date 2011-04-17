@@ -6,12 +6,12 @@
 	   
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.transmission.xacro" />
 
-	<xacro:macro name="reddy_arm_shoulder_roll" params="name reflect parent offset_y offset_z">
+	<xacro:macro name="reddy_arm_shoulder_roll" params="name reflect parent offset_x offset_y offset_z">
 
 		<joint name="${name}_fixed_origine_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="${name}_box"/>
-			<origin xyz="0 ${reflect*offset_y} ${offset_z}" rpy="0 0 ${(reflect-1)*M_PI/2+M_PI/2}" />
+			<origin xyz="${offset_x} ${reflect*offset_y} ${offset_z}" rpy="0 0 ${(reflect-1)*M_PI/2+M_PI/2}" />
 		</joint>
 
 		<link name="${name}_box">

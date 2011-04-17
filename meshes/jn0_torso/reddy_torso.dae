@@ -35,19 +35,19 @@
 							<color>0.00000 0.00000 0.00000 1</color>
 						</emission>
 						<ambient>
-							<color>0.50000 0.00000 0.00000 1</color>
+							<color>0.28000 0.00000 0.00000 1</color>
 						</ambient>
 						<diffuse>
-							<color>1.00000 0.00000 0.00000 1</color>
+							<color>0.56000 0.00000 0.00000 1</color>
 						</diffuse>
 						<specular>
-							<color>0.50000 0.50000 0.50000 1</color>
+							<color>0.50000 0.00000 0.00000 1</color>
 						</specular>
 						<shininess>
 							<float>12.5</float>
 						</shininess>
 						<reflective>
-							<color>1.00000 1.00000 1.00000 1</color>
+							<color>1.00000 0.00000 0.00000 1</color>
 						</reflective>
 						<reflectivity>
 							<float>0.0</float>

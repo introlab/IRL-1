@@ -11,14 +11,15 @@
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/forearm.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/reddy_arm/hand.urdf.xacro" />
 
-	<xacro:macro name="reddy_arm" params="name reflect parent offset_y offset_z">
+	<xacro:macro name="reddy_arm" params="name reflect parent offset_x offset_y offset_z">
 		
 		<xacro:reddy_arm_shoulder_roll
 			name="${name}_shoulder_roll"
 			reflect="${reflect}"
 			parent="${parent}"
+			offset_x="${offset_x}"
 			offset_y="${offset_y}"
-			offset_z="${offset_z - 0.09}"
+			offset_z="${offset_z}"
 			/>
 		<xacro:reddy_arm_shoulder_pitch
 			name="${name}_shoulder_pitch"

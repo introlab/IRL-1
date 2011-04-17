@@ -4,36 +4,26 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<xacro:macro name="reddy_torso" params="name parent">
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+
+	<xacro:macro name="reddy_torso" params="name parent offset_x offset_y offset_z">
 		<joint name="${name}_fixed_joint" type="fixed">
 			<parent link="${parent}"/>
 			<child link="${name}_link"/>
-			<origin xyz="0 0 0.374795" rpy="0 0 0" />
+			<origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0 0 0" />
 		</joint>
 
 		<link name="${name}_link">
-
-			<inertial>
-				<mass value="0.5" />
-				<origin xyz="0 0 0" />
-				<inertia ixx="0" ixy="0" ixz="0"
-						 iyy="0" iyz="0" izz="0" />
-			</inertial>
-
-			<visual name="${name}_visual">
-				<origin xyz="0.055 0 0.545" rpy="${M_PI/2} 0 -${M_PI/2}" />
-				<geometry name="${name}_visual_geom">
-					<!--box size="0.21583 0.270 0.37921" /-->
+			<xacro:simple_inertial mass="0.5" />
+			<visual>
+				<origin xyz="0.0575 0 0.75" rpy="${M_PI/2} 0 -${M_PI/2}" />
+				<geometry>
 					<mesh filename="package://irl_common_description/meshes/jn0_torso/reddy_torso.dae"  />
 				</geometry>
-				<material name="${name}_color">
-					<color rgba="1 0 0 1"/>
-				</material>
 			</visual>
-
-			<collision name="${name}_collision">
+			<collision>
 				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry name="${name}_collision_geom">
+				<geometry>
 					<box size="0.21583 0.270 0.37921" />
 				</geometry>
 			</collision>
@@ -42,6 +32,13 @@
 		<gazebo reference="${name}_link">
 			<material>Gazebo/Red</material>
 		</gazebo>
+
+		<joint name="${name}_top_frame_fixed" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_top_frame"/>
+			<origin xyz="0.0575 0 0.75" rpy="0 0 0" />
+		</joint>
+		<link name="${name}_top_frame" />
 
 	</xacro:macro>
 
