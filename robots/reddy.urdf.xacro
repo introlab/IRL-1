@@ -18,43 +18,26 @@
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
 	<include filename="$(find jn0_description)/gazebo/gazebo.urdf.xacro" />
 	<!-- materials for visualization -->
-	<!-- FIXME  Materials from azimut -->
-	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
+	<include filename="$(find irl_common_description)/urdf/materials.urdf.xacro" />
 
-	<!-- TODO screenshots in irl_common_description ? -->
-	<!-- TODO ticket wg like robot package
-		 {xxx}_common
-		   {xxx}_description (urdf, robots, gazebo, meshes)
-		   {xxx}_machine
-		   {xxx}_msgs
-		 -->
-	
-	<!-- Base Azimut 3 + Laser -->
-	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
+	<link name="base_link" />
 
-	<property name="base_height"  value="0.17" />
-	<property name="torso_height" value="0.55" />
-
-	<!--xacro:box_torso
+	<xacro:reddy_torso
 		name="torso"
 		parent="base_link"
-		xyz = "0 0 ${base_height}"
-		height       = "${torso_height}"
-		stand_width  = "0.038"
-		chest_width  = "0.270"
-		chest_length = "0.21583"
-		chest_height = "0.37921"
-		/-->
-
-	<xacro:reddy_torso name="torso" parent="base_link" />
+		offset_x="0"
+		offset_y="0"
+		offset_z="0"
+		/>
 
 	<xacro:macro name="arm" params="side reflect">
 		<xacro:reddy_arm
 			name="${side}_arm"
 			reflect="${reflect}"
-			parent="torso_link"
+			parent="torso_top_frame"
+			offset_x="-0.03"
 			offset_y="0.09"
-			offset_z="${torso_height}"
+			offset_z="-0.09"
 			/>
 	</xacro:macro>
 	<xacro:arm side="r" reflect="-1"/>
@@ -62,25 +45,18 @@
 
 	<xacro:pan_tilt_ptu46175
 		name="neck"
-		parent="torso_link"
-		offset_x="0.03"
+		parent="torso_top_frame"
+		offset_x="-0.03"
 		offset_y="0"
-		offset_z="${torso_height}"
+		offset_z="0"
 		/>
 
-	<!--xacro:jn0_head
+	<xacro:jn0_head
 		name="head"
-		parent="neck_bracket_link"
+		parent="neck_top_frame"
 		offset_x = "0"
 		offset_y = "0"
 		offset_z = "0"
 		/>
 
-	<xacro:kinect_static
-		name="openni"
-		parent="torso_link"
-		xyz="0.17 0 ${torso_height}" rpy="0 0 0"
-		angle="-0.35"
-		/-->
-	
 </robot>
