@@ -10,7 +10,7 @@
 	
 	<!-- Description files -->
 	<include filename="$(find irl_common_description)/urdf/jn0_torso/box_torso.urdf.xacro" />
-	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/interactive_arm/arm.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
@@ -67,5 +67,13 @@
 		xyz="0.17 0 0" rpy="0 0 0"
 		angle="-0.35"
 		/>
-	
+
+	<xacro:interactive_arm
+		name="arm"
+		parent="torso_top_frame"
+		offset_x="0"
+		offset_y="0.1"
+		offset_z="0"
+		/>
+
 </robot>
