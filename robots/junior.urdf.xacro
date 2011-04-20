@@ -72,7 +72,7 @@
 		name="arm"
 		parent="torso_top_frame"
 		offset_x="0"
-		offset_y="0"
+		offset_y="0.2"
 		offset_z="0"
 		/>
 
