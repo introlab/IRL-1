@@ -17,7 +17,7 @@
 	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
 	<include filename="$(find irl_common_description)/urdf/actuators/DEA.urdf.xacro" />
 
-	<property name="_interactive_arm_shoulder_yaw_offset"  value="0.3" />
+	<property name="_interactive_arm_shoulder_yaw_offset"  value="0.1" />
 	<property name="_interactive_arm_shoulder_pitch_offset"  value="0.055" />
 	<property name="_interactive_arm_elbow_offset"  value="0.198" />
 	<property name="_interactive_arm_forearm_length"  value="0.145" />
