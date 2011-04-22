@@ -30,7 +30,8 @@
 		 -->
 	
 	<!-- Base Azimut 3 + Laser -->
-	<include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" />
+	<!-- include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" /-->
+    <link name="base_link"/>
 
 	<property name="base_height"  value="0.17" />
 
