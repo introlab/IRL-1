@@ -7,7 +7,7 @@
 	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
 
 	<!--
-		Differential Elestic Actuator
+		Differential Elastic Actuator
 
 		    origin v
 		___________
@@ -71,6 +71,13 @@
 
 		<link name="${name}_end_frame" />
 
+		<!-- Transmission for the actuator -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission"
+			name="$name}_transmission">
+			<actuator name="${name}_motor"/>
+			<joint name="${name}_rotor_joint"/>
+			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
 	</xacro:macro>
 
 </robot>
