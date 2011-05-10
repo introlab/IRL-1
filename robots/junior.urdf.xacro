@@ -14,12 +14,13 @@
 	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
 	
 	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
 	<include filename="$(find jn0_description)/gazebo/gazebo.urdf.xacro" />
 	<!-- materials for visualization -->
 	<!-- FIXME  Materials from azimut -->
-	<!--include filename="$(find jn0_description)/urdf/materials.urdf.xacro" /-->
+	<include filename="$(find irl_common_description)/urdf/materials.urdf.xacro" />
 
 	<!-- TODO screenshots in irl_common_description ? -->
 	<!-- TODO ticket wg like robot package
@@ -62,13 +63,6 @@
 		offset_z = "0.02"
 		/>
 
-	<xacro:kinect_static
-		name="openni"
-		parent="torso_top_frame"
-		xyz="0.17 0 0" rpy="0 0 0"
-		angle="-0.35"
-		/>
-
 	<xacro:interactive_arm
 		name="arm"
 		parent="torso_top_frame"
@@ -77,4 +71,20 @@
 		offset_z="0"
 		/>
 
+	<xacro:kinect_static
+		name="openni"
+		parent="torso_top_frame"
+		xyz="0.17 0 0" rpy="0 0 0"
+		angle="-0.35"
+		/>
+
+	<xacro:hokuyo_lx04_laser_v0
+		name="base_laser"
+		parent="base"
+		ros_topic="/sensors/base_scan"
+		update_rate="20"
+		min_angle="-2.2689"
+		max_angle="2.2689" >
+		<origin xyz="1 0 0" rpy="0 0 0" />
+	</xacro:hokuyo_lx04_laser_v0>
 </robot>
