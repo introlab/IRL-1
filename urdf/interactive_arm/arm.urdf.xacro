@@ -103,8 +103,8 @@
 
 		<!-- Forearm -->
 
-		<joint name="${name}_elbow_joint" type="revolute">
-			<parent link="${name}_shoulder_pitch_dea_end_frame"/>
+		<joint name="${name}_elbow_joint" type="fixed">
+			<parent link="${name}_elbow_dea_end_frame"/>
 			<child link="${name}_forearm_link"/>
 			<origin xyz="${_interactive_arm_elbow_offset} 0 0" rpy="0 0 0" />
 			<axis xyz="0 0 1" rpy="0 0 0"/>

@@ -68,9 +68,10 @@
 		</joint>
 		<link name="${name}_top_frame" />
 
+        <!-- Managed by something else
 		<xacro:pan_tilt_ptu46175_tilt_transmission name="${name}_tilt_trans"/>
 		<xacro:pan_tilt_ptu46175_pan_transmission name="${name}_pan_trans"/>
-
+        -->
 	</xacro:macro>
 
 	<!-- (private) Generic pan tilt link -->
