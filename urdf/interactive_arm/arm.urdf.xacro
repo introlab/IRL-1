@@ -127,7 +127,7 @@
 		<joint name="${name}_wrist_joint" type="fixed">
 			<parent link="${name}_forearm_link"/>
 			<child link="${name}_hand_link"/>
-			<origin xyz="${_interactive_arm_forearm_length} 0 0" rpy="0 0 ${-35*M_PI/180}" />
+			<origin xyz="${_interactive_arm_forearm_length} 0 0" rpy="0 0 ${-M_PI/3}" />
 		</joint>
 
 		<xacro:simple_cylinder
