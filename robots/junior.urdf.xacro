@@ -30,11 +30,10 @@
 		   {xxx}_msgs
 		 -->
 	
-	<!-- Base Azimut 3 + Laser -->
-	<!-- include filename="$(find az3_description)/robots/azimut_3.urdf.xacro" /-->
+	<!-- Junior torso with U2S base and separate laser -->
     <link name="base_link"/>
 
-	<property name="base_height"  value="0.17" />
+	<property name="base_height"  value="0.45" />
 
 	<xacro:box_torso
 		name="torso"
@@ -83,8 +82,8 @@
 		parent="base"
 		ros_topic="/sensors/base_scan"
 		update_rate="20"
-		min_angle="-2.2689"
-		max_angle="2.2689" >
-		<origin xyz="1 0 0" rpy="0 0 0" />
+		min_angle="-1.57"
+		max_angle="1.57" >
+		<origin xyz="0.4 1 ${base_height}" rpy="0 0 0" />
 	</xacro:hokuyo_lx04_laser_v0>
 </robot>
