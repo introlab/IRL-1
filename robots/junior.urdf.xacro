@@ -84,6 +84,6 @@
 		update_rate="20"
 		min_angle="-1.57"
 		max_angle="1.57" >
-		<origin xyz="0.4 1 ${base_height}" rpy="0 0 0" />
+		<origin xyz="0.3 -0.5 ${base_height}" rpy="0 0 0" />
 	</xacro:hokuyo_lx04_laser_v0>
 </robot>
