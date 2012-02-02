@@ -8,7 +8,7 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/irl_common_description</url>
-  <depend package="xacro"/>
+  <!-- depend package="xacro"/ -->
   <depend package="urdf"/>
 
 </package>

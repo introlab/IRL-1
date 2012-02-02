@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="johnny_0_gripper_transmission" params="side">
+		
+		<!-- Gripper up transmission -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_gripper_up_trans">
+			<actuator name="${side}_gripper_up_motor" />
+			<joint name="${side}_gripper_up_joint" />
+			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
+		
+		<!-- Gripper down transmission -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_gripper_down_trans">
+			<actuator name="${side}_gripper_down_motor" />
+			<joint name="${side}_gripper_down_joint" />
+			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
+		
+	</xacro:macro>
+
+</robot>

@@ -61,6 +61,11 @@
 	<!-- (private) A grey cylinder to display an optical frame in rviz -->
 	<xacro:macro name="kinect_optical_frame" params="name">
 		<link name="${name}">
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
+			</inertial>
 			<visual>
 				<origin xyz="0 0 0.001" rpy="0 0 0" />
 				<geometry>
@@ -70,6 +75,12 @@
 					<color rgba="0.5 0.5 0.5 1.0"/>
 				</material>
 			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder length="0.06" radius="0.01" />
+				</geometry>
+			</collision>
 		</link>
 	</xacro:macro>
 
@@ -83,6 +94,11 @@
 		</joint>
 
 		<link name="${name}_base_link">
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
+			</inertial>
 			<visual>
 				<geometry>
 					<box size="0.06 0.08 0.02" />
@@ -91,11 +107,22 @@
 					<color rgba="0 0 0 1.0"/>
 				</material>
 			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.06 0.08 0.02" />
+				</geometry>
+			</collision>
 		</link>
 
 		<!-- Missing joint here, defined in kinect.urdf.xacro -->
 
 		<link name="${name}_camera_link">
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
+			</inertial>
 			<visual>
 				<origin xyz="0 0 0.02" rpy="0 0 0" />
 				<geometry>
@@ -105,6 +132,12 @@
 					<color rgba="0 0 0 1.0"/>
 				</material>
 			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="0.06 0.26 0.035" />
+				</geometry>
+			</collision>
 		</link>
 
 		<xacro:kinect_optical_frame name="${name}_depth_optical_frame"/>

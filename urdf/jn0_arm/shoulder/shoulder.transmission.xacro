@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:macro name="johnny_0_shoulder_transmission" params="reflect side">
+		
+		<!-- Shoulder pan -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_shoulder_pan_trans">
+			<actuator name="${side}_shoulder_pan_motor" />
+			<joint name="${side}_shoulder_pan_joint" />
+			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
+		
+		<!-- Shoulder tilt -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_shoulder_tilt_trans">
+			<actuator name="${side}_shoulder_tilt_motor" />
+			<joint name="${side}_shoulder_tilt_joint" />
+			<mechanicalReduction>${reflect}</mechanicalReduction>
+		</transmission>
+
+	</xacro:macro>
+
+</robot>
