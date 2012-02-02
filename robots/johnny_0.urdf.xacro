@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       name="johnny_0" >
+
+	<!-- The following included files set up definitions of parts of the robot body -->
+	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+	
+	<!-- Description files -->
+	<include filename="$(find irl_common_description)/urdf/jn0_torso/box_torso.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/jn0_arm/arm.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
+	
+	<!-- generic simulator_gazebo plugins for starting mechanism control, ros time, ros battery -->
+	<include filename="$(find jn0_description)/gazebo/gazebo.urdf.xacro" />
+	<!-- materials for visualization -->
+	<!-- FIXME  Materials from azimut -->
+	<include filename="$(find irl_common_description)/urdf/materials.urdf.xacro" />
+
+	<!-- TODO screenshots in irl_common_description ? -->
+	<!-- TODO ticket wg like robot package
+		 {xxx}_common
+		   {xxx}_description (urdf, robots, gazebo, meshes)
+		   {xxx}_machine
+		   {xxx}_msgs
+		 -->
+	
+    <link name="base_link">
+        <inertial>
+            <mass value="10.000" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="0.04 0.04 0.08" />
+          </geometry>
+          <material name="Red" />
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="1.000 1.000 .001" />
+        </geometry>
+      </collision>
+    </link>
+
+	<property name="base_height"  value="0.25" />
+
+	<xacro:box_torso
+		name="torso"
+		parent="base_link"
+		xyz = "0 0 ${base_height}"
+		height       = "0.55"
+		stand_width  = "0.038"
+		chest_width  = "0.270"
+		chest_length = "0.21583"
+		chest_height = "0.37921"
+		/>
+
+	<xacro:pan_tilt_ptu46175
+		name="neck"
+		parent="torso_top_frame"
+		offset_x="0.03"
+		offset_y="0"
+		offset_z="0"
+		/>
+
+	<xacro:jn0_head
+		name="head"
+		parent="neck_top_frame"
+		offset_x = "0"
+		offset_y = "0"
+		offset_z = "0.02"
+		/>
+
+	<xacro:arm
+		parent="torso_link"
+        side="R" 
+        reflect="-1"
+		/>
+
+	<xacro:arm
+		parent="torso_link"
+        side="L" 
+        reflect="1"
+		/>
+
+	<xacro:kinect_static
+		name="openni"
+		parent="head_link"
+		xyz="0.055 0 0.17" rpy="0 0 0"
+		angle="0.0"
+		/>
+
+	<xacro:hokuyo_lx04_laser_v0
+		name="base_laser"
+		parent="base"
+		ros_topic="/sensors/base_scan"
+		update_rate="20"
+		min_angle="-1.57"
+		max_angle="1.57" >
+		<origin xyz="0.1 0.0 ${base_height}" rpy="0 0 0" />
+	</xacro:hokuyo_lx04_laser_v0>
+</robot>
