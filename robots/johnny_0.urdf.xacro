@@ -95,7 +95,7 @@
 	<xacro:kinect_static
 		name="openni"
 		parent="head_link"
-		xyz="0.055 0 0.17" rpy="0 0 0"
+		xyz="0.035 0 0.17" rpy="0 0 0"
 		angle="0.0"
 		/>
 
