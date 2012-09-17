@@ -102,7 +102,7 @@
 	<xacro:hokuyo_lx04_laser_v0
 		name="base_laser"
 		parent="base"
-		ros_topic="/sensors/base_scan"
+		ros_topic="base_scan"
 		update_rate="20"
 		min_angle="-1.57"
 		max_angle="1.57" >
