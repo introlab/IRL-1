@@ -87,10 +87,10 @@
             </collision>
         </link>
 
-        <!-- Managed by something else
-		<xacro:pan_tilt_ptu46175_tilt_transmission name="${name}_tilt_trans"/>
-		<xacro:pan_tilt_ptu46175_pan_transmission name="${name}_pan_trans"/>
-        -->
+        <!-- Ignored by CAN managers, used in Gazebo -->
+		<xacro:pan_tilt_ptu46175_tilt_transmission name="${name}_tilt"/>
+		<xacro:pan_tilt_ptu46175_pan_transmission name="${name}_pan"/>
+
 	</xacro:macro>
 
 	<!-- (private) Generic pan tilt link -->
