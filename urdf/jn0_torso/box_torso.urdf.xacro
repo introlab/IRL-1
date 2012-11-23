@@ -72,6 +72,21 @@
             </collision>
         </link>
 
+        <!-- IMU attached to the frame -->
+        <joint name="${name}_imu_fixed" type="fixed">
+            <parent link="${name}_top_frame"/>
+            <child link="${name}_imu_link"/>
+            <origin xyz="0.065 0.0 -0.12" rpy="0 0 -${M_PI/2}"/>
+        </joint>
+        <link name="${name}_imu_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.02 0.02 0.02"/>
+                </geometry>
+            </visual>
+        </link>
+
 	</xacro:macro>
 
 </robot>
