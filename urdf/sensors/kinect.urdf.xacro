@@ -143,16 +143,32 @@
 		<xacro:kinect_optical_frame name="${name}_depth_optical_frame"/>
 		<xacro:kinect_optical_frame name="${name}_rgb_optical_frame"/>
 
-		<joint name="${name}_depth_optical_joint" type="fixed">
-			<origin xyz="0 0.012 0.02" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+		<joint name="${name}_depth_joint" type="fixed">
+			<origin xyz="0 0.012 0.02" rpy="0 0 0" />
 			<parent link="${name}_camera_link" />
+			<child link="${name}_depth_frame" />
+		</joint>
+
+        <link name="${name}_depth_frame"/>
+        
+		<joint name="${name}_depth_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+			<parent link="${name}_depth_frame" />
 			<child link="${name}_depth_optical_frame" />
 		</joint>
 
+		<joint name="${name}_rgb_joint" type="fixed">
+			<origin xyz="0 -0.025 0" rpy="0 0 0" />
+			<parent link="${name}_depth_frame" />
+			<child link="${name}_rgb_frame" />
+		</joint>
+
+        <link name="${name}_rgb_frame"/>
+
 		<joint name="${name}_rgb_optical_joint" type="fixed">
-			<origin xyz="0.025 0 0" rpy="0 0 0" />
-			<parent link="${name}_depth_optical_frame" />
-			<child link="${name}_rgb_optical_frame" />
+            <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}"/>
+			<parent link="${name}_rgb_frame"/>
+			<child link="${name}_rgb_optical_frame"/>
 		</joint>
 
 	</xacro:macro>
