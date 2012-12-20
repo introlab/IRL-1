@@ -4,12 +4,18 @@
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<!-- Same transmission for both joints -->
-	<xacro:macro name="irl_ptu_transmission" params="name" >
+	<xacro:macro name="irl_ptu_pan_transmission" params="name" >
 		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${name}_trans">
 			<actuator name="${name}_motor" />
 			<joint name="${name}_joint" />
 			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
+	</xacro:macro>
+	<xacro:macro name="irl_ptu_tilt_transmission" params="name" >
+		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${name}_trans">
+			<actuator name="${name}_motor" />
+			<joint name="${name}_joint" />
+			<mechanicalReduction>-1.0</mechanicalReduction>
 		</transmission>
 	</xacro:macro>
 </robot>

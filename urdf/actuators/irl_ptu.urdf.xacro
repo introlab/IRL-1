@@ -65,8 +65,8 @@
         />
 
         <!-- Ignored by CAN manager, used in Gazebo -->
-		<xacro:irl_ptu_transmission name="${name}_pan"/>
-		<xacro:irl_ptu_transmission name="${name}_tilt"/>
+		<xacro:irl_ptu_pan_transmission name="${name}_pan"/>
+		<xacro:irl_ptu_tilt_transmission name="${name}_tilt"/>
     
     </xacro:macro>
 
