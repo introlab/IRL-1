@@ -11,7 +11,7 @@
 	<!-- Description files -->
 	<include filename="$(find irl_common_description)/urdf/jn0_torso/box_torso.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_arm/arm.urdf.xacro" />
-	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/actuators/irl_ptu.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/jn0_head/head.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/kinect.urdf.xacro" />
 	<include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.urdf.xacro" />
@@ -64,13 +64,13 @@
 		chest_height = "0.37921"
 		/>
 
-	<xacro:pan_tilt_ptu46175
+	<xacro:irl_ptu
 		name="neck"
 		parent="torso_top_frame"
-		offset_x="0.03"
+		offset_x="0"
 		offset_y="0"
 		offset_z="0"
-		/>
+    />
 
 	<xacro:jn0_head
 		name="head"
