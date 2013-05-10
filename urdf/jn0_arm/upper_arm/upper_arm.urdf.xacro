@@ -58,6 +58,17 @@
 				</geometry>
 			</collision>
 		</link>
+
+ <!--  <gazebo>
+    <controller:gazebo_ros_force name="gazebo_ros_force" plugin="libgazebo_ros_force.so">
+      <alwaysOn>true</alwaysOn>
+      <update>100</update>
+      <updateRate>100.0</updateRate>
+      <bodyName>${side}_upper_arm_link</bodyName>
+      <topicName>${side}_upper_arm_link_force</topicName>
+    </controller:gazebo_ros_force>
+  </gazebo> -->
+
 		
 		<!-- extensions -->
 		<xacro:johnny_0_upper_arm_transmission side="${side}" reflect="${reflect}" />
