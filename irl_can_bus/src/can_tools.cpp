@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <cstdarg>
 
+namespace {
+    static irl_can_bus::log::LoggerFunction logger_fun_ =
+        &irl_can_bus::log::loggerFunctionDefault;
+}
+
 using namespace irl_can_bus;
 
 void irl_can_bus::frameToMsg(const CANFrame& frame, LaboriusMessage& msg)
@@ -42,17 +47,32 @@ void irl_can_bus::msgToFrame(const LaboriusMessage& msg, CANFrame& frame)
 
 }
 
-void irl_can_bus::logLine(LogID id, const char* format, ...)
+void irl_can_bus::log::logLineFormat(LogID id, const char* format, ...)
 {
-    FILE* f = irl_can_bus::logFile(id);
-
-    fprintf(f, "%s: ", logName(id));
+    static char buffer[4096];
+    
+    int prefix_size = snprintf(buffer, sizeof(buffer), "CAN %s: ", logName(id));
 
     va_list vargs;
     va_start(vargs, format);
-    vfprintf(f, format, vargs);
+    vsnprintf(&buffer[prefix_size], sizeof(buffer), format, vargs);
     va_end(vargs);
 
-    fprintf(f, "\n");
+    loggerFunction()(id, buffer);
+}
+
+const irl_can_bus::log::LoggerFunction& irl_can_bus::log::loggerFunction()
+{
+    return ::logger_fun_;
+}
+
+void irl_can_bus::log::loggerFunction(const LoggerFunction& fun)
+{
+    ::logger_fun_ = fun;
+}
+
+void irl_can_bus::log::loggerFunctionDefault(LogID id, const char* str)
+{
+    std::cerr << str;
 }
 

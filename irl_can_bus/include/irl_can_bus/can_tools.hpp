@@ -5,6 +5,7 @@
 #include "laborius_message.hpp"
 #include <cstdio>
 #include <iostream>
+#include <functional>
 
 namespace irl_can_bus
 {
@@ -24,59 +25,50 @@ namespace irl_can_bus
         return f.can_id & 0xFF;
     }
 
-    enum LogID
-    {
-        CAN_LOG_DEBUG = 0
-    };
-
-    static std::ostream& logStream(LogID id)
-    {
-        return std::cerr;
-    }
-
     namespace log
     {
-        static FILE* debug_file_ = stderr;
-        static void setFile(LogID id, FILE* f)
+        enum LogID
+        {
+            CAN_LOG_DEBUG = 0,
+            CAN_LOG_WARN,
+            CAN_LOG_ERROR
+        };
+
+        using LoggerFunction = std::function<void (LogID, const char*)>;
+
+        static const char * logName(LogID id)
         {
             switch (id) {
                 case CAN_LOG_DEBUG:
-                    debug_file_ = f;
-                break;
-
+                    return "DEBUG";
+                    break;
+                case CAN_LOG_WARN:
+                    return "WARNING";
+                    break;
+                case CAN_LOG_ERROR:
+                    return "ERROR";
+                    break;
                 default:
-                break;
-            }
+                    return "DEFAULT";
+                    break;
+            };
         }
+
+        void            logLineFormat(LogID id, const char* format, ...);
+        const LoggerFunction& loggerFunction();
+        void            loggerFunction(const LoggerFunction& fun);
+        void            loggerFunctionDefault(LogID id, const char* str);
     }
-
-    static FILE* logFile(LogID id)
-    {
-        if (id == CAN_LOG_DEBUG) {
-            return log::debug_file_;
-        } else {
-            return stderr;
-        }
-    }
-
-    static const char * logName(LogID id)
-    {
-        if (id == CAN_LOG_DEBUG) {
-            return "DEBUG";
-        } else {
-            return "DEFAULT";
-        }
-    }
-
-    void logLine(LogID id, const char* format, ...);
-
 }
 
 #ifdef DEBUG
-#define CAN_LOG_DEBUG(...)   irl_can_bus::logLine(CAN_LOG_DEBUG, __VA_ARGS__);
+#define CAN_LOG_DEBUG(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_DEBUG, __VA_ARGS__);
 #else
 #define CAN_LOG_DEBUG(...)
 #endif
+
+#define CAN_LOG_WARN(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_WARN, __VA_ARGS__);
+#define CAN_LOG_ERROR(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_ERROR, __VA_ARGS__);
 
 #endif
 

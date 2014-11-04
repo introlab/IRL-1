@@ -4,14 +4,34 @@
 
 namespace
 {
-    irl_can_bus::CANRobot* robot_;
+    irl_can_bus::CANRobot* robot_ = 0;
 
     void signalHandler(int)
     {
-        robot_->stop();
+        if (robot_) {
+            robot_->stop();
+        }
+
         ros::shutdown();
     }
     
+    void loggerFunction(irl_can_bus::log::LogID id, const char* str)
+    {
+        switch (id) {
+            case irl_can_bus::log::CAN_LOG_DEBUG:
+                ROS_DEBUG_STREAM(str);
+                break;
+            case irl_can_bus::log::CAN_LOG_WARN:
+                ROS_WARN_STREAM(str);
+                break;
+            case irl_can_bus::log::CAN_LOG_ERROR:
+                ROS_ERROR_STREAM(str);
+                break;
+            default:
+                ROS_INFO_STREAM(str);
+                break;
+        };
+    }
 
 }
 
@@ -22,6 +42,8 @@ int main(int argc, char** argv)
               "can_robot_proto",
               ros::init_options::NoSigintHandler);
     signal(SIGINT, signalHandler);
+
+    irl_can_bus::log::loggerFunction(&::loggerFunction);
 
     ros::NodeHandle n, np("~");
 
