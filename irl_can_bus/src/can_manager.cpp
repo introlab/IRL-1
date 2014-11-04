@@ -9,6 +9,7 @@
 #include <poll.h>
 #include <unistd.h>
 #include <cassert>
+#include <cerrno>
 
 using namespace irl_can_bus;
 
@@ -30,16 +31,14 @@ CANManager::CANManager(const std::vector<std::string> if_names):
     for (auto i = if_names.cbegin(); i != if_names.cend(); ++i) {
         const std::string if_name = *i;
         if (if_name.size() > IFNAMSIZ) {
-            std::cerr << "Invalid interface name: " << if_name << std::endl;
+            CAN_LOG_ERROR("Invalid interface name: %s", if_name.c_str());
             continue;
         }
 
         int fd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
         if (fd < 0) {
-            std::cerr << "Cannot create PF_CAN socket for interface "
-                      << if_name
-                      << "."
-                      << std::endl;
+            CAN_LOG_ERROR("Cannot create PF_CAN socket for interface %s.",
+                          if_name.c_str());
             continue;
         }
 
@@ -55,11 +54,13 @@ CANManager::CANManager(const std::vector<std::string> if_names):
         if (bind(fd, 
                  (struct sockaddr*)(&addr), 
                  sizeof(addr)) < 0) {
+            int err = errno;
+
+            CAN_LOG_ERROR("Cannot bind socket on interface %s, "
+                          "reason: %s.",                     
+                          if_name.c_str(),
+                          strerror(err));
             close(fd);
-            std::cerr << "Cannot bind socket on interface "
-                      << if_name
-                      << "."
-                      << std::endl;
             continue;
         }
 

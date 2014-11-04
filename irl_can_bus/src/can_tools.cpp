@@ -70,13 +70,16 @@ void irl_can_bus::requestMem(LaboriusMessage& msg,
 void irl_can_bus::log::logLineFormat(LogID id, const char* format, ...)
 {
     static char buffer[4096];
+    int size = 0;
     
-    int prefix_size = snprintf(buffer, sizeof(buffer), "CAN %s: ", logName(id));
+    size = snprintf(buffer, sizeof(buffer), "CAN %s: ", logName(id));
 
     va_list vargs;
     va_start(vargs, format);
-    vsnprintf(&buffer[prefix_size], sizeof(buffer), format, vargs);
+    size += vsnprintf(&buffer[size], sizeof(buffer), format, vargs);
     va_end(vargs);
+
+    snprintf(&buffer[size], sizeof(buffer), "\n");
 
     loggerFunction()(id, buffer);
 }
