@@ -86,9 +86,9 @@ set(IRL_CAN_BUS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/irl_can_bus/include)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES irl_can_ros_ctrl
-#  CATKIN_DEPENDS ros_control roscpp
+  INCLUDE_DIRS include
+  LIBRARIES irl_can_ros_ctrl
+  CATKIN_DEPENDS ros_control roscpp
 #  DEPENDS system_lib
 )
 
@@ -102,12 +102,13 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${IRL_CAN_BUS_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/include
 )
 
 ## Declare a cpp library
-# add_library(irl_can_ros_ctrl
-#   src/${PROJECT_NAME}/irl_can_ros_ctrl.cpp
-# )
+add_library(irl_can_ros_ctrl
+  src/uni_drive_v2.cpp
+)
 
 ## Declare a cpp executable
 add_executable(can_robot_proto src/proto.cpp)
@@ -119,6 +120,7 @@ add_executable(can_robot_proto src/proto.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(can_robot_proto
   ${catkin_LIBRARIES}
+  irl_can_ros_ctrl
   irl_can_bus
 )
 

@@ -153,6 +153,7 @@ namespace irl_can_bus
 
     };
 
+    using CANRobotDevicePtr = std::shared_ptr<CANRobotDevice>;
 }
 
 #endif

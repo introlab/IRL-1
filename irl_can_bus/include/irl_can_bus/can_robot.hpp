@@ -32,9 +32,6 @@ namespace irl_can_bus
     ///    
     class CANRobot
     {
-    public:
-        using CANRobotDevicePtr = std::shared_ptr<CANRobotDevice>;
-
     private:
         CANManager                                        can_;
         std::array<CANRobotDevicePtr, MAX_CAN_DEV_ID + 1> devices_;

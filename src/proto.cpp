@@ -1,5 +1,6 @@
-#include <ros/ros.h>
 #include <irl_can_bus/can_robot.hpp>
+#include <irl_can_ros_ctrl/uni_drive_v2.hpp>
+#include <ros/ros.h>
 #include <signal.h>
 
 namespace
@@ -37,6 +38,8 @@ namespace
 
 int main(int argc, char** argv)
 {
+    using namespace irl_can_ros_ctrl;
+
     ros::init(argc, 
               argv,
               "can_robot_proto",
@@ -69,7 +72,13 @@ int main(int argc, char** argv)
         ROS_WARN("Empty interfaces list (~ifaces parameter).");
     }
 
+    int dev_id;
+    np.param("device_id", dev_id, 20);
+
     robot_ = new irl_can_bus::CANRobot(ifaces);
+
+    irl_can_bus::CANRobotDevicePtr drive(new UniDriveV2(dev_id));
+    robot_->addDevice(drive);
 
     while (ros::ok()) {
         robot_->loopOnce();

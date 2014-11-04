@@ -7,22 +7,6 @@
 namespace {
     using namespace irl_can_bus;
 
-    void requestMem(LaboriusMessage& msg,
-                    unsigned int     device_id,
-                    unsigned int     offset,
-                    unsigned int     size, 
-                    unsigned char    priority = 0)
-    {
-        msg.msg_priority = priority;
-        msg.msg_type = CAN_TYPE_REQUEST_DATA;
-        msg.msg_cmd = offset;
-        msg.msg_dest = device_id;
-        msg.msg_boot = (CAN_REQUEST_RAM << 1) | (CAN_REQUEST_READ);
-
-        msg.msg_remote = 1;
-        msg.msg_data_length = size;
-    }
-
     class UniDrive: public CANRobotDevice
     {
     private:
@@ -82,6 +66,8 @@ namespace {
 
         void requestState(CANManager& can)
         {
+            using namespace irl_can_bus;
+
             LaboriusMessage msg_req;
             requestMem(msg_req, 
                        deviceID(),

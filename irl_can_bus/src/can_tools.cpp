@@ -1,7 +1,9 @@
 #include <irl_can_bus/can_tools.hpp>
+#include <irl_can_bus/can_base_macros.h>
 
 #include <algorithm>
 #include <cstdarg>
+#include <cassert>
 
 namespace {
     static irl_can_bus::log::LoggerFunction logger_fun_ =
@@ -45,6 +47,24 @@ void irl_can_bus::msgToFrame(const LaboriusMessage& msg, CANFrame& frame)
     frame.can_dlc = size;
     std::copy(&msg.msg_data[0], &msg.msg_data[size], &frame.data[0]);
 
+}
+
+void irl_can_bus::requestMem(LaboriusMessage& msg,
+                             unsigned int     device_id,
+                             unsigned int     offset,
+                             unsigned int     size, 
+                             unsigned char    priority)
+{
+    assert(size <= 8);
+
+    msg.msg_priority = priority;
+    msg.msg_type = CAN_TYPE_REQUEST_DATA;
+    msg.msg_cmd = offset;
+    msg.msg_dest = device_id;
+    msg.msg_boot = (CAN_REQUEST_RAM << 1) | (CAN_REQUEST_READ);
+
+    msg.msg_remote = 1;
+    msg.msg_data_length = size;
 }
 
 void irl_can_bus::log::logLineFormat(LogID id, const char* format, ...)
