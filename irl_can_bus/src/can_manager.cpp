@@ -267,3 +267,12 @@ void CANManager::loop()
     };
 }
 
+void CANManager::requestMem(unsigned int device_id,
+                            unsigned int offset,
+                            unsigned int size,
+                            unsigned int priority)
+{
+    LaboriusMessage msg;
+    irl_can_bus::requestMem(msg, device_id, offset, size, priority);
+    pushOneMessage(msg);
+}

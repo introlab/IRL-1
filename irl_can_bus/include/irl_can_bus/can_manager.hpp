@@ -71,6 +71,14 @@ namespace irl_can_bus
         /// released if termination of the CAN thread has been requested.
         void waitForMessages();
 
+        /// \brief Push one memory request message on the queue.
+        ///
+        /// See requestMem in can_tools.hpp for details.
+        void requestMem(unsigned int device_id,
+                        unsigned int offset,
+                        unsigned int size,
+                        unsigned int priority = 0);
+
     private:
         /// \brief Disabled copy constructor.
         CANManager(const CANManager&);

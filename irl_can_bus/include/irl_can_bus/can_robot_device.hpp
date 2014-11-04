@@ -66,7 +66,9 @@ namespace irl_can_bus
         int deviceID() const { return dev_id_; }
 
         /// \brief Return the current state of the device.
-        State state() const { return state_; }
+        /// 
+        /// Can be overriden to consider internal state.
+        virtual State state() const { return state_; }
 
         /// \brief Called by the manager to produce state request messages.
         ///
