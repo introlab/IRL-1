@@ -36,9 +36,11 @@ void CANRobot::stop()
 
 void CANRobot::loopOnce()
 {
+    int  enabled_count = 0;
     for (auto dev: devices_) {
         if (dev && (dev->state() != CANRobotDevice::STATE_DISABLED)) {
             dev->requestState(can_);
+            ++enabled_count;
         }
     }
 
@@ -51,6 +53,8 @@ void CANRobot::loopOnce()
 
         LaboriusMessage msg_in;
         while (can_.popOneMessage(msg_in)) {
+            CAN_LOG_DEBUG("Got one message from %i.",
+                          msg_in.msg_dest);
             CANRobotDevicePtr& dev = devices_[msg_in.msg_dest];
             if (dev && dev->state() != CANRobotDevice::STATE_DISABLED) {
                 dev->processMsg(msg_in);

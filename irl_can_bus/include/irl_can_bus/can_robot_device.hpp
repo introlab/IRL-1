@@ -11,6 +11,8 @@ namespace irl_can_bus
     /// The normal state progress of a CAN device is this:
     ///
     ///  - DISABLED:   In this state until enable() is called.
+    ///  - STARTING:   Transition state between DISABLED and ENABLED for drivers
+    ///                that require async feedback from the device itself.
     ///  - ENABLED:    The device is enabled and its state is expected to be
     ///                updated.
     ///  - CONTROL:    Control is enabled on the device.
@@ -45,6 +47,7 @@ namespace irl_can_bus
         enum State
         {
             STATE_DISABLED, // Nothing should be done on the CAN bus.
+            STATE_STARTING, // Optional state between DISABLED and ENABLED.
             STATE_ENABLED,  // State are requested, but control is disabled.
             STATE_CONTROL   // Control is enabled.
         };

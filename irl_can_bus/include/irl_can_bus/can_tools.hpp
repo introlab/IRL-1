@@ -25,6 +25,12 @@ namespace irl_can_bus
         return f.can_id & 0xFF;
     }
 
+    /// \brief Return the command byte from a reference to a full CAN frame.
+    static int deviceCmdFromFrame(const CANFrame& f)
+    {
+        return (f.can_id & 0xFF00) >> 8;
+    }
+
     /// \brief Build a memory read request message.
     ///
     /// \param msg       A reference to the message to be built.

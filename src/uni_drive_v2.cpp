@@ -15,8 +15,8 @@ UniDriveV2::UniDriveV2(int dev_id):
 CANRobotDevice::State UniDriveV2::state() const
 {
     if (req_state_ == STATE_ENABLED) {
-        return ready_ == ALL_READY ? STATE_ENABLED
-                                   : STATE_DISABLED;
+        return ready_ == CONV_READY ? STATE_ENABLED
+                                    : STATE_STARTING;
     } else {
         return CANRobotDevice::state();
     }
@@ -91,6 +91,8 @@ bool UniDriveV2::stateReady()
 
 void UniDriveV2::processMsg(const LaboriusMessage& msg)
 {
+    ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
+
     if (msg.msg_type != CAN_TYPE_REQUEST_DATA) {
         return;
     }

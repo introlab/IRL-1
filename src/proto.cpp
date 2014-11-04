@@ -19,6 +19,10 @@ namespace
     
     void loggerFunction(irl_can_bus::log::LogID id, const char* str)
     {
+        ROS_INFO_STREAM(str);
+
+        return;
+
         switch (id) {
             case irl_can_bus::log::CAN_LOG_DEBUG:
                 ROS_DEBUG_STREAM(str);
@@ -93,8 +97,11 @@ int main(int argc, char** argv)
     robot_->addDevice(drive_);
     robot_->registerCtrlCB(&::ctrlCB);
 
+    robot_->start();
+
     while (ros::ok()) {
         robot_->loopOnce();
+        ROS_DEBUG_THROTTLE(1.0, "Still looping...");
         ros::spinOnce();
     }
 

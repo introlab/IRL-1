@@ -256,9 +256,10 @@ void CANManager::loop()
                 QueueLock lock(msg_send_queues_mtx_);
                 int q_i = i - 1;
                 while (!msg_send_queues_[q_i].empty()) {
-                    CAN_LOG_DEBUG("Sending for %i on q%i.",
+                    CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
                         deviceIDFromFrame(frame),
-                        q_i);
+                        q_i,
+                        deviceCmdFromFrame(frame));
                     const CANFrame& frame = msg_send_queues_[q_i].front();
                     if (write(fds_[i], &frame, frame_size) == frame_size) {
                         msg_send_queues_[q_i].pop();
@@ -276,6 +277,7 @@ void CANManager::requestMem(unsigned int device_id,
                             unsigned int size,
                             unsigned int priority)
 {
+    CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
     LaboriusMessage msg;
     irl_can_bus::requestMem(msg, device_id, offset, size, priority);
     pushOneMessage(msg);
