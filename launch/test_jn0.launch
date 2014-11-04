@@ -1,0 +1,8 @@
+<launch>
+    <node name="proto" pkg="irl_can_ros_ctrl" type="can_robot_proto">
+        <rosparam>
+            ifaces: [can0, can1, can2]
+            device_id: 20
+        </rosparam>
+    </node>
+</launch>

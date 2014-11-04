@@ -6,7 +6,7 @@ project(irl_can_bus)
 
 #find_package(Boost REQUIRED COMPONENTS thread system)
 
-# NOTE: These flags assume G++-4.8 is available.
+# NOTE: These flags assume clang++ or G++4.8 is available.
 set(CMAKE_CXX_FLAGS "--std=c++11 -pthread ${CMAKE_CXX_FLAGS}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./bin)
 

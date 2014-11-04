@@ -45,9 +45,12 @@ CANManager::CANManager(const std::vector<std::string> if_names):
         fcntl(fd, F_SETFL, O_NONBLOCK);
         
         struct ifreq ifr;
+        memset(&ifr, 0, sizeof(struct ifreq));
         std::copy(if_name.begin(), if_name.end(), ifr.ifr_name);
         ioctl(fd, SIOCGIFINDEX, &ifr);
+
         struct sockaddr_can addr;
+        memset(&addr, 0, sizeof(struct sockaddr_can));
         addr.can_family  = AF_CAN;
         addr.can_ifindex = ifr.ifr_ifindex;
 
