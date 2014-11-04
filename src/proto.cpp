@@ -5,7 +5,8 @@
 
 namespace
 {
-    irl_can_bus::CANRobot* robot_ = 0;
+    irl_can_bus::CANRobot*         robot_ = 0;
+    irl_can_bus::CANRobotDevicePtr drive_ = 0;
 
     void signalHandler(int)
     {
@@ -32,6 +33,17 @@ namespace
                 ROS_INFO_STREAM(str);
                 break;
         };
+    }
+
+    void ctrlCB()
+    {
+        using namespace irl_can_ros_ctrl;
+        if (drive_) {
+
+            UniDriveV2* d = static_cast<UniDriveV2*>(drive_.get());
+
+            ROS_INFO_THROTTLE(1.0, "Drive pos: %f", d->pos());
+        }
     }
 
 }
@@ -77,8 +89,9 @@ int main(int argc, char** argv)
 
     robot_ = new irl_can_bus::CANRobot(ifaces);
 
-    irl_can_bus::CANRobotDevicePtr drive(new UniDriveV2(dev_id));
-    robot_->addDevice(drive);
+    drive_.reset(new UniDriveV2(dev_id));
+    robot_->addDevice(drive_);
+    robot_->registerCtrlCB(&::ctrlCB);
 
     while (ros::ok()) {
         robot_->loopOnce();

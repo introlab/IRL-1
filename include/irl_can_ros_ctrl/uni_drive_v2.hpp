@@ -153,6 +153,8 @@ namespace irl_can_ros_ctrl
         bool stateReady();
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
 
+        // TEMP
+        double pos() const { return position_; }
     };
 }
 

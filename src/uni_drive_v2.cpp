@@ -36,7 +36,7 @@ void UniDriveV2::enable(CANManager& can)
     admittance_changed_ = true;
     pos_offset_changed_ = false;
 
-    ready_     = NONE_READY; 
+    ready_ = NONE_READY; 
 
     can.requestMem(deviceID(), POSITION_TO_RAD_VARIABLE_OFFSET, sizeof(float));
     can.requestMem(deviceID(), TORQUE_TO_NM_VARIABLE_OFFSET,    sizeof(float));
