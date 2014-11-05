@@ -46,7 +46,9 @@ namespace
 
             UniDriveV2* d = static_cast<UniDriveV2*>(drive_.get());
 
-            ROS_INFO_THROTTLE(1.0, "Drive pos: %f", d->pos());
+            if (d->state() == irl_can_bus::CANRobotDevice::STATE_ENABLED) {
+                ROS_INFO_THROTTLE(0.5, "Drive pos: %f", d->pos());
+            }
         }
     }
 
@@ -94,7 +96,7 @@ int main(int argc, char** argv)
     robot_ = new irl_can_bus::CANRobot(ifaces);
 
     drive_.reset(new UniDriveV2(dev_id));
-    robot_->addDevice(drive_);
+    robot_->addDevice(drive_, true);
     robot_->registerCtrlCB(&::ctrlCB);
 
     robot_->start();
@@ -103,6 +105,7 @@ int main(int argc, char** argv)
         robot_->loopOnce();
         ROS_DEBUG_THROTTLE(1.0, "Still looping...");
         ros::spinOnce();
+        ros::Rate(10).sleep();
     }
 
     delete robot_;

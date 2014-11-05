@@ -93,7 +93,11 @@ namespace irl_can_ros_ctrl
             POS_RECEIVED = 1,
             VEL_RECEIVED = 2,
             TQE_RECEIVED = 4,
-            ALL_RECEIVED = POS_RECEIVED | VEL_RECEIVED | TQE_RECEIVED
+            STA_RECEIVED = 8,
+            ALL_RECEIVED = POS_RECEIVED | 
+                           VEL_RECEIVED | 
+                           TQE_RECEIVED | 
+                           STA_RECEIVED
         };
 		/// \brief Indicate if a new state has been obtained from the actuator.
 		unsigned int new_state_;
@@ -108,8 +112,14 @@ namespace irl_can_ros_ctrl
             MAX_SETPOINT    = 16,
             MIN_SETPOINT    = 32,
             POS_OFFSET      = 64,
-            CONV_READY      = CONV_POSITION | CONV_TORQUE | TIMEBASE | MAX_SETPOINT | MIN_SETPOINT | POS_OFFSET,
-            ALL_READY       = MOTOR_DRIVE | CONV_READY
+            CONV_READY      = CONV_POSITION | 
+                              CONV_TORQUE   | 
+                              TIMEBASE      | 
+                              MAX_SETPOINT  | 
+                              MIN_SETPOINT  | 
+                              POS_OFFSET,
+            ALL_READY       = MOTOR_DRIVE   | 
+                              CONV_READY
         };
         /// \brief A set of flags indicating if the drive is ready
         unsigned int ready_;
@@ -137,7 +147,7 @@ namespace irl_can_ros_ctrl
         ///
         /// Depends on the requested state (req_state_) and if the drive is
         /// ready to be used.
-        State state() const;
+        virtual CANRobotDevice::State state() const;
 
         /// \brief Enable the drive.
         ///

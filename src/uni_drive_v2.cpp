@@ -8,24 +8,20 @@ using namespace irl_can_bus;
 UniDriveV2::UniDriveV2(int dev_id): 
     CANRobotDevice(dev_id),
     cmd_var_(&position_),
-    cmd_conv_to_(&pos_conv_to_)
+    cmd_conv_to_(&pos_conv_to_),
+    polling_(true)
 {
 }
 
 CANRobotDevice::State UniDriveV2::state() const
 {
-    if (req_state_ == STATE_ENABLED) {
-        return ready_ == CONV_READY ? STATE_ENABLED
-                                    : STATE_STARTING;
-    } else {
-        return CANRobotDevice::state();
-    }
-
+    return CANRobotDevice::state();
 }
 
 void UniDriveV2::enable(CANManager& can)
 {
     req_state_ = STATE_ENABLED;
+    CANRobotDevice::state(STATE_STARTING);
 
     position_      = 0.0;
     velocity_      = 0.0;
@@ -76,6 +72,7 @@ void UniDriveV2::requestState(CANManager& can)
     // Do not send an extra request.
     if (!polling_)
         return;
+
     can.requestMem(deviceID(), POSITION_VARIABLE_OFFSET, sizeof(int));
     can.requestMem(deviceID(), SPEED_VARIABLE_OFFSET,    sizeof(int));
     can.requestMem(deviceID(), TORQUE_VARIABLE_OFFSET,   sizeof(int));
@@ -86,13 +83,15 @@ void UniDriveV2::requestState(CANManager& can)
 
 bool UniDriveV2::stateReady()
 {
-    return new_state_ == ALL_RECEIVED;
+    if (new_state_ == ALL_RECEIVED) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void UniDriveV2::processMsg(const LaboriusMessage& msg)
 {
-    ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
-
     if (msg.msg_type != CAN_TYPE_REQUEST_DATA) {
         return;
     }
@@ -127,7 +126,7 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
 
 
         case SPEED_VARIABLE_OFFSET:
-            if (ready_ == ALL_READY) 
+            if (ready_ == CONV_READY) 
             {
                 velocity_ = vel_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= VEL_RECEIVED;
@@ -135,7 +134,7 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
         break;
         
         case POSITION_VARIABLE_OFFSET:
-            if (ready_ == ALL_READY)
+            if (ready_ == CONV_READY)
             {
                 position_ = pos_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= POS_RECEIVED;
@@ -143,7 +142,7 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
         break;
 
         case TORQUE_VARIABLE_OFFSET:
-            if (ready_ == ALL_READY)
+            if (ready_ == CONV_READY)
             {
                 torque_ = tqe_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= TQE_RECEIVED;
@@ -173,6 +172,8 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
         
         case DRIVE_STATE_OFFSET:
             drive_state_ = *((unsigned short*)msg.msg_data);  
+            new_state_ |= STA_RECEIVED;
+
             if (drive_state_ != 0)
                 ROS_ERROR_THROTTLE(1.0,
                                    "UniDriveV2 %i state: %i", 
@@ -188,5 +189,16 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
                               msg.msg_cmd);
         break;
     };
+
+    //ROS_WARN("Received, new_state: %i", new_state_);
+    if (state() == STATE_STARTING) {
+        //ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
+        if (ready_ == CONV_READY) {
+            ROS_DEBUG("Switching UniDriveV2 %i to ENABLED.", deviceID());
+            //ROS_WARN("Switching to ENABLED");
+            CANRobotDevice::state(STATE_ENABLED);
+        }
+    }
+
 }
 

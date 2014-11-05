@@ -15,8 +15,15 @@ using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
-    sched_period_(100)
+    sched_period_(200) // TODO: RESET!
 {
+    std::fill(std::begin(max_sent_per_period_),
+              std::end(max_sent_per_period_),
+              0);
+    std::fill(std::begin(cur_sent_per_period_),
+              std::end(cur_sent_per_period_),
+              0);
+
     fds_.reserve(if_names.size() + 1);
 
     // Create internal events pipe, put it first in the list.
@@ -121,7 +128,8 @@ void CANManager::processFrame(const CANFrame& frame)
         QueueLock lock(msg_recv_queue_mtx_);
         if (msg_recv_queue_.size() < MAX_MSG_QUEUE_SIZE) {
             msg_recv_queue_.push(frame);
-
+        } else {
+            CAN_LOG_WARN("Reception queue full!");
         }
     }
     wait_msgs_cond_.notify_one();
@@ -168,16 +176,12 @@ void CANManager::pushOnQueue(const CANFrame& frame, int q)
     bool notify = false;
 
     if (msg_send_queues_[q].size() < MAX_MSG_QUEUE_SIZE) {
-        CAN_LOG_DEBUG("Pushing message for %i on q%i.",
-                      deviceIDFromFrame(frame),
-                      q);
         notify = msg_send_queues_[q].empty();
         msg_send_queues_[q].push(frame);
     }
 
     if (notify) {
         // Wake up the loop if the send queue was previously empty.
-        CAN_LOG_DEBUG("Empty send queue, notify internal queue.");
         pushInternalEvent();
     }
 }
@@ -232,18 +236,22 @@ void CANManager::mainLoop()
         // Internal events pipe, just flush the buffer if there's anything.
         if (pollfds[0].revents & POLLIN) {
 
-            CAN_LOG_DEBUG("Got internal event.");
+            //CAN_LOG_DEBUG("Got internal event.");
             char v;
             while (read(fds_[0], &v, sizeof(v)) == sizeof(v));
         }
 
         // Process in & out queues.
-        CANFrame     frame;
-        const size_t frame_size = sizeof(frame);
+        const size_t frame_size = sizeof(CANFrame);
         for (int i = 1; i < fds_.size(); ++i) {
             if (pollfds[i].revents & POLLIN) {
-                while (read(fds_[i], &frame, frame_size) == frame_size) {
-                    processFrame(frame);
+                CANFrame frame_in;
+
+                while (read(fds_[i], &frame_in, frame_size) == frame_size) {
+                    //CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
+                    //              deviceIDFromFrame(frame_in),
+                    //              deviceCmdFromFrame(frame_in));
+                    processFrame(frame_in);
                 }
                 // Update the send queue map.
                 {
@@ -251,34 +259,39 @@ void CANManager::mainLoop()
                     // Always store the interface on which we received a message
                     // from a identified device.
                     // Note that fds are 1+ than the queue index.
-                    device_queue_map_[deviceIDFromFrame(frame)] = i - 1;
+                    device_queue_map_[deviceIDFromFrame(frame_in)] = i - 1;
                 }
 
             }
+
             if (pollfds[i].revents & POLLOUT) {
                 QueueLock lock(msg_send_queues_mtx_);
-                std::queue<CANFrame> throttled_queue;
                 int q_i = i - 1;
+                std::queue<CANFrame> throttled_queue;
                 while (!msg_send_queues_[q_i].empty()) {
-                    int dev_id = deviceIDFromFrame(frame);
+                    const CANFrame& frame_out = msg_send_queues_[q_i].front();
+                    int dev_id = deviceIDFromFrame(frame_out);
                     if (shouldThrottle(dev_id)) {
-                        throttled_queue.push(frame);
+                        throttled_queue.push(frame_out);
                     } else {
+                        /*
                         CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
                             dev_id,
                             q_i,
-                            deviceCmdFromFrame(frame));
-                        const CANFrame& frame = msg_send_queues_[q_i].front();
-                        if (write(fds_[i], &frame, frame_size) == frame_size) {
+                            deviceCmdFromFrame(frame_out));
+                        */
+                        int bytes_sent = write(fds_[i], &frame_out, frame_size);
+                        if (bytes_sent == frame_size) {
                             ++cur_sent_per_period_[dev_id];
-                        }
+                        } else {
                             // Sent errors are kept in the throttled queue and
                             // will be retried later.
                             CAN_LOG_ERROR("Frame send error for %i on q%i, "
                                           "will retry on next cycle.",
                                           dev_id, q_i);
-                            throttled_queue.push(frame);
+                            throttled_queue.push(frame_out);
                         } 
+                    }
                     msg_send_queues_[q_i].pop();
                 }
 
@@ -287,6 +300,10 @@ void CANManager::mainLoop()
                     msg_send_queues_[q_i].push(throttled_queue.front());
                     throttled_queue.pop();
                 }
+
+                //CAN_LOG_DEBUG("Q%i size: %i.", 
+                //              q_i, 
+                //              msg_send_queues_[q_i].size());
             }
         }
     };
@@ -308,7 +325,8 @@ bool CANManager::shouldThrottle(int dev_id) const
 {
     int m = max_sent_per_period_[dev_id];
     if (m > 0) {
-        return cur_sent_per_period_[dev_id] >= m;
+        int c = cur_sent_per_period_[dev_id];
+        return (c >= m);
     } else {
         return false;
     }
@@ -339,6 +357,7 @@ void CANManager::schedLoop()
             if (!should_notify) {
                 for (const auto& q: msg_send_queues_) {
                     if (!q.empty()) {
+                        //CAN_LOG_DEBUG("Send queues not empty, will notify.");
                         should_notify = true;
                         break;
                     }
@@ -356,6 +375,7 @@ void CANManager::schedLoop()
         auto dur = SchedClock::now() - start;
         auto rem = sched_period_ - dur;
         if (rem.count() > 0) {
+            //CAN_LOG_DEBUG("Scheduler will sleep for %i.", rem.count());
             std::this_thread::sleep_for(rem);
         }
 
@@ -367,7 +387,7 @@ void CANManager::requestMem(unsigned int device_id,
                             unsigned int size,
                             unsigned int priority)
 {
-    CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
+    //CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
     LaboriusMessage msg;
     irl_can_bus::requestMem(msg, device_id, offset, size, priority);
     pushOneMessage(msg);

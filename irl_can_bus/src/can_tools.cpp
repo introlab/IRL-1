@@ -69,7 +69,7 @@ void irl_can_bus::requestMem(LaboriusMessage& msg,
 
 void irl_can_bus::log::logLineFormat(LogID id, const char* format, ...)
 {
-    static char buffer[4096];
+    char buffer[4096];
     int size = 0;
     
     size = snprintf(buffer, sizeof(buffer), "CAN %s: ", logName(id));

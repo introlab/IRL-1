@@ -46,10 +46,10 @@ namespace irl_can_bus
     public:
         enum State
         {
-            STATE_DISABLED, // Nothing should be done on the CAN bus.
-            STATE_STARTING, // Optional state between DISABLED and ENABLED.
-            STATE_ENABLED,  // State are requested, but control is disabled.
-            STATE_CONTROL   // Control is enabled.
+            STATE_DISABLED = 0, // Nothing should be done on the CAN bus.
+            STATE_STARTING = 1, // Optional state between DISABLED and ENABLED.
+            STATE_ENABLED  = 2, // State are requested, but control is disabled.
+            STATE_CONTROL  = 3  // Control is enabled.
         };
 
     private:
@@ -71,7 +71,10 @@ namespace irl_can_bus
         /// \brief Return the current state of the device.
         /// 
         /// Can be overriden to consider internal state.
-        virtual State state() const { return state_; }
+        virtual CANRobotDevice::State state() const 
+        {
+            return state_;
+        }
 
         /// \brief Called by the manager to produce state request messages.
         ///
@@ -81,7 +84,9 @@ namespace irl_can_bus
         /// devices that automatically broadcast their state. 
         ///
         /// \param can A reference to the CANManager to use to send messages.
-        virtual void requestState(CANManager& can) {};
+        virtual void requestState(CANManager& can)
+        {
+        };
 
         /// \brief Return true if a full state has been made available after a
         ///        requestState() call.
