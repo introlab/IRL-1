@@ -6,7 +6,7 @@
 namespace
 {
     irl_can_bus::CANRobot*         robot_ = 0;
-    irl_can_bus::CANRobotDevicePtr drive_ = 0;
+    irl_can_bus::CANRobotDevicePtr drives_[4];
 
     void signalHandler(int)
     {
@@ -41,13 +41,20 @@ namespace
 
     void ctrlCB()
     {
+        ROS_INFO_THROTTLE(1.0, "Running...");
         using namespace irl_can_ros_ctrl;
-        if (drive_) {
+        for (int i = 0; i < 4; ++i) {
+            if (drives_[i]) {
 
-            UniDriveV2* d = static_cast<UniDriveV2*>(drive_.get());
+                UniDriveV2* d = static_cast<UniDriveV2*>(drives_[i].get());
 
-            if (d->state() == irl_can_bus::CANRobotDevice::STATE_ENABLED) {
-                ROS_INFO_THROTTLE(0.5, "Drive pos: %f", d->pos());
+                /*
+                if (d->state() == irl_can_bus::CANRobotDevice::STATE_ENABLED) {
+                    ROS_INFO("Drive %i pos: %f",
+                             d->deviceID(), 
+                             d->pos());
+                }
+                */
             }
         }
     }
@@ -90,13 +97,19 @@ int main(int argc, char** argv)
         ROS_WARN("Empty interfaces list (~ifaces parameter).");
     }
 
-    int dev_id;
-    np.param("device_id", dev_id, 20);
+    int dev_ids[4];
+    np.param("dev1_id", dev_ids[0],  1);
+    np.param("dev2_id", dev_ids[1],  2);
+    np.param("dev3_id", dev_ids[2], 19);
+    np.param("dev4_id", dev_ids[3], 20);
 
     robot_ = new irl_can_bus::CANRobot(ifaces);
 
-    drive_.reset(new UniDriveV2(dev_id));
-    robot_->addDevice(drive_, true);
+    for (int i = 0; i < 4; ++i) {
+        drives_[i].reset(new UniDriveV2(dev_ids[i]));
+        robot_->addDevice(drives_[i], true);
+    }
+
     robot_->registerCtrlCB(&::ctrlCB);
 
     robot_->start();

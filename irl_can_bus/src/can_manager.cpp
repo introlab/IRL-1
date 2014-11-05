@@ -15,7 +15,7 @@ using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
-    sched_period_(200) // TODO: RESET!
+    sched_period_(1000) // TODO: RESET!
 {
     std::fill(std::begin(max_sent_per_period_),
               std::end(max_sent_per_period_),
@@ -102,7 +102,10 @@ CANManager::~CANManager()
 void CANManager::pushInternalEvent(const char v)
 {
     std::unique_lock<MutexType> lock(mutex_);
-    write(pipe_[1], &v, sizeof(char));
+    int r = write(pipe_[1], &v, sizeof(char));
+    if (r != sizeof(char)) {
+        CAN_LOG_ERROR("Internal pipe write error.");
+    }
 }
 
 void CANManager::stop()

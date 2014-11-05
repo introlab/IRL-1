@@ -33,12 +33,18 @@ namespace irl_can_bus
         int         pipe_[2];
 
         // Message queues.
-        using QueueLock = std::lock_guard<SpinningMutex>;
+#ifdef CAN_USE_SPINNING_MUTEX
+        using QueueMutex = SpinningMutex; 
+#else
+        using QueueMutex = std::mutex;
+#endif
+        using QueueLock  = std::lock_guard<QueueMutex>;
+
         static const int                   MAX_MSG_QUEUE_SIZE = 4096;
         std::queue<CANFrame>               msg_recv_queue_;
-        SpinningMutex                      msg_recv_queue_mtx_;
+        QueueMutex                         msg_recv_queue_mtx_;
         std::vector<std::queue<CANFrame>>  msg_send_queues_;
-        SpinningMutex                      msg_send_queues_mtx_;
+        QueueMutex                         msg_send_queues_mtx_;
         std::array<int, MAX_CAN_DEV_COUNT> device_queue_map_;
 
         // Mechanism for waiting on the reception queue.
