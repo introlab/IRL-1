@@ -118,7 +118,7 @@ int main(int argc, char** argv)
         robot_->loopOnce();
         ROS_DEBUG_THROTTLE(1.0, "Still looping...");
         ros::spinOnce();
-        ros::Rate(10).sleep();
+        ros::Rate(100).sleep();
     }
 
     delete robot_;

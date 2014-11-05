@@ -10,6 +10,7 @@
 #include <string>
 #include <queue>
 #include <chrono>
+#include <boost/circular_buffer.hpp>
 
 #include "can_tools.hpp"
 #include "spinning_mutex.hpp"
@@ -39,11 +40,13 @@ namespace irl_can_bus
         using QueueMutex = std::mutex;
 #endif
         using QueueLock  = std::lock_guard<QueueMutex>;
+        using Queue      = std::queue<CANFrame, 
+                                      boost::circular_buffer<CANFrame> >;
 
         static const int                   MAX_MSG_QUEUE_SIZE = 4096;
-        std::queue<CANFrame>               msg_recv_queue_;
+        Queue                              msg_recv_queue_;
         QueueMutex                         msg_recv_queue_mtx_;
-        std::vector<std::queue<CANFrame>>  msg_send_queues_;
+        std::vector<Queue>                 msg_send_queues_;
         QueueMutex                         msg_send_queues_mtx_;
         std::array<int, MAX_CAN_DEV_COUNT> device_queue_map_;
 
