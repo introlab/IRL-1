@@ -33,8 +33,8 @@ namespace irl_can_bus
     class CANRobot
     {
     private:
-        CANManager                                        can_;
-        std::array<CANRobotDevicePtr, MAX_CAN_DEV_ID + 1> devices_;
+        CANManager                                       can_;
+        std::array<CANRobotDevicePtr, MAX_CAN_DEV_COUNT> devices_;
 
         bool running_;
 
@@ -51,7 +51,7 @@ namespace irl_can_bus
         /// Adding a device with an already used id will overwrite it.
         ///
         /// \param dev A shared pointer to a CANRobotDevice.
-        void addDevice(const CANRobotDevicePtr& dev);
+        void addDevice(const CANRobotDevicePtr& dev, bool throttled=false);
 
         /// \brief Register a callback for control calculations when a state is
         /// ready.

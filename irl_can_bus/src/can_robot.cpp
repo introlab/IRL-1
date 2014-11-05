@@ -7,11 +7,16 @@ CANRobot::CANRobot(const std::vector<std::string>& ifaces):
 {
 }
 
-void CANRobot::addDevice(const CANRobotDevicePtr& dev)
+void CANRobot::addDevice(const CANRobotDevicePtr& dev, bool throttled)
 {
     int dev_id = dev->deviceID();
     if (dev_id <= MAX_CAN_DEV_ID) {
         devices_[dev_id] = dev;
+    }
+
+    if (throttled) {
+        // TODO: Find a way to properly define the value.
+        can_.throttling(dev_id, 1);
     }
 }
 

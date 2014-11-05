@@ -292,6 +292,18 @@ void CANManager::mainLoop()
     };
 }
 
+void CANManager::throttling(int dev_id, int count)
+{
+    QueueLock lock(msg_send_queues_mtx_);
+    max_sent_per_period_[dev_id] = count;
+}
+
+void CANManager::throttlingPeriod(SchedTimeBase p)
+{
+    QueueLock lock(msg_send_queues_mtx_);
+    sched_period_ = p;
+}
+
 bool CANManager::shouldThrottle(int dev_id) const
 {
     int m = max_sent_per_period_[dev_id];
