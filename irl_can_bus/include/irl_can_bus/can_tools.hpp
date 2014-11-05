@@ -9,7 +9,8 @@
 
 namespace irl_can_bus
 {
-    static const int MAX_CAN_DEV_ID = 255;
+    static const int MAX_CAN_DEV_ID    = 255;
+    static const int MAX_CAN_DEV_COUNT = MAX_CAN_DEV_ID + 1;
 
     using CANFrame  = struct can_frame;
 

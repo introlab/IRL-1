@@ -9,12 +9,16 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <chrono>
 
 #include "can_tools.hpp"
 #include "spinning_mutex.hpp"
 
 namespace irl_can_bus
 {
+    /// \brief A class that gives access to one or more CAN bus interfaces and
+    /// manages input and output messages with optional throttling per device.
+    ///
     class CANManager
     {
     private:
@@ -23,7 +27,7 @@ namespace irl_can_bus
         std::vector<int> fds_;
 
         MutexType   mutex_;
-        std::thread thread_;
+        std::thread main_thread_;
         bool        running_;
 
         int         pipe_[2];
@@ -35,11 +39,26 @@ namespace irl_can_bus
         SpinningMutex                      msg_recv_queue_mtx_;
         std::vector<std::queue<CANFrame>>  msg_send_queues_;
         SpinningMutex                      msg_send_queues_mtx_;
-        std::array<int, 256>               device_queue_map_;
+        std::array<int, MAX_CAN_DEV_COUNT> device_queue_map_;
 
         // Mechanism for waiting on the reception queue.
         MutexType               wait_msgs_mtx_;
         std::condition_variable wait_msgs_cond_;
+
+        // Throttling mechanism.
+        using SchedTimeBase  = std::chrono::microseconds;
+        using SchedClock     = std::chrono::high_resolution_clock;
+        using SchedTimePoint = std::chrono::time_point<SchedClock>;
+
+        SchedTimeBase sched_period_; // Base scheduler period.
+        std::thread   sched_thread_;
+
+        /// \brief How many messages can be sent per base time period.
+        ///
+        /// Zero (or lower) disables throttling.
+        std::array<int, MAX_CAN_DEV_COUNT> max_sent_per_period_;
+        /// \brief How many messages have been sent in the current period.
+        std::array<int, MAX_CAN_DEV_COUNT> cur_sent_per_period_;
 
     public:
         /// \brief Constructor.
@@ -50,6 +69,20 @@ namespace irl_can_bus
         ~CANManager();
 
         void stop();
+
+        /// \brief Adjust throttling for a single CAN device.
+        ///
+        /// \param dev_id The device ID.
+        /// \param count  The amount of messages that can be sent in a single
+        ///               base time period (see throttlingPeriod).
+        void throttling(int dev_id, int count);
+
+        /// \brief Change the base period of the throttling scheduler.
+        ///
+        /// The default period at initialization is 100 us.
+        ///
+        /// \param period The period, in microseconds.
+        void throttlingPeriod(std::chrono::microseconds period);
 
         /// \brief Pop a single CAN message from the reception queue.
         ///
@@ -87,7 +120,10 @@ namespace irl_can_bus
         void pushInternalEvent(const char v = 1);
         void pushOnQueue(const CANFrame& f, int q);
         void processFrame(const CANFrame& frame);
-        void loop();
+        void mainLoop();
+
+        bool shouldThrottle(int dev_id) const;
+        void schedLoop();
 
 
     };

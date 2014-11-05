@@ -14,7 +14,8 @@
 using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
-    running_(false)
+    running_(false),
+    sched_period_(100)
 {
     fds_.reserve(if_names.size() + 1);
 
@@ -77,13 +78,15 @@ CANManager::CANManager(const std::vector<std::string> if_names):
     device_queue_map_.fill(-1);
 
     running_ = true;
-    thread_ = std::thread(std::bind(&CANManager::loop, this));
+    sched_thread_ = std::thread(std::bind(&CANManager::schedLoop, this));
+    main_thread_  = std::thread(std::bind(&CANManager::mainLoop,  this));
+
 }
 
 CANManager::~CANManager()
 {
     stop();
-    thread_.join();
+    main_thread_.join();
     for (auto i = fds_.begin(); i != fds_.end(); ++i) {
         close(*i);
     }
@@ -197,7 +200,7 @@ void CANManager::pushOneMessage(const LaboriusMessage& msg)
 
 }
 
-void CANManager::loop()
+void CANManager::mainLoop()
 {
     using pollfd = struct pollfd;
 
@@ -254,22 +257,85 @@ void CANManager::loop()
             }
             if (pollfds[i].revents & POLLOUT) {
                 QueueLock lock(msg_send_queues_mtx_);
+                std::queue<CANFrame> throttled_queue;
                 int q_i = i - 1;
                 while (!msg_send_queues_[q_i].empty()) {
-                    CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
-                        deviceIDFromFrame(frame),
-                        q_i,
-                        deviceCmdFromFrame(frame));
-                    const CANFrame& frame = msg_send_queues_[q_i].front();
-                    if (write(fds_[i], &frame, frame_size) == frame_size) {
-                        msg_send_queues_[q_i].pop();
+                    int dev_id = deviceIDFromFrame(frame);
+                    if (shouldThrottle(dev_id)) {
+                        throttled_queue.push(frame);
                     } else {
-                        // TODO!
-                    }
+                        CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
+                            dev_id,
+                            q_i,
+                            deviceCmdFromFrame(frame));
+                        const CANFrame& frame = msg_send_queues_[q_i].front();
+                        if (write(fds_[i], &frame, frame_size) == frame_size) {
+                            ++cur_sent_per_period_[dev_id];
+                        }
+                            // Sent errors are kept in the throttled queue and
+                            // will be retried later.
+                            CAN_LOG_ERROR("Frame send error for %i on q%i, "
+                                          "will retry on next cycle.",
+                                          dev_id, q_i);
+                            throttled_queue.push(frame);
+                        } 
+                    msg_send_queues_[q_i].pop();
+                }
+
+                // Push back the throttled frames on the main queue.
+                while (!throttled_queue.empty()) {
+                    msg_send_queues_[q_i].push(throttled_queue.front());
+                    throttled_queue.pop();
                 }
             }
         }
     };
+}
+
+bool CANManager::shouldThrottle(int dev_id) const
+{
+    int m = max_sent_per_period_[dev_id];
+    if (m > 0) {
+        return cur_sent_per_period_[dev_id] >= m;
+    } else {
+        return false;
+    }
+}
+
+void CANManager::schedLoop()
+{
+    while (shouldRun())
+    {
+        SchedTimePoint start = SchedClock::now();
+        bool should_notify = false;
+
+        // Reset the sent counts.
+        {
+            QueueLock lock(msg_send_queues_mtx_);
+            for (int i = 0; i < MAX_CAN_DEV_COUNT; ++i) {
+                int m = max_sent_per_period_[i];
+                if (m > 0) {
+                    int& c = cur_sent_per_period_[i];
+                    if (c >= m) {
+                        should_notify = true;
+                    }
+                    c = 0;
+                }
+            }
+        }
+
+        // If any count was at max (indicating throttling), notify the main 
+        // loop.
+        pushInternalEvent();
+
+        // Sleep for the rest of the period.
+        auto dur = SchedClock::now() - start;
+        auto rem = sched_period_ - dur;
+        if (rem.count() > 0) {
+            std::this_thread::sleep_for(rem);
+        }
+
+    }
 }
 
 void CANManager::requestMem(unsigned int device_id,
