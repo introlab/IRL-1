@@ -328,17 +328,29 @@ void CANManager::schedLoop()
                 int m = max_sent_per_period_[i];
                 if (m > 0) {
                     int& c = cur_sent_per_period_[i];
-                    if (c >= m) {
+                    if (!should_notify && c >= m) {
                         should_notify = true;
                     }
                     c = 0;
+                }
+            }
+
+            // Also check for non-empty queues.
+            if (!should_notify) {
+                for (const auto& q: msg_send_queues_) {
+                    if (!q.empty()) {
+                        should_notify = true;
+                        break;
+                    }
                 }
             }
         }
 
         // If any count was at max (indicating throttling), notify the main 
         // loop.
-        pushInternalEvent();
+        if (should_notify) {
+            pushInternalEvent();
+        }
 
         // Sleep for the rest of the period.
         auto dur = SchedClock::now() - start;
