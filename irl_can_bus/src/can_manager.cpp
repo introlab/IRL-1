@@ -15,7 +15,6 @@ using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
-    msg_recv_queue_(boost::circular_buffer<CANFrame>(MAX_MSG_QUEUE_SIZE)),
     sched_period_(1000) // TODO: RESET!
 {
     std::fill(std::begin(max_sent_per_period_),
@@ -82,10 +81,7 @@ CANManager::CANManager(const std::vector<std::string> if_names):
 
     }
 
-    msg_send_queues_ = std::vector<Queue>(if_names.size(),
-                                          Queue(
-                                              boost::circular_buffer<CANFrame>(
-                                              MAX_MSG_QUEUE_SIZE)));
+    msg_send_queues_.resize(if_names.size());
 
     device_queue_map_.fill(-1);
 
@@ -136,7 +132,8 @@ void CANManager::processFrame(const CANFrame& frame)
     {
         QueueLock lock(msg_recv_queue_mtx_);
         if (msg_recv_queue_.size() < MAX_MSG_QUEUE_SIZE) {
-            msg_recv_queue_.push(frame);
+            CANFramePtr frame_ptr(new CANFrame(frame));
+            msg_recv_queue_.push(frame_ptr);
         } else {
             CAN_LOG_WARN("Reception queue full!");
         }
@@ -147,7 +144,7 @@ void CANManager::processFrame(const CANFrame& frame)
 bool CANManager::popOneMessage(LaboriusMessage& msg)
 {
     // Copy the front frame from the queue (if available) and then transform it.
-    CANFrame frame;
+    CANFramePtr frame;
     {
         QueueLock lock(msg_recv_queue_mtx_);
         if (msg_recv_queue_.empty()) {
@@ -158,7 +155,7 @@ bool CANManager::popOneMessage(LaboriusMessage& msg)
         msg_recv_queue_.pop();
     }
 
-    irl_can_bus::frameToMsg(frame, msg);
+    irl_can_bus::frameToMsg(*frame, msg);
     
     return true;
 }
@@ -185,8 +182,9 @@ void CANManager::pushOnQueue(const CANFrame& frame, int q)
     bool notify = false;
 
     if (msg_send_queues_[q].size() < MAX_MSG_QUEUE_SIZE) {
+        CANFramePtr frame_ptr(new CANFrame(frame));
         notify = msg_send_queues_[q].empty();
-        msg_send_queues_[q].push(frame);
+        msg_send_queues_[q].push(frame_ptr);
     }
 
     if (notify) {
@@ -215,10 +213,9 @@ void CANManager::pushOneMessage(const LaboriusMessage& msg)
 
 void CANManager::mainLoop()
 {
-    static Queue throttled_queue = 
-        Queue(boost::circular_buffer<CANFrame>(MAX_MSG_QUEUE_SIZE));
-    using pollfd = struct pollfd;
+    static Queue throttled_queue;
 
+    using pollfd = struct pollfd;
     std::vector<pollfd> pollfds(fds_.size());
     for (int i = 0; i < fds_.size(); ++i) {
         pollfd& pfd = pollfds[i];
@@ -279,8 +276,8 @@ void CANManager::mainLoop()
                 QueueLock lock(msg_send_queues_mtx_);
                 int q_i = i - 1;
                 while (!msg_send_queues_[q_i].empty()) {
-                    const CANFrame& frame_out = msg_send_queues_[q_i].front();
-                    int dev_id = deviceIDFromFrame(frame_out);
+                    CANFramePtr& frame_out = msg_send_queues_[q_i].front();
+                    int dev_id = deviceIDFromFrame(*frame_out);
                     if (shouldThrottle(dev_id)) {
                         throttled_queue.push(frame_out);
                     } else {

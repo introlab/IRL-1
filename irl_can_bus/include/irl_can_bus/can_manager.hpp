@@ -34,14 +34,14 @@ namespace irl_can_bus
         int         pipe_[2];
 
         // Message queues.
+        using CANFramePtr = std::shared_ptr<CANFrame>;
 #ifdef CAN_USE_SPINNING_MUTEX
-        using QueueMutex = SpinningMutex; 
+        using QueueMutex  = SpinningMutex; 
 #else
-        using QueueMutex = std::mutex;
+        using QueueMutex  = std::mutex;
 #endif
-        using QueueLock  = std::lock_guard<QueueMutex>;
-        using Queue      = std::queue<CANFrame, 
-                                      boost::circular_buffer<CANFrame> >;
+        using QueueLock   = std::lock_guard<QueueMutex>;
+        using Queue       = std::queue<CANFramePtr>; 
 
         static const int                   MAX_MSG_QUEUE_SIZE = 4096;
         Queue                              msg_recv_queue_;
