@@ -15,7 +15,7 @@ using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
-    sched_period_(1000) // TODO: RESET!
+    sched_period_(500) // TODO: RESET!
 {
     std::fill(std::begin(max_sent_per_period_),
               std::end(max_sent_per_period_),
@@ -138,7 +138,7 @@ void CANManager::processFrame(const CANFrame& frame)
             CAN_LOG_WARN("Reception queue full!");
         }
     }
-    wait_msgs_cond_.notify_one();
+    wait_msgs_cond_.notify_all();
 }
 
 bool CANManager::popOneMessage(LaboriusMessage& msg)
@@ -160,17 +160,24 @@ bool CANManager::popOneMessage(LaboriusMessage& msg)
     return true;
 }
 
-void CANManager::waitForMessages()
+bool CANManager::waitForMessages()
 {
     {
         QueueLock lock(msg_recv_queue_mtx_);
         if (!msg_recv_queue_.empty()) {
-            return;
+            return true;
         }
     }
     
     std::unique_lock<std::mutex> wait_lock(wait_msgs_mtx_);
+#ifdef CAN_NO_TIMEOUT
     wait_msgs_cond_.wait(wait_lock);
+    return true;
+#else
+    return wait_msgs_cond_.wait_for(wait_lock, 
+                                    std::chrono::seconds(10)) !=
+           std::cv_status::timeout;
+#endif
 }
 
 void CANManager::pushOnQueue(const CANFrame& frame, int q)
@@ -231,7 +238,9 @@ void CANManager::mainLoop()
             pfd.events = POLLPRI | POLLIN | POLLERR | POLLHUP | POLLNVAL;
             {
                 QueueLock lock(msg_send_queues_mtx_);
-                if (!msg_send_queues_[i - 1].empty()) {
+                int dev_id = i - 1;
+                if (!msg_send_queues_[dev_id].empty() &&
+                    !shouldThrottle(dev_id)) {
                     pfd.events |= POLLOUT;
                 }
             }
@@ -253,12 +262,15 @@ void CANManager::mainLoop()
         const size_t frame_size = sizeof(CANFrame);
         for (int i = 1; i < fds_.size(); ++i) {
             if (pollfds[i].revents & POLLIN) {
+                //CAN_LOG_DEBUG("POLLIN on %i.", i);
                 CANFrame frame_in;
 
                 while (read(fds_[i], &frame_in, frame_size) == frame_size) {
-                    //CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
-                    //              deviceIDFromFrame(frame_in),
-                    //              deviceCmdFromFrame(frame_in));
+                    /*
+                    CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
+                                  deviceIDFromFrame(frame_in),
+                                  deviceCmdFromFrame(frame_in));
+                    */
                     processFrame(frame_in);
                 }
                 // Update the send queue map.
@@ -276,19 +288,23 @@ void CANManager::mainLoop()
                 QueueLock lock(msg_send_queues_mtx_);
                 int q_i = i - 1;
                 while (!msg_send_queues_[q_i].empty()) {
-                    CANFramePtr& frame_out = msg_send_queues_[q_i].front();
+                    CANFramePtr frame_out = msg_send_queues_[q_i].front();
                     int dev_id = deviceIDFromFrame(*frame_out);
                     if (shouldThrottle(dev_id)) {
+                        //CAN_LOG_DEBUG("Throttling for %i", dev_id);
                         throttled_queue.push(frame_out);
                     } else {
-                        /*
+                        /* 
                         CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
                             dev_id,
                             q_i,
-                            deviceCmdFromFrame(frame_out));
+                            deviceCmdFromFrame(*frame_out));
                         */
-                        int bytes_sent = write(fds_[i], &frame_out, frame_size);
+                        int bytes_sent = write(fds_[i],
+                                               frame_out,
+                                               frame_size);
                         if (bytes_sent == frame_size) {
+                            delete frame_out;
                             ++cur_sent_per_period_[dev_id];
                         } else {
                             // Sent errors are kept in the throttled queue and
@@ -386,17 +402,22 @@ void CANManager::schedLoop()
         // Wait here for re-activation - the scheduler yields until throttling
         // is actually needed.
         {
-            std::unique_lock<MutexType> lock(sched_mtx_);
-            sched_cond_.wait(lock);
+            //CAN_LOG_DEBUG("sched wait...");
+            //std::unique_lock<MutexType> lock(sched_mtx_);
+            //sched_cond_.wait(lock);
         }
+        //CAN_LOG_DEBUG("sched goes to sleep...");
+        //std::this_thread::sleep_for(sched_period_);
 
         // Sleep for the rest of the period.
+        /* */ 
         auto dur = SchedClock::now() - start;
         auto rem = sched_period_ - dur;
         if (rem.count() > 0) {
             //CAN_LOG_DEBUG("Scheduler will sleep for %i.", rem.count());
             std::this_thread::sleep_for(rem);
         }
+        /* */
 
     }
 }

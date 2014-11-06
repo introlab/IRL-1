@@ -51,10 +51,16 @@ void CANRobot::loopOnce()
         }
     }
 
-    bool all_ready;
+    bool all_ready = false;
+    bool timed_out = false;
+    int cycles = 0;
     do {
         if (enabled_count > 0) {
-            can_.waitForMessages();
+            timed_out = !can_.waitForMessages();
+        }
+
+        if (timed_out) {
+            CAN_LOG_ERROR("Timed out on waitForMessages!");
         }
 
         if (!running_)
@@ -75,14 +81,24 @@ void CANRobot::loopOnce()
             if (dev && (dev->state() == CANRobotDevice::STATE_ENABLED)) {
                 if (!dev->stateReady()) {
                     all_ready = false;
-                    break;
+                    if (timed_out) {
+                        CAN_LOG_DEBUG("Requesting state again for %i.",
+                                      dev->deviceID());
+                        dev->requestState(can_);
+                    } else {
+                        break;
+                    }
                 }
             }
         }
 
         // TODO: Detect if something has timed out.
-        
+        ++cycles;
     } while (!all_ready);
+
+    if (cycles > 10) {
+        CAN_LOG_DEBUG("cycles: %i", cycles);
+    }
 
     for (const auto& cb : ctrl_cbs_) {
         cb();

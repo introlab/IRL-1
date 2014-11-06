@@ -34,7 +34,7 @@ namespace irl_can_bus
         int         pipe_[2];
 
         // Message queues.
-        using CANFramePtr = std::shared_ptr<CANFrame>;
+        using CANFramePtr = CANFrame*;
 #ifdef CAN_USE_SPINNING_MUTEX
         using QueueMutex  = SpinningMutex; 
 #else
@@ -114,7 +114,9 @@ namespace irl_can_bus
         /// Note that there are no guarantees on message availability after
         /// return from this call, as the condition variable when locked is
         /// released if termination of the CAN thread has been requested.
-        void waitForMessages();
+        ///
+        /// \return true if messages are available, false if it timed out.
+        bool waitForMessages();
 
         /// \brief Push one memory request message on the queue.
         ///

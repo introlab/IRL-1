@@ -2,6 +2,7 @@
     <node name="can_robot_proto" 
           pkg="irl_can_ros_ctrl"
           type="can_robot_proto"
+          launch-prefix="xterm -e gdb --args"
           output="screen"
     >
         <rosparam>
