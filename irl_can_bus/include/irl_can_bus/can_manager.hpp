@@ -59,8 +59,11 @@ namespace irl_can_bus
         using SchedClock     = std::chrono::high_resolution_clock;
         using SchedTimePoint = std::chrono::time_point<SchedClock>;
 
-        SchedTimeBase sched_period_; // Base scheduler period.
-        std::thread   sched_thread_;
+        SchedTimeBase           sched_period_; // Base scheduler period.
+        MutexType               sched_mtx_;    // For condition variable.
+        std::condition_variable sched_cond_;   // Used to yield when not 
+                                               // throttling.
+        std::thread             sched_thread_;
 
         /// \brief How many messages can be sent per base time period.
         ///

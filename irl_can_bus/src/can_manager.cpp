@@ -116,9 +116,10 @@ void CANManager::pushInternalEvent(const char v)
 void CANManager::stop()
 {
     CAN_LOG_DEBUG("CANManager::stop()");
+    running_ = false;
     pushInternalEvent();
     wait_msgs_cond_.notify_all(); 
-    running_ = false;
+    sched_cond_.notify_all();
     CAN_LOG_DEBUG("CANManager::stop() done");
 }
 
@@ -304,10 +305,14 @@ void CANManager::mainLoop()
                     msg_send_queues_[q_i].pop();
                 }
 
-                // Push back the throttled frames on the main queue.
-                while (!throttled_queue.empty()) {
-                    msg_send_queues_[q_i].push(throttled_queue.front());
-                    throttled_queue.pop();
+                if (!throttled_queue.empty()) {
+                    // Push back the throttled frames on the main queue.
+                    while (!throttled_queue.empty()) {
+                        msg_send_queues_[q_i].push(throttled_queue.front());
+                        throttled_queue.pop();
+                    }
+                    // Notify the scheduler thread.
+                    sched_cond_.notify_one();
                 }
 
                 //CAN_LOG_DEBUG("Q%i size: %i.", 
@@ -377,7 +382,15 @@ void CANManager::schedLoop()
         // If any count was at max (indicating throttling), notify the main 
         // loop.
         if (should_notify) {
+            // TODO: Re-evaluate this.
             pushInternalEvent();
+        }
+
+        // Wait here for re-activation - the scheduler yields until throttling
+        // is actually needed.
+        {
+            std::unique_lock<MutexType> lock(sched_mtx_);
+            sched_cond_.wait(lock);
         }
 
         // Sleep for the rest of the period.
