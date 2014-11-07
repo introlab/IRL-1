@@ -228,20 +228,6 @@ void CANManager::pushOneMessage(const LaboriusMessage& msg)
     }
 
     return;
-
-#if 0
-    // Check if we know on which interface the device is.
-    // If it isn't known, broadcast on all interfaces.
-    int queue_i = device_queue_map_[msg.msg_dest];
-    if (queue_i < 0) {
-        for (int i = 0; i < can_send_queues_.size(); ++i) {
-            pushOnQueue(frame, i);
-        }
-    } else {
-        pushOnQueue(frame, queue_i);
-    }
-#endif
-
 }
 
 void CANManager::mainLoop()
@@ -339,15 +325,9 @@ void CANManager::mainLoop()
                                       "frame dropped.",
                                       deviceIDFromFrame(*frame_out),
                                       q_i);
-                        //throttled_queues_[q_i].push(frame_out);
                     } 
                     csq.pop();
-                    //delete frame_out;
                 }
-
-                //CAN_LOG_DEBUG("Q%i size: %i.", 
-                //              q_i, 
-                //              can_send_queues_[q_i].size());
             }
         }
     };
@@ -426,47 +406,20 @@ void CANManager::schedLoop()
                 ticks = (ticks + 1) % dev_p;
             }
 
-            // Transfer throttled messages back to the send queues.
-#if 0       // Now handled by the new queue structure.
-            for (int q_i = 0; q_i < throttled_queues_.size(); ++q_i) {
-                Queue& t_q = throttled_queues_[q_i];
-                Queue& s_q = can_send_queues_[q_i];
-                while (!t_q.empty()) {
-                    s_q.push(t_q.front());
-                    t_q.pop();
-                }
-            }
-#endif
         }
 
         // If any count was at max (indicating throttling), notify the main 
         // loop.
         if (should_notify) {
-            // TODO: Re-evaluate this.
             pushInternalEvent();
         }
 
-        // Wait here for re-activation - the scheduler yields until throttling
-        // is actually needed.
-        {
-            //CAN_LOG_DEBUG("sched wait...");
-            //std::unique_lock<MutexType> lock(sched_mtx_);
-            //sched_cond_.wait(lock);
-        }
-        //CAN_LOG_DEBUG("sched goes to sleep...");
-        //std::this_thread::sleep_for(sched_period_);
-
         // Sleep for the rest of the period.
-        /* */ 
         auto dur = SchedClock::now() - start;
         auto rem = sched_period_ - dur;
         if (rem.count() > 0) {
-        //  CAN_LOG_DEBUG("Scheduler will sleep for %i us.", 
-        //                std::chrono::duration_cast<TimeBase>(rem).count());
             std::this_thread::sleep_for(rem);
         }
-        /* */
-
     }
 }
 

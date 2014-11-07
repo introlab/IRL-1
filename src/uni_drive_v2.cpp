@@ -15,9 +15,9 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const
 {
-    // UniDrive cannot accept more than 2 messages every 400 us.
-    // TODO: RESET THIS:
-    ThrottlingDef td = {TimeBase(500), 1};
+    // UniDriveV2 limited to 1 message every 1 ms, meaning the maximum
+    // state update frequency is 250 Hz (4 messages: 4 ms).
+    ThrottlingDef td = {TimeBase(1000), 1};
     return td;
 }
 
