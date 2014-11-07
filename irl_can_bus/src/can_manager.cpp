@@ -15,13 +15,19 @@ using namespace irl_can_bus;
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
-    sched_period_(500) // TODO: RESET!
+    sched_period_(100)
 {
     std::fill(std::begin(max_sent_per_period_),
               std::end(max_sent_per_period_),
               0);
     std::fill(std::begin(cur_sent_per_period_),
               std::end(cur_sent_per_period_),
+              0);
+    std::fill(std::begin(dev_period_length_),
+              std::end(dev_period_length_),
+              0);
+    std::fill(std::begin(dev_period_ticks_),
+              std::end(dev_period_ticks_),
               0);
 
     fds_.reserve(if_names.size() + 1);
@@ -81,7 +87,7 @@ CANManager::CANManager(const std::vector<std::string> if_names):
 
     }
 
-    msg_send_queues_.resize(if_names.size());
+    can_send_queues_.resize(if_names.size());
 
     device_queue_map_.fill(-1);
 
@@ -182,16 +188,16 @@ bool CANManager::waitForMessages()
 
 void CANManager::pushOnQueue(const CANFrame& frame, int q)
 {
-    QueueLock lock(msg_send_queues_mtx_);
+    QueueLock lock(send_queues_mtx_);
 
-    assert(q < msg_send_queues_.size());
+    assert(q < can_send_queues_.size());
 
     bool notify = false;
 
-    if (msg_send_queues_[q].size() < MAX_MSG_QUEUE_SIZE) {
+    if (can_send_queues_[q].size() < MAX_MSG_QUEUE_SIZE) {
         CANFramePtr frame_ptr(new CANFrame(frame));
-        notify = msg_send_queues_[q].empty();
-        msg_send_queues_[q].push(frame_ptr);
+        notify = can_send_queues_[q].empty();
+        can_send_queues_[q].push(frame_ptr);
     }
 
     if (notify) {
@@ -202,19 +208,36 @@ void CANManager::pushOnQueue(const CANFrame& frame, int q)
 
 void CANManager::pushOneMessage(const LaboriusMessage& msg)
 {
-    CANFrame frame;
-    irl_can_bus::msgToFrame(msg, frame);
+    CANFrame* frame_ptr = new CANFrame();
+    irl_can_bus::msgToFrame(msg, *frame_ptr);
+    int dev_id = msg.msg_dest;
 
+    {
+        QueueLock lock(send_queues_mtx_);
+        Queue& q = dev_send_queues_[dev_id];
+        if (q.size() < MAX_MSG_QUEUE_SIZE) {
+            q.push(frame_ptr);
+        } else {
+            CAN_LOG_ERROR("Device %i send queue full, dropping message.",
+                          dev_id);
+            delete frame_ptr;
+        }
+    }
+
+    return;
+
+#if 0
     // Check if we know on which interface the device is.
     // If it isn't known, broadcast on all interfaces.
     int queue_i = device_queue_map_[msg.msg_dest];
     if (queue_i < 0) {
-        for (int i = 0; i < msg_send_queues_.size(); ++i) {
+        for (int i = 0; i < can_send_queues_.size(); ++i) {
             pushOnQueue(frame, i);
         }
     } else {
         pushOnQueue(frame, queue_i);
     }
+#endif
 
 }
 
@@ -229,21 +252,43 @@ void CANManager::mainLoop()
     }
 
     while (shouldRun()) {
+        // First step: distribute new messages into device queues while
+        // respecting throttling.
+        {
+            QueueLock lock(send_queues_mtx_);
+            for (int dev_id = 0; dev_id < dev_send_queues_.size(); ++dev_id) {
+                Queue& q = dev_send_queues_[dev_id];
+                while (!shouldThrottle(dev_id) && !q.empty()) {
+                    int if_i = device_queue_map_[dev_id];
+                    if (if_i < 0) {
+                        for (int j = 0; j < can_send_queues_.size(); ++j) {
+                            Queue& cq = can_send_queues_[j];
+                            cq.push(q.front());
+                            //pushOnQueue(q.front(), j);
+                        }
+                    } else {
+                        Queue& cq = can_send_queues_[if_i];
+                        cq.push(q.front());
+                        ++cur_sent_per_period_[dev_id];
+                    }
+                    q.pop();
+                }
+
+            }
+        }
+
         for (int i = 1; i < fds_.size(); ++i) {
             // Reset event types to poll for, add POLLOUT only if the
             // corresending queue has at least one message.
             pollfd& pfd = pollfds[i];
             pfd.events = POLLPRI | POLLIN | POLLERR | POLLHUP | POLLNVAL;
             {
-                QueueLock lock(msg_send_queues_mtx_);
+                QueueLock lock(send_queues_mtx_);
                 int dev_id = i - 1;
-                if (!msg_send_queues_[dev_id].empty() &&
-                    !shouldThrottle(dev_id)) {
+                if (!can_send_queues_[dev_id].empty()) {
                     pfd.events |= POLLOUT;
                 }
             }
-
-                
         }
 
         poll(&pollfds[0], pollfds.size(), -1);
@@ -273,7 +318,7 @@ void CANManager::mainLoop()
                 }
                 // Update the send queue map.
                 {
-                    QueueLock lock(msg_send_queues_mtx_);
+                    QueueLock lock(send_queues_mtx_);
                     // Always store the interface on which we received a message
                     // from a identified device.
                     // Note that fds are 1+ than the queue index.
@@ -283,42 +328,29 @@ void CANManager::mainLoop()
             }
 
             if (pollfds[i].revents & POLLOUT) {
-                QueueLock lock(msg_send_queues_mtx_);
+                QueueLock lock(send_queues_mtx_);
                 int q_i = i - 1;
-                while (!msg_send_queues_[q_i].empty()) {
-                    CANFramePtr frame_out = msg_send_queues_[q_i].front();
-                    int dev_id = deviceIDFromFrame(*frame_out);
-                    if (shouldThrottle(dev_id)) {
-                        //CAN_LOG_DEBUG("Throttling for %i", dev_id);
-                        throttled_queues_[q_i].push(frame_out);
-                    } else {
-                        /* 
-                        CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
-                            dev_id,
-                            q_i,
-                            deviceCmdFromFrame(*frame_out));
-                        */
-                        int bytes_sent = write(fds_[i],
-                                               frame_out,
-                                               frame_size);
-                        if (bytes_sent == frame_size) {
-                            delete frame_out;
-                            ++cur_sent_per_period_[dev_id];
-                        } else {
-                            // Sent errors are kept in the throttled queue and
-                            // will be retried later.
-                            CAN_LOG_ERROR("Frame send error for %i on q%i, "
-                                          "will retry on next cycle.",
-                                          dev_id, q_i);
-                            throttled_queues_[q_i].push(frame_out);
-                        } 
-                    }
-                    msg_send_queues_[q_i].pop();
+                while (!can_send_queues_[q_i].empty()) {
+                    CANFramePtr frame_out = can_send_queues_[q_i].front();
+                    int bytes_sent = write(fds_[i],
+                                           frame_out,
+                                           frame_size);
+                    if (!bytes_sent == frame_size) {
+                        // Sent errors are kept in the throttled queue and
+                        // will be retried later.
+                        CAN_LOG_ERROR("Send error for %i on q%i, "
+                                      "frame dropped.",
+                                      deviceIDFromFrame(*frame_out),
+                                      q_i);
+                        //throttled_queues_[q_i].push(frame_out);
+                    } 
+                    can_send_queues_[q_i].pop();
+                    delete frame_out;
                 }
 
                 //CAN_LOG_DEBUG("Q%i size: %i.", 
                 //              q_i, 
-                //              msg_send_queues_[q_i].size());
+                //              can_send_queues_[q_i].size());
             }
         }
     };
@@ -326,13 +358,13 @@ void CANManager::mainLoop()
 
 void CANManager::throttling(int dev_id, int count)
 {
-    QueueLock lock(msg_send_queues_mtx_);
+    QueueLock lock(send_queues_mtx_);
     max_sent_per_period_[dev_id] = count;
 }
 
 void CANManager::throttlingPeriod(SchedTimeBase p)
 {
-    QueueLock lock(msg_send_queues_mtx_);
+    QueueLock lock(send_queues_mtx_);
     sched_period_ = p;
 }
 
@@ -354,29 +386,44 @@ void CANManager::schedLoop()
         SchedTimePoint start = SchedClock::now();
         bool should_notify = false;
 
-        // Reset the sent counts.
+        bool transfer[MAX_CAN_DEV_COUNT]; // Indicates if messages from a 
+                                          // device should go back on the 
+                                          // send queue.
+        std::fill(&transfer[0], &transfer[MAX_CAN_DEV_COUNT], false);
+
+        // Update the device ticks and reset counts at the end of a period.
         {
-            QueueLock lock(msg_send_queues_mtx_);
+            QueueLock lock(send_queues_mtx_);
             for (int i = 0; i < MAX_CAN_DEV_COUNT; ++i) {
                 int m = max_sent_per_period_[i];
+                // Only do this for throttled devices (max > 0).
                 if (m > 0) {
-                    int& c = cur_sent_per_period_[i];
-                    if (!should_notify && c >= m) {
-                        should_notify = true;
+                    int&       ticks = dev_period_ticks_[i];
+                    const int& dev_p = dev_period_length_[i];
+                    // Resetting count on tick 0.
+                    if (ticks == 0) {
+                        int& c = cur_sent_per_period_[i];
+                        if (!should_notify && c >= m) {
+                            should_notify = true;
+                        }
+                        c = 0;
+                        transfer[i] = true;
                     }
-                    c = 0;
+                    ticks = (ticks + 1) % dev_p;
                 }
             }
 
             // Transfer throttled messages back to the send queues.
+#if 0       // Now handled by the new queue structure.
             for (int q_i = 0; q_i < throttled_queues_.size(); ++q_i) {
                 Queue& t_q = throttled_queues_[q_i];
-                Queue& s_q = msg_send_queues_[q_i];
+                Queue& s_q = can_send_queues_[q_i];
                 while (!t_q.empty()) {
                     s_q.push(t_q.front());
                     t_q.pop();
                 }
             }
+#endif
         }
 
         // If any count was at max (indicating throttling), notify the main 

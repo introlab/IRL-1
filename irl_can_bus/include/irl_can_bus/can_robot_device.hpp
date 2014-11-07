@@ -3,6 +3,7 @@
 
 #include "laborius_message.hpp"
 #include "can_manager.hpp"
+#include <chrono>
 
 namespace irl_can_bus
 {
@@ -19,6 +20,12 @@ namespace irl_can_bus
     ///
     /// Methods to implement:
     ///
+    ///  - throttled()    Return the number of messages that can be sent to this
+    ///                   device per reference period.
+    ///                   Only called when added to the CANRobot instance.
+    ///  - state()        Return the current state of the device.
+    ///                   The default implementation directly returns what has
+    ///                   been set by the state(const State&) method.
     ///  - requestState() Called at the beginning of the control loop.
     ///                   Messages that requests CAN variables should be sent
     ///                   at this moment.
@@ -67,6 +74,19 @@ namespace irl_can_bus
 
         /// \brief Return the CAN bus device id.
         int deviceID() const { return dev_id_; }
+
+        /// \brief Return how many messages can be sent to this device per given
+        ///        reference period.
+        ///
+        /// A value of (or below) zero indicates that throttling is not
+        /// necessary for this device.
+        /// This is default implementation.
+        ///
+        /// \param p Throttling reference period.
+        virtual int throttled(const std::chrono::microseconds& p) const
+        {
+            return 0;
+        }
 
         /// \brief Return the current state of the device.
         /// 

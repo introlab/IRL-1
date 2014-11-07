@@ -33,7 +33,11 @@ namespace irl_can_bus
 
         int         pipe_[2];
 
-        // Message queues.
+        // Message queues: 
+        //  - 1 msg_recv_queue (overall), with its own mutex.
+        //  - 1 can_send_queue per interface.
+        //  - 1 dev_send_queue per device (for throttling).
+        // Both send queue vectors share the same mutex.
         using CANFramePtr = CANFrame*;
 #ifdef CAN_USE_SPINNING_MUTEX
         using QueueMutex  = SpinningMutex; 
@@ -43,12 +47,13 @@ namespace irl_can_bus
         using QueueLock   = std::lock_guard<QueueMutex>;
         using Queue       = std::queue<CANFramePtr>; 
 
-        static const int                   MAX_MSG_QUEUE_SIZE = 4096;
-        Queue                              msg_recv_queue_;
-        QueueMutex                         msg_recv_queue_mtx_;
-        std::vector<Queue>                 msg_send_queues_;
-        QueueMutex                         msg_send_queues_mtx_;
-        std::array<int, MAX_CAN_DEV_COUNT> device_queue_map_;
+        static const int                     MAX_MSG_QUEUE_SIZE = 4096;
+        Queue                                msg_recv_queue_;
+        QueueMutex                           msg_recv_queue_mtx_;
+        std::vector<Queue>                   can_send_queues_;
+        QueueMutex                           send_queues_mtx_;
+        std::array<Queue, MAX_CAN_DEV_COUNT> dev_send_queues_;
+        std::array<int, MAX_CAN_DEV_COUNT>   device_queue_map_;
 
         // Mechanism for waiting on the reception queue.
         MutexType               wait_msgs_mtx_;
@@ -73,6 +78,13 @@ namespace irl_can_bus
         std::array<int, MAX_CAN_DEV_COUNT> max_sent_per_period_;
         /// \brief How many messages have been sent in the current period.
         std::array<int, MAX_CAN_DEV_COUNT> cur_sent_per_period_;
+        /// \brief Period length (in ticks) for this device.
+        std::array<int, MAX_CAN_DEV_COUNT> dev_period_length_;
+        /// \brief Current tick in period for this device.
+        ///
+        /// Tick should be between 0 and (dev_period_length - 1).
+        std::array<int, MAX_CAN_DEV_COUNT> dev_period_ticks_;
+
 
     public:
         /// \brief Constructor.
@@ -98,6 +110,12 @@ namespace irl_can_bus
         /// \param period The period, in microseconds.
         void throttlingPeriod(std::chrono::microseconds period);
 
+        /// \brief Return the current throttling base period.
+        const std::chrono::microseconds& throttlingPeriod() const
+        {
+            return sched_period_;
+        }
+
         /// \brief Pop a single CAN message from the reception queue.
         ///
         /// Thread safe.
@@ -105,7 +123,7 @@ namespace irl_can_bus
         /// \return false if no messages where available.
         bool popOneMessage(LaboriusMessage& msg);
 
-        /// \brief Push a single CAN message on the send queue.
+        /// \brief Push a single CAN message on the device send queue.
         ///
         /// Thread safe.
         void pushOneMessage(const LaboriusMessage& msg);
@@ -141,6 +159,8 @@ namespace irl_can_bus
         bool shouldThrottle(int dev_id) const;
         void schedLoop();
 
+        /// \brief Push a single CAN frame on the interface send queue.
+        void pushOneFrame(const CANFrame* frame);
 
     };
 }

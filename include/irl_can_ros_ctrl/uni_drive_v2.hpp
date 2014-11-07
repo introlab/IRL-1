@@ -143,6 +143,8 @@ namespace irl_can_ros_ctrl
         /// \param dev_id The CAN device id.
         UniDriveV2(int dev_id); 
 
+        virtual int throttled(const std::chrono::microseconds& p) const;
+
         /// \brief Return the current (CANRobotDevice) state.
         ///
         /// Depends on the requested state (req_state_) and if the drive is

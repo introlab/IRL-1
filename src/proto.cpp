@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < 4; ++i) {
         drives_[i].reset(new UniDriveV2(dev_ids[i]));
-        robot_->addDevice(drives_[i], true);
+        robot_->addDevice(drives_[i]);
     }
 
     robot_->registerCtrlCB(&::ctrlCB);

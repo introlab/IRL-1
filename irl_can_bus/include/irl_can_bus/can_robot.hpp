@@ -46,12 +46,16 @@ namespace irl_can_bus
         /// \param ifaces A vector of names of CAN interfaces to use. 
         CANRobot(const std::vector<std::string>& ifaces);
 
+        /// \brief Return a reference to the CANManager for this robot.
+        CANManager&       canManager()       { return can_; }
+        const CANManager& canManager() const { return can_; }
+
         /// \brief Add a device to monitor.
         ///
         /// Adding a device with an already used id will overwrite it.
         ///
         /// \param dev A shared pointer to a CANRobotDevice.
-        void addDevice(const CANRobotDevicePtr& dev, bool throttled=false);
+        void addDevice(const CANRobotDevicePtr& dev);
 
         /// \brief Register a callback for control calculations when a state is
         /// ready.
