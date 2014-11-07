@@ -186,42 +186,46 @@ bool CANManager::waitForMessages()
 #endif
 }
 
-void CANManager::pushOnQueue(const CANFrame& frame, int q)
+void CANManager::pushOnCANSendQueue(const CANFramePtr& frame_ptr)
 {
-    QueueLock lock(send_queues_mtx_);
+    int dev_id = deviceIDFromFrame(*frame_ptr);
+    int if_i   = device_queue_map_[dev_id];
 
-    assert(q < can_send_queues_.size());
-
-    bool notify = false;
-
-    if (can_send_queues_[q].size() < MAX_MSG_QUEUE_SIZE) {
-        CANFramePtr frame_ptr(new CANFrame(frame));
-        notify = can_send_queues_[q].empty();
-        can_send_queues_[q].push(frame_ptr);
-    }
-
-    if (notify) {
-        // Wake up the loop if the send queue was previously empty.
-        pushInternalEvent();
+    if (if_i < 0) {
+        for (int j = 0; j < can_send_queues_.size(); ++j) {
+            Queue& cq = can_send_queues_[j];
+            cq.push(frame_ptr);
+        }
+    } else {
+        Queue& cq = can_send_queues_[if_i];
+        cq.push(frame_ptr);
     }
 }
 
 void CANManager::pushOneMessage(const LaboriusMessage& msg)
 {
-    CANFrame* frame_ptr = new CANFrame();
+    CANFramePtr frame_ptr(new CANFrame());
     irl_can_bus::msgToFrame(msg, *frame_ptr);
     int dev_id = msg.msg_dest;
 
+    bool should_notify = false;
     {
         QueueLock lock(send_queues_mtx_);
         Queue& q = dev_send_queues_[dev_id];
+
+        should_notify = q.empty();
+
         if (q.size() < MAX_MSG_QUEUE_SIZE) {
             q.push(frame_ptr);
         } else {
             CAN_LOG_ERROR("Device %i send queue full, dropping message.",
                           dev_id);
-            delete frame_ptr;
         }
+    }
+
+    // If a  previously empty queue was found, notify the main loop to wake it up.
+    if (should_notify) {
+        pushInternalEvent();
     }
 
     return;
@@ -257,21 +261,11 @@ void CANManager::mainLoop()
         {
             QueueLock lock(send_queues_mtx_);
             for (int dev_id = 0; dev_id < dev_send_queues_.size(); ++dev_id) {
-                Queue& q = dev_send_queues_[dev_id];
-                while (!shouldThrottle(dev_id) && !q.empty()) {
-                    int if_i = device_queue_map_[dev_id];
-                    if (if_i < 0) {
-                        for (int j = 0; j < can_send_queues_.size(); ++j) {
-                            Queue& cq = can_send_queues_[j];
-                            cq.push(q.front());
-                            //pushOnQueue(q.front(), j);
-                        }
-                    } else {
-                        Queue& cq = can_send_queues_[if_i];
-                        cq.push(q.front());
-                        ++cur_sent_per_period_[dev_id];
-                    }
-                    q.pop();
+                Queue& dq = dev_send_queues_[dev_id];
+                while (!dq.empty() && !shouldThrottle(dev_id)) {
+                    pushOnCANSendQueue(dq.front());
+                    ++cur_sent_per_period_[dev_id];
+                    dq.pop();
                 }
 
             }
@@ -330,10 +324,11 @@ void CANManager::mainLoop()
             if (pollfds[i].revents & POLLOUT) {
                 QueueLock lock(send_queues_mtx_);
                 int q_i = i - 1;
-                while (!can_send_queues_[q_i].empty()) {
-                    CANFramePtr frame_out = can_send_queues_[q_i].front();
+                Queue& csq = can_send_queues_[q_i];
+                while (!csq.empty()) {
+                    const CANFramePtr& frame_out = csq.front();
                     int bytes_sent = write(fds_[i],
-                                           frame_out,
+                                           frame_out.get(),
                                            frame_size);
                     if (!bytes_sent == frame_size) {
                         // Sent errors are kept in the throttled queue and
@@ -344,8 +339,8 @@ void CANManager::mainLoop()
                                       q_i);
                         //throttled_queues_[q_i].push(frame_out);
                     } 
-                    can_send_queues_[q_i].pop();
-                    delete frame_out;
+                    csq.pop();
+                    //delete frame_out;
                 }
 
                 //CAN_LOG_DEBUG("Q%i size: %i.", 

@@ -38,7 +38,7 @@ namespace irl_can_bus
         //  - 1 can_send_queue per interface.
         //  - 1 dev_send_queue per device (for throttling).
         // Both send queue vectors share the same mutex.
-        using CANFramePtr = CANFrame*;
+        using CANFramePtr = std::shared_ptr<CANFrame>;
 #ifdef CAN_USE_SPINNING_MUTEX
         using QueueMutex  = SpinningMutex; 
 #else
@@ -152,7 +152,8 @@ namespace irl_can_bus
 
         bool shouldRun();
         void pushInternalEvent(const char v = 1);
-        void pushOnQueue(const CANFrame& f, int q);
+        /// \brief Adds a single frame to the proper CAN send queue.
+        void pushOnCANSendQueue(const CANFramePtr& f);
         void processFrame(const CANFrame& frame);
         void mainLoop();
 
