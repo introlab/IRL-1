@@ -220,8 +220,6 @@ void CANManager::pushOneMessage(const LaboriusMessage& msg)
 
 void CANManager::mainLoop()
 {
-    static Queue throttled_queue;
-
     using pollfd = struct pollfd;
     std::vector<pollfd> pollfds(fds_.size());
     for (int i = 0; i < fds_.size(); ++i) {
@@ -292,7 +290,7 @@ void CANManager::mainLoop()
                     int dev_id = deviceIDFromFrame(*frame_out);
                     if (shouldThrottle(dev_id)) {
                         //CAN_LOG_DEBUG("Throttling for %i", dev_id);
-                        throttled_queue.push(frame_out);
+                        throttled_queues_[q_i].push(frame_out);
                     } else {
                         /* 
                         CAN_LOG_DEBUG("Sending for %i on q%i, cmd: %i.",
@@ -312,20 +310,10 @@ void CANManager::mainLoop()
                             CAN_LOG_ERROR("Frame send error for %i on q%i, "
                                           "will retry on next cycle.",
                                           dev_id, q_i);
-                            throttled_queue.push(frame_out);
+                            throttled_queues_[q_i].push(frame_out);
                         } 
                     }
                     msg_send_queues_[q_i].pop();
-                }
-
-                if (!throttled_queue.empty()) {
-                    // Push back the throttled frames on the main queue.
-                    while (!throttled_queue.empty()) {
-                        msg_send_queues_[q_i].push(throttled_queue.front());
-                        throttled_queue.pop();
-                    }
-                    // Notify the scheduler thread.
-                    sched_cond_.notify_one();
                 }
 
                 //CAN_LOG_DEBUG("Q%i size: %i.", 
@@ -380,14 +368,13 @@ void CANManager::schedLoop()
                 }
             }
 
-            // Also check for non-empty queues.
-            if (!should_notify) {
-                for (const auto& q: msg_send_queues_) {
-                    if (!q.empty()) {
-                        //CAN_LOG_DEBUG("Send queues not empty, will notify.");
-                        should_notify = true;
-                        break;
-                    }
+            // Transfer throttled messages back to the send queues.
+            for (int q_i = 0; q_i < throttled_queues_.size(); ++q_i) {
+                Queue& t_q = throttled_queues_[q_i];
+                Queue& s_q = msg_send_queues_[q_i];
+                while (!t_q.empty()) {
+                    s_q.push(t_q.front());
+                    t_q.pop();
                 }
             }
         }
