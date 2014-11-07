@@ -5,8 +5,8 @@
 using namespace irl_can_ros_ctrl;
 using namespace irl_can_bus;
 
-UniDriveV2::UniDriveV2(int dev_id): 
-    CANRobotDevice(dev_id),
+UniDriveV2::UniDriveV2(const ros::NodeHandle& np): 
+    RCDevice(np),
     cmd_var_(&position_),
     cmd_conv_to_(&pos_conv_to_),
     polling_(true)

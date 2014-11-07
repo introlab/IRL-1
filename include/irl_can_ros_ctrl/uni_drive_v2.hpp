@@ -1,6 +1,7 @@
 #ifndef UNIDRIVE_V2_HPP
 #define UNIDRIVE_V2_HPP
 
+#include "rc_device.hpp"
 #include <irl_can_bus/can_robot_device.hpp>
 
 namespace irl_can_ros_ctrl
@@ -9,7 +10,7 @@ namespace irl_can_ros_ctrl
     static const double UNIDRIVE_V2_TIMEBASE_CONV_FROM = 1.28e-5;
 
     /// \brief A CANRobotDevice for the UniDriveV2 motor driver from IntRoLab.
-    class UniDriveV2: public irl_can_bus::CANRobotDevice
+    class UniDriveV2: public RCDevice 
     {
     private:
         // CAN-related defines
@@ -140,8 +141,8 @@ namespace irl_can_ros_ctrl
         ///
         /// Construct a UniDriveV2 in position control mode (default).
         ///
-        /// \param dev_id The CAN device id.
-        UniDriveV2(int dev_id); 
+        /// \param np Namespace for parameters.
+        UniDriveV2(const ros::NodeHandle& np); 
 
         virtual irl_can_bus::ThrottlingDef 
             throttled(const irl_can_bus::TimeBase& p) const;

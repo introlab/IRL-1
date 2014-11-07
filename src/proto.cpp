@@ -97,16 +97,13 @@ int main(int argc, char** argv)
         ROS_WARN("Empty interfaces list (~ifaces parameter).");
     }
 
-    int dev_ids[4];
-    np.param("dev1_id", dev_ids[0],  1);
-    np.param("dev2_id", dev_ids[1],  2);
-    np.param("dev3_id", dev_ids[2], 19);
-    np.param("dev4_id", dev_ids[3], 20);
-
     robot_ = new irl_can_bus::CANRobot(ifaces);
 
     for (int i = 0; i < 4; ++i) {
-        drives_[i].reset(new UniDriveV2(dev_ids[i]));
+        std::stringstream np_name;
+        np_name << "dev_" << i;
+        ros::NodeHandle nd(np, np_name.str());
+        drives_[i].reset(new UniDriveV2(nd));
         robot_->addDevice(drives_[i]);
     }
 

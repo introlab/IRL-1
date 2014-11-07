@@ -7,7 +7,14 @@
     >
         <rosparam>
             ifaces: [can0, can1, can2]
-            device_id: 20
+            dev_0:
+                can_device_id: 1
+            dev_1:
+                can_device_id: 2
+            dev_2:
+                can_device_id: 19
+            dev_3:
+                can_device_id: 20
         </rosparam>
     </node>
 </launch>

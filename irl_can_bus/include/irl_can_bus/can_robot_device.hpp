@@ -68,13 +68,18 @@ namespace irl_can_bus
         /// \brief Constructor.
         ///
         /// \param dev_id CAN bus device id.
-        CANRobotDevice(int dev_id): 
+        CANRobotDevice(int dev_id = -1): 
             dev_id_(dev_id),
             state_(STATE_DISABLED)
         {}
 
         /// \brief Return the CAN bus device id.
         int deviceID() const { return dev_id_; }
+
+        /// \brief Set the CAN bus device id.
+        ///
+        /// NOTE: Has no effect after the device has been added to the manager.
+        void deviceID(int d_id) { dev_id_ = d_id; } 
 
         /// \brief Return a throttling definition for this device.
         ///

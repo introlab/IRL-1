@@ -12,6 +12,10 @@ void CANRobot::addDevice(const CANRobotDevicePtr& dev)
     int dev_id = dev->deviceID();
     if (dev_id <= MAX_CAN_DEV_ID) {
         devices_[dev_id] = dev;
+    } else {
+        CAN_LOG_ERROR("Attempted to add a device with an invalid ID: %i",
+                      dev_id);
+        return;
     }
 
     ThrottlingDef td = dev->throttled(can_.throttlingPeriod());
