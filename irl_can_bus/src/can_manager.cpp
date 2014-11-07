@@ -42,8 +42,7 @@ CANManager::CANManager(const std::vector<std::string> if_names):
     fcntl(pipe_[1], F_SETFL, O_NONBLOCK);
     fds_.push_back(pipe_[0]);
 
-    for (auto i = if_names.cbegin(); i != if_names.cend(); ++i) {
-        const std::string if_name = *i;
+    for (const auto& if_name: if_names) {
         if (if_name.size() > IFNAMSIZ) {
             CAN_LOG_ERROR("Invalid interface name: %s", if_name.c_str());
             continue;
@@ -101,8 +100,8 @@ CANManager::~CANManager()
 {
     stop();
     main_thread_.join();
-    for (auto i = fds_.begin(); i != fds_.end(); ++i) {
-        close(*i);
+    for (auto& i: fds_) { 
+        close(i);
     }
 }
 
@@ -264,7 +263,7 @@ void CANManager::mainLoop()
                 Queue& dq = dev_send_queues_[dev_id];
                 while (!dq.empty() && !shouldThrottle(dev_id)) {
                     pushOnCANSendQueue(dq.front());
-                    ++cur_sent_per_period_[dev_id];
+                    ++(cur_sent_per_period_[dev_id]);
                     dq.pop();
                 }
 
@@ -278,8 +277,8 @@ void CANManager::mainLoop()
             pfd.events = POLLPRI | POLLIN | POLLERR | POLLHUP | POLLNVAL;
             {
                 QueueLock lock(send_queues_mtx_);
-                int dev_id = i - 1;
-                if (!can_send_queues_[dev_id].empty()) {
+                int if_id = i - 1;
+                if (!can_send_queues_[if_id].empty()) {
                     pfd.events |= POLLOUT;
                 }
             }
@@ -327,6 +326,9 @@ void CANManager::mainLoop()
                 Queue& csq = can_send_queues_[q_i];
                 while (!csq.empty()) {
                     const CANFramePtr& frame_out = csq.front();
+                    //CAN_LOG_DEBUG("Sending for %i, cmd: %i",
+                    //              deviceIDFromFrame(*frame_out),
+                    //              deviceCmdFromFrame(*frame_out));
                     int bytes_sent = write(fds_[i],
                                            frame_out.get(),
                                            frame_size);
@@ -353,10 +355,18 @@ void CANManager::mainLoop()
 
 void CANManager::throttling(int dev_id, const ThrottlingDef& td)
 {
+    if (!td.valid()) {
+        return;
+    }
+
     QueueLock lock(send_queues_mtx_);
 
     int dpl = td.period_length.count();
     int sp  = sched_period_.count();
+    CAN_LOG_DEBUG("throttling for %i: dpl: %i sp: %i",
+                  dev_id,
+                  dpl,
+                  sp);
 
     if (dpl % sp) {
         CAN_LOG_WARN("The throttling period for %i (%i) is not a multiple "
@@ -368,6 +378,9 @@ void CANManager::throttling(int dev_id, const ThrottlingDef& td)
 
     dev_period_length_[dev_id]   = dpl / sp; 
     max_sent_per_period_[dev_id] = td.max_per_period;
+
+    throttled_devs_.push_back(dev_id);
+
 }
 
 void CANManager::throttlingPeriod(SchedTimeBase p)
@@ -394,31 +407,23 @@ void CANManager::schedLoop()
         SchedTimePoint start = SchedClock::now();
         bool should_notify = false;
 
-        bool transfer[MAX_CAN_DEV_COUNT]; // Indicates if messages from a 
-                                          // device should go back on the 
-                                          // send queue.
-        std::fill(&transfer[0], &transfer[MAX_CAN_DEV_COUNT], false);
-
         // Update the device ticks and reset counts at the end of a period.
         {
             QueueLock lock(send_queues_mtx_);
-            for (int i = 0; i < MAX_CAN_DEV_COUNT; ++i) {
-                int m = max_sent_per_period_[i];
-                // Only do this for throttled devices (max > 0).
-                if (m > 0) {
-                    int&       ticks = dev_period_ticks_[i];
-                    const int& dev_p = dev_period_length_[i];
-                    // Resetting count on tick 0.
-                    if (ticks == 0) {
-                        int& c = cur_sent_per_period_[i];
-                        if (!should_notify && c >= m) {
-                            should_notify = true;
-                        }
-                        c = 0;
-                        transfer[i] = true;
-                    }
-                    ticks = (ticks + 1) % dev_p;
+            for (auto i: throttled_devs_) {
+                int        m     = max_sent_per_period_[i];
+                int&       ticks = dev_period_ticks_[i];
+                const int& dev_p = dev_period_length_[i];
+                // Resetting count on tick 0.
+                if (ticks == 0) {
+                    int& c = cur_sent_per_period_[i];
+                    //if (c > 0) {
+                    //    CAN_LOG_DEBUG("cycle for %i, c: %i", i, c);
+                    //}
+                    should_notify = true;
+                    c = 0;
                 }
+                ticks = (ticks + 1) % dev_p;
             }
 
             // Transfer throttled messages back to the send queues.
@@ -456,7 +461,8 @@ void CANManager::schedLoop()
         auto dur = SchedClock::now() - start;
         auto rem = sched_period_ - dur;
         if (rem.count() > 0) {
-            //CAN_LOG_DEBUG("Scheduler will sleep for %i.", rem.count());
+        //  CAN_LOG_DEBUG("Scheduler will sleep for %i us.", 
+        //                std::chrono::duration_cast<TimeBase>(rem).count());
             std::this_thread::sleep_for(rem);
         }
         /* */

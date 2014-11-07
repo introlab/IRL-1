@@ -65,8 +65,8 @@ namespace irl_can_bus
         using SchedClock     = std::chrono::high_resolution_clock;
         using SchedTimePoint = std::chrono::time_point<SchedClock>;
 
-        std::vector<Queue>      throttled_queues_; // Stores throttled
-                                                   // messages.
+        std::vector<int>        throttled_devs_;   // List of throttled
+                                                   // devices.
         SchedTimeBase           sched_period_;     // Base scheduler period.
         MutexType               sched_mtx_;        // For condition variable.
         std::condition_variable sched_cond_;       // Used to yield when not 

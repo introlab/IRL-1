@@ -46,7 +46,7 @@ void CANRobot::stop()
 void CANRobot::loopOnce()
 {
     int  enabled_count = 0;
-    for (auto dev: devices_) {
+    for (auto& dev: devices_) {
         if (dev) {
             if (dev->state() != CANRobotDevice::STATE_DISABLED) {
                 dev->requestState(can_);

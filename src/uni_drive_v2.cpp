@@ -16,7 +16,8 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const
 {
     // UniDrive cannot accept more than 2 messages every 400 us.
-    ThrottlingDef td = {TimeBase(400), 2};
+    // TODO: RESET THIS:
+    ThrottlingDef td = {TimeBase(500), 1};
     return td;
 }
 

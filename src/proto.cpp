@@ -2,11 +2,13 @@
 #include <irl_can_ros_ctrl/uni_drive_v2.hpp>
 #include <ros/ros.h>
 #include <signal.h>
+#include <std_msgs/Float64.h>
 
 namespace
 {
     irl_can_bus::CANRobot*         robot_ = 0;
     irl_can_bus::CANRobotDevicePtr drives_[4];
+    ros::Publisher                 pub_dev_[4];
 
     void signalHandler(int)
     {
@@ -41,24 +43,21 @@ namespace
 
     void ctrlCB()
     {
-        ROS_INFO_THROTTLE(1.0, "Running...");
         using namespace irl_can_ros_ctrl;
+
+        std::stringstream msg;
         for (int i = 0; i < 4; ++i) {
             if (drives_[i]) {
 
                 UniDriveV2* d = static_cast<UniDriveV2*>(drives_[i].get());
-
-                /*
                 if (d->state() == irl_can_bus::CANRobotDevice::STATE_ENABLED) {
-                    ROS_INFO("Drive %i pos: %f",
-                             d->deviceID(), 
-                             d->pos());
+                    msg << "dev " << d->deviceID() << " pos: " << d->pos() 
+                        << " ";
                 }
-                */
             }
         }
+        ROS_INFO_THROTTLE(0.5, "Status: %s", msg.str().c_str());
     }
-
 }
 
 int main(int argc, char** argv)
@@ -105,6 +104,9 @@ int main(int argc, char** argv)
         ros::NodeHandle nd(np, np_name.str());
         drives_[i].reset(new UniDriveV2(nd));
         robot_->addDevice(drives_[i]);
+
+        //BUG WITH BOOST 1.48:
+        //pub_dev_[i] = nd.advertise<std_msgs::Float64>("pos", 10);
     }
 
     robot_->registerCtrlCB(&::ctrlCB);
