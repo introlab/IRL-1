@@ -1,8 +1,9 @@
 #ifndef CAN_ROBOT_DEVICE_HPP
 #define CAN_ROBOT_DEVICE_HPP
 
-#include "laborius_message.hpp"
 #include "can_manager.hpp"
+#include "laborius_message.hpp"
+#include "throttling_def.hpp"
 #include <chrono>
 
 namespace irl_can_bus
@@ -75,17 +76,17 @@ namespace irl_can_bus
         /// \brief Return the CAN bus device id.
         int deviceID() const { return dev_id_; }
 
-        /// \brief Return how many messages can be sent to this device per given
-        ///        reference period.
+        /// \brief Return a throttling definition for this device.
         ///
-        /// A value of (or below) zero indicates that throttling is not
+        /// A value of (or below) for any value indicates that throttling is not
         /// necessary for this device.
         /// This is default implementation.
         ///
         /// \param p Throttling reference period.
-        virtual int throttled(const std::chrono::microseconds& p) const
+        virtual ThrottlingDef throttled(const TimeBase& p) const
         {
-            return 0;
+            ThrottlingDef d = {TimeBase(0),0};
+            return d;
         }
 
         /// \brief Return the current state of the device.

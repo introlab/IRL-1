@@ -351,10 +351,23 @@ void CANManager::mainLoop()
     };
 }
 
-void CANManager::throttling(int dev_id, int count)
+void CANManager::throttling(int dev_id, const ThrottlingDef& td)
 {
     QueueLock lock(send_queues_mtx_);
-    max_sent_per_period_[dev_id] = count;
+
+    int dpl = td.period_length.count();
+    int sp  = sched_period_.count();
+
+    if (dpl % sp) {
+        CAN_LOG_WARN("The throttling period for %i (%i) is not a multiple "
+                     "of the reference period of CANManager (%i).",
+                     dev_id,
+                     dpl,
+                     sp);
+    }
+
+    dev_period_length_[dev_id]   = dpl / sp; 
+    max_sent_per_period_[dev_id] = td.max_per_period;
 }
 
 void CANManager::throttlingPeriod(SchedTimeBase p)

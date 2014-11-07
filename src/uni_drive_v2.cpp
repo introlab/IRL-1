@@ -13,10 +13,11 @@ UniDriveV2::UniDriveV2(int dev_id):
 {
 }
 
-int UniDriveV2::throttled(const std::chrono::microseconds& p) const
+ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const
 {
-    // UniDrive cannot accept more than 2 messages every 100 us.
-    return 2 * p.count() / 100;
+    // UniDrive cannot accept more than 2 messages every 400 us.
+    ThrottlingDef td = {TimeBase(400), 2};
+    return td;
 }
 
 CANRobotDevice::State UniDriveV2::state() const

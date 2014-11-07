@@ -14,9 +14,9 @@ void CANRobot::addDevice(const CANRobotDevicePtr& dev)
         devices_[dev_id] = dev;
     }
 
-    int throttling = dev->throttled(can_.throttlingPeriod());
-    if (throttling > 0) {
-        can_.throttling(dev_id, throttling);
+    ThrottlingDef td = dev->throttled(can_.throttlingPeriod());
+    if (td.valid()) {
+        can_.throttling(dev_id, td);
     }
 }
 

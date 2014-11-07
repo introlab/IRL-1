@@ -14,6 +14,7 @@
 
 #include "can_tools.hpp"
 #include "spinning_mutex.hpp"
+#include "throttling_def.hpp"
 
 namespace irl_can_bus
 {
@@ -99,9 +100,8 @@ namespace irl_can_bus
         /// \brief Adjust throttling for a single CAN device.
         ///
         /// \param dev_id The device ID.
-        /// \param count  The amount of messages that can be sent in a single
-        ///               base time period (see throttlingPeriod).
-        void throttling(int dev_id, int count);
+        /// \param td     The throttling definition for the device.
+        void throttling(int dev_id, const ThrottlingDef& td);
 
         /// \brief Change the base period of the throttling scheduler.
         ///
