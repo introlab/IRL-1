@@ -3,7 +3,8 @@
 
 using namespace irl_can_ros_ctrl;
 
-IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np)
+IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
+    rc_cm_(this)
 {
     std::vector<std::string> ifaces;
     if (np.hasParam("ifaces")) {
@@ -52,7 +53,8 @@ IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np)
 
     double p;
     np.param("period", p, 0.01);
-    timer_ = np.createTimer(ros::Duration(p), &IRLRobot::timerCB, this);
+    period_ = ros::Duration(p);
+    timer_ = np.createTimer(period_, &IRLRobot::timerCB, this);
 }
 
 void IRLRobot::addDevice(const ros::NodeHandle& np)
@@ -86,6 +88,7 @@ void IRLRobot::addDevice(const ros::NodeHandle& np)
 
 void IRLRobot::control()
 {
+    rc_cm_.update(ros::Time::now(), period_);
 }
 
 void IRLRobot::timerCB(const ros::TimerEvent&)

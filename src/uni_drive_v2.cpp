@@ -17,6 +17,7 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     cmd_conv_to_(&pos_conv_to_),
     polling_(true)
 {
+    np.param("joint_name", joint_name_, std::string("unidrive_v2_joint"));
 }
 
 UniDriveV2::~UniDriveV2()
@@ -30,7 +31,13 @@ RCDevicePtr UniDriveV2::create(const ros::NodeHandle& np)
 
 void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
 {
-    hardware_interface::JointStateInterface* jsi = &robot.jsi();
+    hardware_interface::JointStateInterface& jsi = robot.jsi();
+    hardware_interface::JointStateHandle sh(joint_name_, 
+                                            &position_,
+                                            &velocity_, 
+                                            &torque_);
+    jsi.registerHandle(sh);
+
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const

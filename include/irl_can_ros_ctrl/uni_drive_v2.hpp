@@ -11,6 +11,11 @@ namespace irl_can_ros_ctrl
     static const double UNIDRIVE_V2_TIMEBASE_CONV_FROM = 1.28e-5;
 
     /// \brief A CANRobotDevice for the UniDriveV2 motor driver from IntRoLab.
+    ///
+    /// ROS Parameters (TODO):
+    ///  - joint_name: The name of the controlled joint.
+    ///                Default: "unidrive_v2_joint"
+    ///
     class UniDriveV2: public RCDevice 
     {
     private:
@@ -36,6 +41,9 @@ namespace irl_can_ros_ctrl
             TORQUE_TO_NM_VARIABLE_OFFSET    = 230,
             TIMEBASE_VARIABLE_OFFSET        = 238
         };
+
+        // ROS parameters
+        std::string joint_name_;
 
         /// \brief the CANRobotDevice requested state.
         State req_state_;
@@ -67,7 +75,7 @@ namespace irl_can_ros_ctrl
         int min_setpoint_;
         
         /// \brief Reference to the commanded variable. Position by default.
-        float* cmd_var_;
+        double* cmd_var_;
         /// \brief Reference to the commanded variable conversion ratio.
         /// Defaults to pos_conv_to_. 
         float* cmd_conv_to_;
@@ -76,9 +84,9 @@ namespace irl_can_ros_ctrl
         float timebase_;
 
         /// Internal state.
-        float position_;
-        float velocity_;
-        float torque_;
+        double position_;
+        double velocity_;
+        double torque_;
         float torque_offset_; // Torque offset to send to the drive.
         float pos_offset_; // Position offset, in radians.
         float admittance_m_; // Inertia

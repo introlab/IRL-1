@@ -1,20 +1,37 @@
 <launch>
     <node name="can_robot_proto" 
           pkg="irl_can_ros_ctrl"
-          type="can_robot_proto"
+          type="irl_robot_node"
           launch-prefix="xterm -e gdb --args"
           output="screen"
     >
         <rosparam>
             ifaces: [can0, can1, can2]
-            dev_0:
-                can_device_id: 1
-            dev_1:
-                can_device_id: 2
-            dev_2:
-                can_device_id: 19
-            dev_3:
-                can_device_id: 20
+            devices: [dev1, dev2, dev19, dev20]
+            dev1:
+                can_device_type: UniDriveV2
+                can_device_id:   1
+
+                joint_name: "Joint1"
+
+            dev2:
+                can_device_type: UniDriveV2
+                can_device_id:   2
+
+                joint_name: "Joint2"
+
+            dev19:
+                can_device_type: UniDriveV2
+                can_device_id:   19
+
+                joint_name: "Joint19"
+
+            dev20:
+                can_device_type: UniDriveV2
+                can_device_id:   20
+
+                joint_name: "Joint20"
+
         </rosparam>
     </node>
 </launch>

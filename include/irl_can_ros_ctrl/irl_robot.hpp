@@ -4,6 +4,8 @@
 #include "rc_device.hpp"
 #include <irl_can_bus/can_robot.hpp>
 #include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/robot_hw.h>
+#include <controller_manager/controller_manager.h>
 #include <ros/ros.h>
 
 namespace irl_can_ros_ctrl
@@ -23,7 +25,7 @@ namespace irl_can_ros_ctrl
     ///             "/irl_robot/dev1".
     ///             See addDevice() for which parameters are expected in each
     ///             namespace.
-    class IRLRobot
+    class IRLRobot: public hardware_interface::RobotHW
     {
     private:
         using CANRobot          = irl_can_bus::CANRobot;
@@ -34,9 +36,11 @@ namespace irl_can_ros_ctrl
 
         // ros_control items
         hardware_interface::JointStateInterface rc_jsi_;
+        controller_manager::ControllerManager   rc_cm_;
 
         // General ROS interface
-        ros::Timer timer_;
+        ros::Duration period_;
+        ros::Timer    timer_;
          
     public:
         /// \brief Constructor.

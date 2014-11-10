@@ -6,6 +6,8 @@ project(irl_can_ros_ctrl)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
 #  ros_control
+  hardware_interface
+  controller_manager
   roscpp
 )
 
@@ -88,7 +90,7 @@ set(IRL_CAN_BUS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/irl_can_bus/include)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES irl_can_ros_ctrl
-  CATKIN_DEPENDS ros_control roscpp
+  CATKIN_DEPENDS ros_control roscpp controller_manager hardware_interface
 #  DEPENDS system_lib
 )
 
@@ -122,15 +124,19 @@ add_executable(irl_robot_node src/irl_robot_node.cpp)
 # add_dependencies(irl_can_ros_ctrl_node irl_can_ros_ctrl_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(irl_can_ros_ctrl
+  ${catkin_LIBRARIES}
+  ${hardware_interface_LIBRARIES}
+  ${controller_manager_LIBRARIES}
+  irl_can_bus
+)
 target_link_libraries(can_robot_proto
   ${catkin_LIBRARIES}
   irl_can_ros_ctrl
-  irl_can_bus
 )
 target_link_libraries(irl_robot_node
   ${catkin_LIBRARIES}
   irl_can_ros_ctrl
-  irl_can_bus
 )
 
 #############
