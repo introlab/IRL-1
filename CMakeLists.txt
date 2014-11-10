@@ -5,7 +5,6 @@ project(irl_can_ros_ctrl)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-#  ros_control
   hardware_interface
   controller_manager
   roscpp
@@ -90,7 +89,7 @@ set(IRL_CAN_BUS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/irl_can_bus/include)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES irl_can_ros_ctrl
-  CATKIN_DEPENDS ros_control roscpp controller_manager hardware_interface
+  CATKIN_DEPENDS roscpp controller_manager hardware_interface
 #  DEPENDS system_lib
 )
 

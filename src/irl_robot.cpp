@@ -88,6 +88,7 @@ void IRLRobot::addDevice(const ros::NodeHandle& np)
 
 void IRLRobot::control()
 {
+    ROS_DEBUG_THROTTLE(1.0, "control()");
     rc_cm_.update(ros::Time::now(), period_);
 }
 

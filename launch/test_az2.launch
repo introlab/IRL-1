@@ -1,0 +1,24 @@
+<launch>
+    <node name="irl_robot_node" 
+          pkg="irl_can_ros_ctrl"
+          type="irl_robot_node"
+          output="screen"
+    >
+        <rosparam>
+            ifaces: [can0]
+            devices: [dev1, dev2]
+            dev1:
+                can_device_type: UniDriveV2
+                can_device_id:   1
+
+                joint_name: "Joint1"
+
+            dev2:
+                can_device_type: UniDriveV2
+                can_device_id:   2
+
+                joint_name: "Joint2"
+
+        </rosparam>
+    </node>
+</launch>
