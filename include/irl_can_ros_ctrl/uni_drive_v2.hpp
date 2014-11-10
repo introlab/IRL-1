@@ -2,6 +2,7 @@
 #define UNIDRIVE_V2_HPP
 
 #include "rc_device.hpp"
+#include "rc_device_factory.hpp"
 #include <irl_can_bus/can_robot_device.hpp>
 
 namespace irl_can_ros_ctrl
@@ -143,6 +144,8 @@ namespace irl_can_ros_ctrl
         ///
         /// \param np Namespace for parameters.
         UniDriveV2(const ros::NodeHandle& np); 
+
+        static RCDevicePtr create(const ros::NodeHandle& np);
 
         virtual irl_can_bus::ThrottlingDef 
             throttled(const irl_can_bus::TimeBase& p) const;

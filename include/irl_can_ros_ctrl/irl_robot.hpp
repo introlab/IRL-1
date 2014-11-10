@@ -1,7 +1,9 @@
 #ifndef IRL_ROBOT_HPP
 #define IRL_ROBOT_HPP
 
+#include "rc_device.hpp"
 #include <irl_can_bus/can_robot.hpp>
+#include <hardware_interface/joint_state_interface.h>
 #include <ros/ros.h>
 
 namespace irl_can_ros_ctrl
@@ -15,6 +17,9 @@ namespace irl_can_ros_ctrl
 
         CANRobot                       can_robot_;
         std::vector<CANRobotDevicePtr> devices_;
+
+        // ros_control items
+        hardware_interface::JointStateInterface rc_jsi_;
 
     public:
         IRLRobot();

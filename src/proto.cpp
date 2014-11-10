@@ -1,5 +1,6 @@
 #include <irl_can_bus/can_robot.hpp>
 #include <irl_can_ros_ctrl/uni_drive_v2.hpp>
+#include <irl_can_ros_ctrl/rc_device_factory.hpp>
 #include <ros/ros.h>
 #include <signal.h>
 #include <std_msgs/Float64.h>
@@ -102,7 +103,7 @@ int main(int argc, char** argv)
         std::stringstream np_name;
         np_name << "dev_" << i;
         ros::NodeHandle nd(np, np_name.str());
-        drives_[i].reset(new UniDriveV2(nd));
+        drives_[i] = RCDeviceFactory::createDevice("UniDriveV2", nd);
         robot_->addDevice(drives_[i]);
 
         //BUG WITH BOOST 1.48:

@@ -5,12 +5,22 @@
 using namespace irl_can_ros_ctrl;
 using namespace irl_can_bus;
 
+namespace {
+    static RCDeviceCreatorHelper ch_("UniDriveV2", 
+                                     RCDeviceCreator(&UniDriveV2::create));
+}
+
 UniDriveV2::UniDriveV2(const ros::NodeHandle& np): 
     RCDevice(np),
     cmd_var_(&position_),
     cmd_conv_to_(&pos_conv_to_),
     polling_(true)
 {
+}
+
+RCDevicePtr UniDriveV2::create(const ros::NodeHandle& np)
+{
+    return RCDevicePtr(new UniDriveV2(np));
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const

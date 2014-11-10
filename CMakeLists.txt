@@ -107,7 +107,9 @@ include_directories(
 
 ## Declare a cpp library
 add_library(irl_can_ros_ctrl
+  src/irl_robot.cpp
   src/rc_device.cpp
+  src/rc_device_factory.cpp
   src/uni_drive_v2.cpp
 )
 
