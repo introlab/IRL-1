@@ -73,6 +73,8 @@ namespace irl_can_bus
             state_(STATE_DISABLED)
         {}
 
+        virtual ~CANRobotDevice() {}
+
         /// \brief Return the CAN bus device id.
         int deviceID() const { return dev_id_; }
 

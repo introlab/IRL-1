@@ -6,7 +6,6 @@
 
 namespace irl_can_ros_ctrl
 {
-    using RCDevicePtr     = std::shared_ptr<RCDevice>;
     using RCDeviceCreator = std::function<RCDevicePtr (const ros::NodeHandle&)>;
 
     class RCDeviceFactory

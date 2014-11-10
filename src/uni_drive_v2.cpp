@@ -1,4 +1,5 @@
 #include <irl_can_ros_ctrl/uni_drive_v2.hpp>
+#include <irl_can_ros_ctrl/irl_robot.hpp>
 #include <irl_can_bus/can_base_macros.h>
 #include <ros/ros.h>
 
@@ -18,9 +19,18 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
 {
 }
 
+UniDriveV2::~UniDriveV2()
+{
+}
+
 RCDevicePtr UniDriveV2::create(const ros::NodeHandle& np)
 {
     return RCDevicePtr(new UniDriveV2(np));
+}
+
+void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
+{
+    hardware_interface::JointStateInterface* jsi = &robot.jsi();
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const

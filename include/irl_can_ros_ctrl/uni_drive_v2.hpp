@@ -145,8 +145,12 @@ namespace irl_can_ros_ctrl
         /// \param np Namespace for parameters.
         UniDriveV2(const ros::NodeHandle& np); 
 
+        ~UniDriveV2();
+
         static RCDevicePtr create(const ros::NodeHandle& np);
 
+        void registerCtrlIfaces(IRLRobot& robot);
+        
         virtual irl_can_bus::ThrottlingDef 
             throttled(const irl_can_bus::TimeBase& p) const;
 

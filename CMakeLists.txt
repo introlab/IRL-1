@@ -115,6 +115,7 @@ add_library(irl_can_ros_ctrl
 
 ## Declare a cpp executable
 add_executable(can_robot_proto src/proto.cpp)
+add_executable(irl_robot_node src/irl_robot_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -122,6 +123,11 @@ add_executable(can_robot_proto src/proto.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(can_robot_proto
+  ${catkin_LIBRARIES}
+  irl_can_ros_ctrl
+  irl_can_bus
+)
+target_link_libraries(irl_robot_node
   ${catkin_LIBRARIES}
   irl_can_ros_ctrl
   irl_can_bus

@@ -9,3 +9,8 @@ RCDevice::RCDevice(const ros::NodeHandle& np)
     np.param("can_device_id", dev_id, -1);
     CANRobotDevice::deviceID(dev_id);
 }
+
+RCDevice::~RCDevice()
+{
+}
+
