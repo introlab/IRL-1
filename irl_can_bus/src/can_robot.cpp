@@ -100,7 +100,7 @@ void CANRobot::loopOnce()
         ++cycles;
     } while (!all_ready);
 
-    if (cycles > 10) {
+    if (cycles > 100) {
         CAN_LOG_DEBUG("cycles: %i", cycles);
     }
 
