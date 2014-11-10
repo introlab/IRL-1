@@ -21,4 +21,7 @@
 
         </rosparam>
     </node>
+
+    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
+
 </launch>

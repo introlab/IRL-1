@@ -48,6 +48,8 @@ IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
         ROS_WARN("~devices not defined!");
     }
 
+    hardware_interface::RobotHW::registerInterface(&rc_jsi_);
+
     can_robot_->registerCtrlCB(std::bind(&IRLRobot::control, this));
     can_robot_->start();
 
