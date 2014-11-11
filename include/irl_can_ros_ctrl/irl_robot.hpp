@@ -4,6 +4,7 @@
 #include "rc_device.hpp"
 #include <irl_can_bus/can_robot.hpp>
 #include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 #include <controller_manager/controller_manager.h>
 #include <ros/ros.h>
@@ -35,8 +36,9 @@ namespace irl_can_ros_ctrl
         std::vector<RCDevicePtr>  devices_;
 
         // ros_control items
-        hardware_interface::JointStateInterface rc_jsi_;
-        controller_manager::ControllerManager   rc_cm_;
+        hardware_interface::JointStateInterface   rc_jsi_;
+        hardware_interface::JointCommandInterface rc_jci_;
+        controller_manager::ControllerManager     rc_cm_;
 
         // General ROS interface
         ros::Duration period_;
@@ -64,6 +66,10 @@ namespace irl_can_ros_ctrl
         
         /// \brief Return a reference to the ros_control JointStateInterface.
         hardware_interface::JointStateInterface& jsi() { return rc_jsi_; }
+
+        /// \brief Return a reference to the generic ros_control 
+        ///        JointCommandInterface.
+        hardware_interface::JointCommandInterface& jci() { return rc_jci_; }
 
     private:
         /// \brief Control update loop call, registered as a callback in

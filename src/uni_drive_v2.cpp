@@ -31,13 +31,11 @@ RCDevicePtr UniDriveV2::create(const ros::NodeHandle& np)
 
 void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
 {
-    hardware_interface::JointStateInterface& jsi = robot.jsi();
     hardware_interface::JointStateHandle sh(joint_name_, 
                                             &position_,
                                             &velocity_, 
                                             &torque_);
-    jsi.registerHandle(sh);
-
+    robot.jsi().registerHandle(sh);
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const

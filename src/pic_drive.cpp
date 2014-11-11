@@ -70,19 +70,21 @@ RCDevicePtr PICDrive::create(const ros::NodeHandle& np)
 
 void PICDrive::registerCtrlIfaces(IRLRobot& robot)
 {
-    hardware_interface::JointStateInterface& jsi = robot.jsi();
     hardware_interface::JointStateHandle sh(joint_name_, 
                                             &position_,
                                             &velocity_, 
                                             &torque_);
-    jsi.registerHandle(sh);
+    robot.jsi().registerHandle(sh);
 
+    robot.jci().registerHandle(hardware_interface::JointHandle(sh,
+                                                               cmd_var_));
 }
 
 ThrottlingDef PICDrive::throttled(const TimeBase& p) const
 {
-    // No throttling for PICDrive.
-    ThrottlingDef td = {TimeBase(0), 0};
+    // UniDriveV2 limited to 1 message every 1 ms, meaning the maximum
+    // state update frequency is 250 Hz (4 messages: 4 ms).
+    ThrottlingDef td = {TimeBase(1000), 1};
     return td;
 }
 

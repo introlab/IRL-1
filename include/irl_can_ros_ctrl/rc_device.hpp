@@ -11,7 +11,6 @@ namespace irl_can_ros_ctrl
     /// \brief A base class for ros_control-managed CANRobotDevices.
     class RCDevice: public irl_can_bus::CANRobotDevice
     {
-    private:
     public:
         RCDevice(const ros::NodeHandle& n);
 
@@ -19,6 +18,11 @@ namespace irl_can_ros_ctrl
 
         /// \brief Called by the IRLRobot instance to register ros_control
         /// interfaces.
+        ///
+        /// Each driver has to register its joint handles on the robot's state
+        /// interface, and command interfaces either on the generic (JCI) one
+        /// provided by the robot or custom ones directly through the RobotHW
+        /// base class interface of IRLRobot.
         virtual void registerCtrlIfaces(IRLRobot& robot) = 0;
     };
 
