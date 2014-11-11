@@ -56,7 +56,7 @@ IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
     double p;
     np.param("period", p, 0.01);
     period_ = ros::Duration(p);
-    timer_ = np.createTimer(period_, &IRLRobot::timerCB, this);
+    rt_thread_ = std::thread(std::bind(&IRLRobot::rtThread, this));
 }
 
 void IRLRobot::addDevice(const ros::NodeHandle& np)
@@ -94,8 +94,19 @@ void IRLRobot::control()
     rc_cm_.update(ros::Time::now(), period_);
 }
 
-void IRLRobot::timerCB(const ros::TimerEvent&)
+void IRLRobot::rtThread()
 {
-    can_robot_->loopOnce();
+    while (ros::ok())
+    {
+        ros::Time start = ros::Time::now();
+        can_robot_->loopOnce();
+        ros::Duration spent = ros::Time::now() - start;
+        ros::Duration left  = period_          - spent;
+        ROS_DEBUG_THROTTLE(1.0,
+                           "Control loop spent/left: %.2f/%.2f us.",
+                           spent.toSec() * 1e6,
+                           left.toSec()  * 1e6);
+        left.sleep();
+    }
 }
 

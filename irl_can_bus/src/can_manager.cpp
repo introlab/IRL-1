@@ -180,7 +180,7 @@ bool CANManager::waitForMessages()
     return true;
 #else
     return wait_msgs_cond_.wait_for(wait_lock, 
-                                    std::chrono::seconds(10)) !=
+                                    std::chrono::seconds(1)) !=
            std::cv_status::timeout;
 #endif
 }

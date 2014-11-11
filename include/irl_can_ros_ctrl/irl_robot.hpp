@@ -45,7 +45,9 @@ namespace irl_can_ros_ctrl
 
         // General ROS interface
         ros::Duration period_;
-        ros::Timer    timer_;
+
+        // Real-time thread
+        std::thread rt_thread_;
          
     public:
         /// \brief Constructor.
@@ -100,8 +102,8 @@ namespace irl_can_ros_ctrl
         /// Called from the same thread as can_robot_->loopOnce() is called.
         void control();
 
-        /// \brief Timer callback for the main control loop.
-        void timerCB(const ros::TimerEvent&);
+        /// \brief Real-time thread loop.
+        void rtThread();
     };
 }
 
