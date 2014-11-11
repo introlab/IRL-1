@@ -36,8 +36,11 @@ namespace irl_can_ros_ctrl
         std::vector<RCDevicePtr>  devices_;
 
         // ros_control items
+        using HWI    = hardware_interface::HardwareInterface;
+        using HWIPtr = std::shared_ptr<HWI>; 
+
+        std::vector<HWIPtr>                       rc_hwis_;
         hardware_interface::JointStateInterface   rc_jsi_;
-        hardware_interface::JointCommandInterface rc_jci_;
         controller_manager::ControllerManager     rc_cm_;
 
         // General ROS interface
@@ -64,12 +67,31 @@ namespace irl_can_ros_ctrl
         /// See their respective documentation for details.
         void addDevice(const ros::NodeHandle& np);
         
-        /// \brief Return a reference to the ros_control JointStateInterface.
-        hardware_interface::JointStateInterface& jsi() { return rc_jsi_; }
+        
+        /// \brief Return, or create and register, a pointer to an instance of a
+        ///        specific ros_control interface.
+        ///
+        /// Interfaces are created on demand as we cannot determine which will
+        //// be necessary at build time (except for the JointStateInterface).
+        template <class T>
+        T* getHWI()
+        {
+            T* hwi = get<T>();
+            if (!hwi) {
+                // Create and register.
+                hwi = new T();
+                HWIPtr hwi_p(hwi);
+                rc_hwis_.push_back(hwi_p);
+                registerInterface(hwi);
+            }
 
-        /// \brief Return a reference to the generic ros_control 
-        ///        JointCommandInterface.
-        hardware_interface::JointCommandInterface& jci() { return rc_jci_; }
+            return hwi;
+        }
+
+        /// \brief Return a reference to the ros_control JointStateInterface.
+        ///
+        /// For other types of HardwareInterface, see getHWI().
+        hardware_interface::JointStateInterface& jsi() { return rc_jsi_; }
 
     private:
         /// \brief Control update loop call, registered as a callback in

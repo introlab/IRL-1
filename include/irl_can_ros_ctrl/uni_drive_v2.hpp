@@ -12,9 +12,15 @@ namespace irl_can_ros_ctrl
 
     /// \brief A CANRobotDevice for the UniDriveV2 motor driver from IntRoLab.
     ///
-    /// ROS Parameters (TODO):
-    ///  - joint_name: The name of the controlled joint.
-    ///                Default: "unidrive_v2_joint"
+    /// ROS Parameters:
+    ///  - joint_name:       The name of the controlled joint.
+    ///                      Default: "unidrive_v2_joint"
+    ///  - command_variable: The variable that is commanded on this drive
+    ///                      ("position, "velocity" or "torque")
+    ///                      Default: "position".
+    ///  - polling:          If the drive is configured in polling mode, where
+    ///                      state has to be requested at each cycle.
+    ///                      Default: true.
     ///
     class UniDriveV2: public RCDevice 
     {
@@ -134,14 +140,6 @@ namespace irl_can_ros_ctrl
         /// \brief A set of flags indicating if the drive is ready
         unsigned int ready_;
 
-        // \brief Set to true to consider torque offset changes
-        bool active_torque_offset_; 
-        // \brief Indicates if the torque offset values should be converted.
-        bool convert_torque_offset_;
-        /// \brief m in torque_offset_out = m * torque_offset_in + b
-        double torque_offset_km_;
-        /// \brief b in torque_offset_out = m * torque_offset_in + b
-        double torque_offset_kb_;
         /// \brief Indicates if the drive is in polling mode or not.
         bool polling_;
 

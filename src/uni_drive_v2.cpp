@@ -18,6 +18,28 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     polling_(true)
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v2_joint"));
+
+    std::string cmd_var;
+    np.param("command_variable", cmd_var, std::string("position"));
+
+    // TODO: Get/Set this from/to the drive.
+    if (cmd_var == "position")
+    {
+        cmd_var_ = &position_;
+        cmd_conv_to_ = &pos_conv_to_;
+    }
+    else if (cmd_var == "velocity")
+    {
+        cmd_var_ = &velocity_;
+        cmd_conv_to_ = &vel_conv_to_;
+    }
+    else if (cmd_var == "torque")
+    {
+        cmd_var_ = &torque_;
+        cmd_conv_to_ = &tqe_conv_to_;
+    }
+
+    np.param("polling", polling_, true);
 }
 
 UniDriveV2::~UniDriveV2()
@@ -36,6 +58,7 @@ void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
                                             &velocity_, 
                                             &torque_);
     robot.jsi().registerHandle(sh);
+
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const

@@ -1,6 +1,7 @@
 #include <irl_can_ros_ctrl/pic_drive.hpp>
 #include <irl_can_ros_ctrl/irl_robot.hpp>
 #include <irl_can_bus/can_base_macros.h>
+#include <hardware_interface/joint_command_interface.h>
 #include <ros/ros.h>
 
 using namespace irl_can_ros_ctrl;
@@ -76,8 +77,23 @@ void PICDrive::registerCtrlIfaces(IRLRobot& robot)
                                             &torque_);
     robot.jsi().registerHandle(sh);
 
-    robot.jci().registerHandle(hardware_interface::JointHandle(sh,
-                                                               cmd_var_));
+    hardware_interface::JointCommandInterface* jci = nullptr;
+
+    if (cmd_var_ == &position_) {
+        using HWI = hardware_interface::PositionJointInterface;
+        jci = robot.getHWI<HWI>();
+    } else if (cmd_var_ == &velocity_) {
+        using HWI = hardware_interface::VelocityJointInterface;
+        jci = robot.getHWI<HWI>();
+    } else if (cmd_var_ == &torque_) {
+        using HWI = hardware_interface::EffortJointInterface;
+        jci = robot.getHWI<HWI>();
+    }
+
+    if (jci != nullptr) {
+        jci->registerHandle(hardware_interface::JointHandle(sh,
+                                                            cmd_var_));
+    }
 }
 
 ThrottlingDef PICDrive::throttled(const TimeBase& p) const

@@ -49,7 +49,6 @@ IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
     }
 
     registerInterface(&rc_jsi_);
-    registerInterface(&rc_jci_);
 
     can_robot_->registerCtrlCB(std::bind(&IRLRobot::control, this));
     can_robot_->start();
