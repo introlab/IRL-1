@@ -6,56 +6,49 @@
     >
         <rosparam>
             ifaces: [can0]
-            devices: [dev1, dev2]
-            dev1:
-                can_device_type: PICDrive
-                can_device_id:   1
+            devices: [dir1, dir2, dir3, dir4, prop1, prop2, prop3, prop4]
 
-                joint_name: "Direction1"
-
-                command_variable: "position" # position, velocity or torque
-
-                # 1 [turn] = 2 * pi [rad]
-                # The actuator sensor gives 82000 [pulses/turn].
-                # The actuator has no gearbox.
-                # 1 [rad] = (1 / (2 * pi)) * 82000 [pulses]
-                # Convention for positive sign is different.
-                position_conv_ratio: -13050.705334
-
-                # The PID regulator cycling time is 312*256*50*1e-9 [s] (~ 250 [Hz]).
-                # Convention for positive sign is different.
-                # 1 [rad/s] = - (1 / (2 * pi)) * 82000 * (312*256*50*1e-9) [pulses/cycle]
-                velocity_conv_ratio: -52.119297
-
-                # Lifted straight from the old controller (^-1, actually)
-                torque_conv_ratio: -204.16497
-
-            dev2:
-                can_device_type: PICDrive 
-                can_device_id:   2
-
-                joint_name: "Direction2"
-
-                command_variable: "position" # position, velocity or torque
-
-                # 1 [turn] = 2 * pi [rad]
-                # The actuator sensor gives 82000 [pulses/turn].
-                # The actuator has no gearbox.
-                # 1 [rad] = (1 / (2 * pi)) * 82000 [pulses]
-                # Convention for positive sign is different.
-                position_conv_ratio: -13050.705334
-
-                # The PID regulator cycling time is 312*256*50*1e-9 [s] (~ 250 [Hz]).
-                # Convention for positive sign is different.
-                # 1 [rad/s] = - (1 / (2 * pi)) * 82000 * (312*256*50*1e-9) [pulses/cycle]
-                velocity_conv_ratio: -52.119297
-
-                # Lifted straight from the old controller (^-1, actually)
-                torque_conv_ratio: -204.16497
+            dir1:
+                can_device_id: 5
+                joint_name:    wheelRF_revolute_joint
+            dir2:
+                can_device_id: 6
+                joint_name:    wheelLF_revolute_joint
+            dir3:
+                can_device_id: 7
+                joint_name:    wheelLB_revolute_joint
+            dir4:
+                can_device_id: 8
+                joint_name:    wheelRB_revolute_joint
+            prop1:
+                can_device_id: 1
+                joint_name:    wheelRF_wheel_continuous_joint
+            prop2:
+                can_device_id: 2
+                joint_name:    wheelLF_wheel_continuous_joint
+            prop3:
+                can_device_id: 3
+                joint_name:    wheelLB_wheel_continuous_joint
+            prop4:
+                can_device_id: 4
+                joint_name:    wheelRB_wheel_continuous_joint
 
         </rosparam>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_dir.yaml" ns="dir1"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_dir.yaml" ns="dir2"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_dir.yaml" ns="dir3"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_dir.yaml" ns="dir4"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_prop.yaml" ns="prop1"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_prop.yaml" ns="prop2"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_prop.yaml" ns="prop3"/>
+        <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_prop.yaml" ns="prop4"/>
     </node>
 
     <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
+
+    <include file="$(find az2_description)/robots/upload_azimut_2.launch"/>
+    <node name="robot_state_publisher"
+          pkg="robot_state_publisher"
+          type="robot_state_publisher"/>
 
 </launch>
