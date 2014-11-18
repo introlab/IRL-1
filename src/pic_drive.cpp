@@ -92,7 +92,7 @@ void PICDrive::registerCtrlIfaces(IRLRobot& robot)
 
     if (jci != nullptr) {
         jci->registerHandle(hardware_interface::JointHandle(sh,
-                                                            cmd_var_));
+                                                            &set_point_));
     }
 }
 
@@ -113,23 +113,47 @@ void PICDrive::enable(CANManager& can)
 {
     CANRobotDevice::state(STATE_ENABLED);
 
+    ROS_DEBUG("Enabling device %i", deviceID());
+
     position_      = 0.0;
     velocity_      = 0.0;
     torque_        = 0.0;
+    set_point_     = *cmd_var_;
 }
 
 void PICDrive::enableCtrl(CANManager& can)
 {
+    ROS_INFO("Enabling control on device %i", deviceID());
     CANRobotDevice::enableCtrl(can);
 
-    // TODO: Start motor.
+    // Start the motor:
+    LaboriusMessage msg;
+    msg.msg_priority    = 0;
+    msg.msg_type        = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
+    msg.msg_cmd         = 0x80;
+    msg.msg_boot        = 0;
+    msg.msg_dest        = deviceID();
+    msg.msg_data_length = 1;
+    msg.msg_data[0]     = 1;
+    msg.msg_remote      = 0;
+    can.pushOneMessage(msg);
 }
 
 void PICDrive::disableCtrl(CANManager& can)
 {
     CANRobotDevice::disableCtrl(can);
 
-    // TODO: Stop motor.
+    // Stop the motor:
+    LaboriusMessage msg;
+    msg.msg_priority    = 0;
+    msg.msg_type        = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
+    msg.msg_cmd         = 0x80;
+    msg.msg_boot        = 0;
+    msg.msg_dest        = deviceID();
+    msg.msg_data_length = 1;
+    msg.msg_data[0]     = 0;
+    msg.msg_remote      = 1;
+    can.pushOneMessage(msg);
 }
 
 void PICDrive::disable(CANManager& can)
@@ -165,3 +189,29 @@ void PICDrive::processMsg(const LaboriusMessage& msg)
 
 }
 
+void PICDrive::sendCommand(CANManager& can)
+{
+    if (state() != STATE_CONTROL) {
+        return;
+    }
+
+    ROS_DEBUG_THROTTLE(1.0,
+                       "Set point for %i: %f",
+                       deviceID(),
+                       set_point_);
+
+    short cmd_s = set_point_ * *cmd_conv_to_;
+
+    LaboriusMessage msg;
+    msg.msg_cmd         = CAN_CMD_SETPOINT;
+    msg.msg_type        = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
+    msg.msg_priority    = 0;
+    msg.msg_boot        = 0;
+    msg.msg_remote      = 0;
+    msg.msg_dest        = deviceID();
+    msg.msg_data_length = 2;
+    msg.msg_data[0]     = 0xFF & cmd_s;
+    msg.msg_data[1]     = 0xFF & (cmd_s >> 8);
+
+    can.pushOneMessage(msg);
+}

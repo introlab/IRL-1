@@ -82,16 +82,24 @@ void CANRobot::loopOnce()
 
         all_ready = true;
         for (auto& dev: devices_) {
-            if (dev && (dev->state() == CANRobotDevice::STATE_ENABLED)) {
+            if (dev && ((dev->state() == CANRobotDevice::STATE_ENABLED)  || 
+                        (dev->state() == CANRobotDevice::STATE_CONTROL))   ) {
                 if (!dev->stateReady()) {
                     all_ready = false;
                     if (timed_out) {
-                        CAN_LOG_DEBUG("Requesting state again for %i.",
-                                      dev->deviceID());
+                        CAN_LOG_WARN("Requesting state again for %i.",
+                                     dev->deviceID());
+
                         dev->requestState(can_);
+                        if (dev->state() == CANRobotDevice::STATE_CONTROL) {
+                            dev->disableCtrl(can_);
+                        }
                     } else {
                         break;
                     }
+                } else if (dev->state() == CANRobotDevice::STATE_ENABLED) {
+                    CAN_LOG_DEBUG("Enabling control on %i", dev->deviceID());
+                    dev->enableCtrl(can_);
                 }
             }
         }

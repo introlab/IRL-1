@@ -51,6 +51,9 @@ namespace irl_can_ros_ctrl
         /// (Nm).
         float tqe_conv_from_;
 
+        /// \brief Set point coming from higher-level controllers.
+        double set_point_;
+
         /// \brief Maximum setpoin in drive units (pulses, torque)
         /// (pulses, ADC units)
         int max_setpoint_;
@@ -111,6 +114,7 @@ namespace irl_can_ros_ctrl
         void requestState(irl_can_bus::CANManager& can);
         bool stateReady();
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
+        void sendCommand(irl_can_bus::CANManager& can);
 
     };
 }

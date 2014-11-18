@@ -1,4 +1,6 @@
 <launch>
+    <include file="$(find az2_description)/robots/upload_azimut_2.launch"/>
+
     <node name="irl_robot_node" 
           pkg="irl_can_ros_ctrl"
           type="irl_robot_node"
@@ -44,11 +46,11 @@
         <rosparam file="$(find irl_can_ros_ctrl)/launch/az2_prop.yaml" ns="prop4"/>
     </node>
 
-    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
-
-    <include file="$(find az2_description)/robots/upload_azimut_2.launch"/>
     <node name="robot_state_publisher"
           pkg="robot_state_publisher"
           type="robot_state_publisher"/>
+
+    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
+    <include file="$(find irl_can_ros_ctrl)/launch/az2_ctrl.launch"/>
 
 </launch>
