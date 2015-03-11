@@ -1,0 +1,40 @@
+<launch>
+    <include file="$(find ermasa_description)/launch/upload_ermasa.launch"/>
+
+    <node name="can_robot_ermasa" 
+          pkg="irl_can_ros_ctrl"
+          type="irl_robot_node"
+          output="screen"
+    >
+        <rosparam>
+            ifaces: [can0]
+            devices: [dev3, dev2, dev1]
+
+            dev3:
+                can_device_type: UniDriveV3
+                can_device_id:   3
+                joint_name: "ERMASA_X"
+
+            dev2:
+                can_device_type: UniDriveV3
+                can_device_id:   2
+                joint_name: "ERMASA_Y"
+
+            dev1:
+                can_device_type: UniDriveV3
+                can_device_id:   1
+                joint_name: "ERMASA_Z"
+
+        </rosparam>
+    </node>
+
+
+    <node name="robot_state_publisher"
+          pkg="robot_state_publisher"
+          type="robot_state_publisher"/>
+    
+    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
+    <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
+
+
+</launch>

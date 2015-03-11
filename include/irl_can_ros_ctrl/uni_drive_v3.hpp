@@ -79,6 +79,9 @@ namespace irl_can_ros_ctrl
         /// \brief Minimum setpoint in drive units (pulses, torque)
         /// (pulses, ADC units)
         int min_setpoint_;
+
+        /// \brief Set point coming from higher-level controllers.
+        double set_point_;
         
         /// \brief Reference to the commanded variable. Position by default.
         double* cmd_var_;
@@ -179,9 +182,12 @@ namespace irl_can_ros_ctrl
         void requestState(irl_can_bus::CANManager& can);
         bool stateReady();
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
+        void sendCommand(irl_can_bus::CANManager& can);
 
         // TEMP
         double pos() const { return position_; }
+
+        
     };
 }
 
