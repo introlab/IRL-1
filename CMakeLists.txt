@@ -113,6 +113,7 @@ add_library(irl_can_ros_ctrl
   src/rc_device_factory.cpp
   src/pic_drive.cpp
   src/uni_drive_v2.cpp
+  src/uni_drive_v3.cpp
 )
 
 ## Declare a cpp executable
