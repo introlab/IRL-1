@@ -1,4 +1,5 @@
 <launch>
+
     <include file="$(find ermasa_description)/launch/upload_ermasa.launch"/>
 
     <node name="can_robot_ermasa" 
@@ -29,12 +30,15 @@
     </node>
 
 
+    
+
+    <!--
     <node name="robot_state_publisher"
           pkg="robot_state_publisher"
           type="robot_state_publisher"/>
     
     <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
     <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
-
+    -->
 
 </launch>

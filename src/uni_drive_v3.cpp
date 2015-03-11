@@ -15,7 +15,13 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
     RCDevice(np),
     cmd_var_(&position_),
     cmd_conv_to_(&pos_conv_to_),
-    polling_(true)
+    polling_(true),
+    pos_conv_to_(1.0),
+    pos_conv_from_(1.0),
+    vel_conv_to_(1.0),  
+    vel_conv_from_(1.0), 
+    tqe_conv_to_(1.0),
+    tqe_conv_from_(1.0)
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v3_joint"));
 
@@ -133,21 +139,14 @@ void UniDriveV3::enableCtrl(CANManager& can)
     CANRobotDevice::enableCtrl(can);
 
     // TODO: Start motor.
-    ROS_INFO("enableCtrl");
+    ROS_INFO("enableCtrl %i",deviceID());
 
     // Start the motor:
-/*
-    LaboriusMessage msg;
-    msg.msg_priority    = 0;
-    msg.msg_type        = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
-    msg.msg_cmd         = 0x80;
-    msg.msg_boot        = 0;
-    msg.msg_dest        = deviceID();
-    msg.msg_data_length = 1;
-    msg.msg_data[0]     = 1;
-    msg.msg_remote      = 0;
-    can.pushOneMessage(msg);
-*/
+
+
+    //TODO ENABLE MOTOR CTRL_MODE = 1
+
+    
 
 }
 
@@ -157,7 +156,7 @@ void UniDriveV3::disableCtrl(CANManager& can)
     CANRobotDevice::disableCtrl(can);
 
     // TODO: Stop motor.
-    ROS_INFO("disableCtrl");
+    ROS_INFO("disableCtrl %i",deviceID());
 
 /*
     LaboriusMessage msg;
@@ -182,6 +181,9 @@ void UniDriveV3::disable(CANManager& can)
 
 void UniDriveV3::requestState(CANManager& can)
 {
+
+    //ROS_INFO("Drive: %i STATE: %i",deviceID(),state());
+
     new_state_ = 0;
 
     // In non-polling mode, messages should come by themselves.
@@ -203,13 +205,21 @@ void UniDriveV3::requestState(CANManager& can)
 bool UniDriveV3::stateReady()
 {
 
-    //ROS_INFO("STATE_READY : %i",new_state_ == ALL_RECEIVED);
+    //ROS_INFO("DEVICE: %i, STATE_READY : %i",deviceID(), new_state_ == ALL_RECEIVED);
 
     if (new_state_ == ALL_RECEIVED) {
         return true;
     } else {
         return false;
     }
+}
+
+void UniDriveV3::calcConvRatios()
+{
+    pos_conv_to_ = 1.0 / pos_conv_from_;	
+    vel_conv_to_ = pos_conv_to_ * timebase_;
+    vel_conv_from_ = 1.0 / vel_conv_to_;
+    tqe_conv_to_ = 1.0 / tqe_conv_from_;
 }
 
 void UniDriveV3::processMsg(const LaboriusMessage& msg)
@@ -277,7 +287,7 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
         break;
 
         case POSITION_TO_RAD_VARIABLE_OFFSET:
-            pos_conv_from_ = *((float*)msg.msg_data);
+            pos_conv_from_ = *((float*)msg.msg_data);            
             ready_ |= CONV_POSITION;
         break;
 
@@ -314,10 +324,13 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
 
     //ROS_WARN("Received, new_state: %i", new_state_);
     if (state() == STATE_STARTING) {
-        ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
+        //ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
         if (ready_ == CONV_READY) {
-            ROS_DEBUG("Switching UniDriveV3 %i to ENABLED.", deviceID());
-            ROS_WARN("Switching to ENABLED");
+            
+            //MANDATORY IF WE WANT THE RIGHT UNITS...
+            calcConvRatios();
+
+            ROS_WARN("Switching UniDriveV3 %i to ENABLED.", deviceID());
             CANRobotDevice::state(STATE_ENABLED);
         }
     }
@@ -326,6 +339,7 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
 
 void UniDriveV3::sendCommand(CANManager& can)
 {
-    ROS_INFO_THROTTLE(5.0,"SendCommand : %f",set_point_);
+    //ROS_INFO("Dev: %i, SendCommand : %f",deviceID(), set_point_);
+    //MUST USE cmd_conv_to_ * set_point_;
 }
 

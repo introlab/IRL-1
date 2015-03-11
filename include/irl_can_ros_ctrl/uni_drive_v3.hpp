@@ -8,7 +8,8 @@
 namespace irl_can_ros_ctrl
 {
     /// \brief Conversion ratio from the the time base value.
-    static const double UNIDRIVE_V3_TIMEBASE_CONV_FROM = 1.28e-5;
+    ///        Timer is divided by 256 @ 30 MIPS on UniDriveV3
+    static const double UNIDRIVE_V3_TIMEBASE_CONV_FROM = (256.0 / 30000000.0);
 
     /// \brief A CANRobotDevice for the UniDriveV3 motor driver from IntRoLab.
     ///
@@ -187,6 +188,9 @@ namespace irl_can_ros_ctrl
         // TEMP
         double pos() const { return position_; }
 
+    protected:
+
+        void calcConvRatios();
         
     };
 }
