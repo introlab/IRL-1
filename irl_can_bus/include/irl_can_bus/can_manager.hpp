@@ -146,6 +146,12 @@ namespace irl_can_bus
                         unsigned int size,
                         unsigned int priority = 0);
 
+        void writeMem(unsigned int device_id,
+                        unsigned int offset,
+                        unsigned char* data,
+                        unsigned int size,
+                        unsigned int priority = 0);
+
     private:
         /// \brief Disabled copy constructor.
         CANManager(const CANManager&);

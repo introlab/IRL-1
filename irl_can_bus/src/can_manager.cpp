@@ -433,3 +433,16 @@ void CANManager::requestMem(unsigned int device_id,
     irl_can_bus::requestMem(msg, device_id, offset, size, priority);
     pushOneMessage(msg);
 }
+
+void CANManager::writeMem(unsigned int device_id,
+                            unsigned int offset,
+                            unsigned char* data,
+                            unsigned int size,
+                            unsigned int priority)
+{
+    //CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
+    LaboriusMessage msg;
+    irl_can_bus::writeMem(msg, device_id, offset, data, size, priority);
+    pushOneMessage(msg);
+}
+

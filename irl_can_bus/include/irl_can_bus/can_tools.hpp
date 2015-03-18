@@ -45,6 +45,22 @@ namespace irl_can_bus
                     unsigned int     size, 
                     unsigned char    priority = 0);
 
+    /// \brief Build a memory write message.
+    ///
+    /// \param msg       A reference to the message to be built.
+    /// \param device_id CAN device id (0-255)
+    /// \param offset    Memory offset where to start reading.
+    /// \param data      Data to write
+    /// \param size      Size to write, cannot be more than 8.
+    /// \param priority  CAN frame priority.
+    void writeMem(LaboriusMessage& msg,
+                    unsigned int     device_id,
+                    unsigned int     offset,
+                    unsigned char*   data,
+                    unsigned int     size, 
+                    unsigned char    priority = 0);
+
+
     namespace log
     {
         enum LogID

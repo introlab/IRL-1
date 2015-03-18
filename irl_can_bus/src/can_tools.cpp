@@ -67,6 +67,29 @@ void irl_can_bus::requestMem(LaboriusMessage& msg,
     msg.msg_data_length = size;
 }
 
+void irl_can_bus::writeMem(LaboriusMessage& msg,
+                             unsigned int     device_id,
+                             unsigned int     offset,
+                             unsigned char*   data,
+                             unsigned int     size, 
+                             unsigned char    priority)
+{
+    assert(size <= 8);
+
+    msg.msg_priority = priority;
+    msg.msg_type = CAN_TYPE_REQUEST_DATA;
+    msg.msg_cmd = offset;
+    msg.msg_dest = device_id;
+    msg.msg_boot = (CAN_REQUEST_RAM << 1) | (CAN_REQUEST_WRITE);
+
+    msg.msg_remote = 0;
+    msg.msg_data_length = size;
+
+    //copy data
+    memcpy(msg.msg_data,data,size);
+}
+
+
 void irl_can_bus::log::logLineFormat(LogID id, const char* format, ...)
 {
     char buffer[4096];

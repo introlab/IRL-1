@@ -4,6 +4,8 @@
 #include "rc_device.hpp"
 #include "rc_device_factory.hpp"
 #include <irl_can_bus/can_robot_device.hpp>
+#include <transmission_interface/simple_transmission.h>
+#include <transmission_interface/transmission_interface.h>
 
 namespace irl_can_ros_ctrl
 {
@@ -49,6 +51,22 @@ namespace irl_can_ros_ctrl
             TIMEBASE_VARIABLE_OFFSET        = 238
         };
 
+        enum
+        {
+            RAW_DATA_INDEX,
+            TRANS_DATA_INDEX,
+            DATA_INDEX_SIZE
+        };
+
+        ///TYPE OF COMMAND VARIABLE
+        typedef enum
+        {
+            CMD_VAR_NONE,
+            CMD_VAR_VELOCITY,
+            CMD_VAR_POSITION,
+            CMD_VAR_TORQUE
+        } CmdVarType;
+
         // ROS parameters
         std::string joint_name_;
 
@@ -84,6 +102,8 @@ namespace irl_can_ros_ctrl
         /// \brief Set point coming from higher-level controllers.
         double set_point_;
         
+        CmdVarType cmd_var_type_;
+
         /// \brief Reference to the commanded variable. Position by default.
         double* cmd_var_;
         /// \brief Reference to the commanded variable conversion ratio.
@@ -93,10 +113,23 @@ namespace irl_can_ros_ctrl
         /// \brief The drive's loop time base, used in speed conversions.
         float timebase_;
 
-        /// Internal state.
-        double position_;
-        double velocity_;
-        double torque_;
+        /// Internal state (raw, transmission).
+        double position_[DATA_INDEX_SIZE];
+        double velocity_[DATA_INDEX_SIZE];
+        double torque_[DATA_INDEX_SIZE];
+
+        /// Transmission state(ratio applied).
+        transmission_interface::SimpleTransmission  transmission_;
+
+        /// Conversion from actuator to joint
+        transmission_interface::ActuatorToJointPositionInterface act_to_jnt_pos_;
+        transmission_interface::ActuatorToJointVelocityInterface act_to_jnt_vel_;
+        transmission_interface::ActuatorToJointEffortInterface act_to_jnt_eff_;
+
+        transmission_interface::ActuatorData actuator_data_;
+        transmission_interface::JointData joint_data_;
+                       
+
         float torque_offset_; // Torque offset to send to the drive.
         float pos_offset_; // Position offset, in radians.
         float admittance_m_; // Inertia
@@ -184,9 +217,6 @@ namespace irl_can_ros_ctrl
         bool stateReady();
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
         void sendCommand(irl_can_bus::CANManager& can);
-
-        // TEMP
-        double pos() const { return position_; }
 
     protected:
 

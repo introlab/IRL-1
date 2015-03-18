@@ -3,6 +3,8 @@
 #include <irl_can_bus/can_base_macros.h>
 #include <ros/ros.h>
 
+
+
 using namespace irl_can_ros_ctrl;
 using namespace irl_can_bus;
 
@@ -13,7 +15,8 @@ namespace {
 
 UniDriveV3::UniDriveV3(const ros::NodeHandle& np): 
     RCDevice(np),
-    cmd_var_(&position_),
+    cmd_var_type_(CMD_VAR_POSITION),
+    cmd_var_(&position_[TRANS_DATA_INDEX]),
     cmd_conv_to_(&pos_conv_to_),
     polling_(true),
     pos_conv_to_(1.0),
@@ -21,33 +24,40 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
     vel_conv_to_(1.0),  
     vel_conv_from_(1.0), 
     tqe_conv_to_(1.0),
-    tqe_conv_from_(1.0)
+    tqe_conv_from_(1.0),
+    transmission_(1.0) //DEFAULT TRANSMISSION 1:1
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v3_joint"));
 
     std::string cmd_var;
     np.param("command_variable", cmd_var, std::string("position"));
 
+    double transmission_ratio = 1.0;
+    np.param("transmission_ratio", transmission_ratio, 1.0);
+    transmission_ = transmission_interface::SimpleTransmission(transmission_ratio);
+
     // TODO: Get/Set this from/to the drive.
     if (cmd_var == "position")
     {
-        cmd_var_ = &position_;
+        cmd_var_ = &position_[TRANS_DATA_INDEX];
         cmd_conv_to_ = &pos_conv_to_;
+        cmd_var_type_ = CMD_VAR_POSITION;
     }
     else if (cmd_var == "velocity")
     {
-        cmd_var_ = &velocity_;
+        cmd_var_ = &velocity_[TRANS_DATA_INDEX];
         cmd_conv_to_ = &vel_conv_to_;
+        cmd_var_type_ = CMD_VAR_VELOCITY;
     }
     else if (cmd_var == "torque")
     {
-        cmd_var_ = &torque_;
+        cmd_var_ = &torque_[TRANS_DATA_INDEX];
         cmd_conv_to_ = &tqe_conv_to_;
+        cmd_var_type_ = CMD_VAR_TORQUE;
     }
 
     np.param("polling", polling_, true);
-
-    ROS_INFO("Joint name : %s, type: %s, polling: %i",joint_name_.c_str(), cmd_var.c_str(), polling_);
+    ROS_INFO("Joint name : %s, type: %s, polling: %i ratio: %f",joint_name_.c_str(), cmd_var.c_str(), polling_, transmission_ratio);
 }
 
 UniDriveV3::~UniDriveV3()
@@ -63,31 +73,56 @@ RCDevicePtr UniDriveV3::create(const ros::NodeHandle& np)
 void UniDriveV3::registerCtrlIfaces(IRLRobot& robot)
 {
 
+    //TRANSMISSION CONVERSION (RAW DATA)    
+    actuator_data_.position.push_back(&position_[RAW_DATA_INDEX]);
+    actuator_data_.velocity.push_back(&velocity_[RAW_DATA_INDEX]);
+    actuator_data_.effort.push_back(&torque_[RAW_DATA_INDEX]);
+
+    joint_data_.position.push_back(&position_[TRANS_DATA_INDEX]);
+    joint_data_.velocity.push_back(&velocity_[TRANS_DATA_INDEX]);
+    joint_data_.effort.push_back(&torque_[TRANS_DATA_INDEX]);
+
+    act_to_jnt_pos_.registerHandle(transmission_interface::ActuatorToJointPositionHandle("trans_position", &transmission_, actuator_data_, joint_data_));
+    act_to_jnt_vel_.registerHandle(transmission_interface::ActuatorToJointVelocityHandle("trans_velocity", &transmission_, actuator_data_, joint_data_));
+    act_to_jnt_eff_.registerHandle(transmission_interface::ActuatorToJointEffortHandle("trans_effort", &transmission_, actuator_data_, joint_data_));
+
+
     //JOINT STATE INTERFACE
+    //AFTER TRANSMISSION...
     hardware_interface::JointStateHandle sh(joint_name_, 
-                                            &position_,
-                                            &velocity_, 
-                                            &torque_);
+                                            &position_[TRANS_DATA_INDEX],
+                                            &velocity_[TRANS_DATA_INDEX], 
+                                            &torque_[TRANS_DATA_INDEX]);
     robot.jsi().registerHandle(sh);
 
 
     //JOINT COMMAND INTERFACE    
     hardware_interface::JointCommandInterface* jci = nullptr;
 
-    if (cmd_var_ == &position_) {
+    if (cmd_var_type_ == CMD_VAR_POSITION)
+    {
         using HWI = hardware_interface::PositionJointInterface;
         jci = robot.getHWI<HWI>();
-    } else if (cmd_var_ == &velocity_) {
+    }    
+    else if (cmd_var_type_ == CMD_VAR_VELOCITY)
+    {
         using HWI = hardware_interface::VelocityJointInterface;
         jci = robot.getHWI<HWI>();
-    } else if (cmd_var_ == &torque_) {
+    }
+    else if (cmd_var_type_ == CMD_VAR_TORQUE)
+    {
         using HWI = hardware_interface::EffortJointInterface;
         jci = robot.getHWI<HWI>();
     }
-
+    
+ 
     if (jci != nullptr) {
         jci->registerHandle(hardware_interface::JointHandle(sh,
                                                             &set_point_));
+    }
+    else
+    {
+        ROS_ERROR("JointCommandInterface unknown for device : %i",deviceID());
     }
 
 }
@@ -111,9 +146,15 @@ void UniDriveV3::enable(CANManager& can)
     req_state_ = STATE_ENABLED;
     CANRobotDevice::state(STATE_STARTING);
 
-    position_      = 0.0;
-    velocity_      = 0.0;
-    torque_        = 0.0;
+    position_[RAW_DATA_INDEX]      = 0.0;
+    velocity_[RAW_DATA_INDEX]      = 0.0;
+    torque_[RAW_DATA_INDEX]        = 0.0;
+
+    position_[TRANS_DATA_INDEX]      = 0.0;
+    velocity_[TRANS_DATA_INDEX]      = 0.0;
+    torque_[TRANS_DATA_INDEX]        = 0.0;
+
+
     torque_offset_ = 0.0;
     pos_offset_    = 0.0;
 
@@ -142,12 +183,9 @@ void UniDriveV3::enableCtrl(CANManager& can)
     ROS_INFO("enableCtrl %i",deviceID());
 
     // Start the motor:
-
-
-    //TODO ENABLE MOTOR CTRL_MODE = 1
-
-    
-
+    // ENABLE MOTOR CTRL_MODE = 1, Will do init phase
+    unsigned char mode = 1;
+    can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char));   
 }
 
 void UniDriveV3::disableCtrl(CANManager& can)
@@ -155,22 +193,14 @@ void UniDriveV3::disableCtrl(CANManager& can)
     req_state_ = STATE_ENABLED;
     CANRobotDevice::disableCtrl(can);
 
-    // TODO: Stop motor.
+
     ROS_INFO("disableCtrl %i",deviceID());
 
-/*
-    LaboriusMessage msg;
-    msg.msg_priority    = 0;
-    msg.msg_type        = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
-    msg.msg_cmd         = 0x80;
-    msg.msg_boot        = 0;
-    msg.msg_dest        = deviceID();
-    msg.msg_data_length = 1;
-    msg.msg_data[0]     = 1;
-    msg.msg_remote      = 0;
-    can.pushOneMessage(msg);
-*/
 
+    // Stop motor.
+    // ENABLE MOTOR CTRL_MODE = 0
+    unsigned char mode = 0;
+    can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char)); 
 }
 
 void UniDriveV3::disable(CANManager& can)
@@ -207,7 +237,12 @@ bool UniDriveV3::stateReady()
 
     //ROS_INFO("DEVICE: %i, STATE_READY : %i",deviceID(), new_state_ == ALL_RECEIVED);
 
-    if (new_state_ == ALL_RECEIVED) {
+    if (new_state_ == ALL_RECEIVED) 
+    {
+        //Actuator to joint propagation
+        act_to_jnt_pos_.propagate();
+        act_to_jnt_vel_.propagate();
+        act_to_jnt_eff_.propagate();
         return true;
     } else {
         return false;
@@ -260,7 +295,7 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
         case SPEED_VARIABLE_OFFSET:
             if (ready_ == CONV_READY) 
             {
-                velocity_ = vel_conv_from_ * *((int*)msg.msg_data);
+                velocity_[RAW_DATA_INDEX] = vel_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= VEL_RECEIVED;
             }
         break;
@@ -268,7 +303,7 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
         case POSITION_VARIABLE_OFFSET:
             if (ready_ == CONV_READY)
             {
-                position_ = pos_conv_from_ * *((int*)msg.msg_data);
+                position_[RAW_DATA_INDEX] = pos_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= POS_RECEIVED;
             }
         break;
@@ -276,7 +311,7 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
         case TORQUE_VARIABLE_OFFSET:
             if (ready_ == CONV_READY)
             {
-                torque_ = tqe_conv_from_ * *((int*)msg.msg_data);
+                torque_[RAW_DATA_INDEX] = tqe_conv_from_ * *((int*)msg.msg_data);
                 new_state_ |= TQE_RECEIVED;
             }
         break;

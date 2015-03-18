@@ -8,15 +8,18 @@
             joint: ERMASA_Y
         zaxis_pos_ctrl:
             type:  position_controllers/JointPositionController
-            joint: ERMASA_Z
-        
+            joint: ERMASA_Z        
+        ermasa_linear_ctrl:
+            type: ermasa_ctrl/LinearController
+            joint_x: ERMASA_X
+            joint_y: ERMASA_Y
+            joint_z: ERMASA_Z
+
     </rosparam>
     <node name="ermasa_ctrl_spawner" 
           pkg="controller_manager" 
           type="spawner"
-          args="xaxis_pos_ctrl
-                yaxis_pos_ctrl 
-                zaxis_pos_ctrl"
+          args="xaxis_pos_ctrl yaxis_pos_ctrl zaxis_pos_ctrl"
           output="screen"
     />
 </launch>
