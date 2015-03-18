@@ -2,18 +2,18 @@
     <rosparam>
         xaxis_pos_ctrl:
             type:  position_controllers/JointPositionController
-            joint: ERMASA_X
+            joint: ermasa_x_linear_joint
         yaxis_pos_ctrl:
             type:  position_controllers/JointPositionController
-            joint: ERMASA_Y
+            joint: ermasa_y_linear_joint
         zaxis_pos_ctrl:
             type:  position_controllers/JointPositionController
-            joint: ERMASA_Z        
+            joint: ermasa_z_linear_joint        
         ermasa_linear_ctrl:
             type: ermasa_ctrl/LinearController
-            joint_x: ERMASA_X
-            joint_y: ERMASA_Y
-            joint_z: ERMASA_Z
+            joint_x: ermasa_x_linear_joint
+            joint_y: ermasa_y_linear_joint
+            joint_z: ermasa_z_linear_joint
 
     </rosparam>
     <node name="ermasa_ctrl_spawner" 

@@ -14,27 +14,31 @@
             dev3:
                 can_device_type: UniDriveV3
                 can_device_id:   3
-                joint_name: "ERMASA_X"
+                joint_name: "ermasa_x_linear_joint"
                 transmission_ratio: 69.81317007977319
             dev2:
                 can_device_type: UniDriveV3
                 can_device_id:   2
-                joint_name: "ERMASA_Y"
+                joint_name: "ermasa_y_linear_joint"
                 transmission_ratio: 69.81317007977319
             dev1:
                 can_device_type: UniDriveV3
                 can_device_id:   1
-                joint_name: "ERMASA_Z"
+                joint_name: "ermasa_z_linear_joint"
                 transmission_ratio: 69.81317007977319
         </rosparam>
     </node>
   
+
     <node name="robot_state_publisher"
           pkg="robot_state_publisher"
           type="robot_state_publisher"/>
     
-    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
-    <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
     
+    <include file="$(find joint_state_controller)/joint_state_controller.launch"/>
+
+ 
+    <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
+  
 
 </launch>
