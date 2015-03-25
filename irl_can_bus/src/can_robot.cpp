@@ -37,10 +37,10 @@ void CANRobot::start()
 
 void CANRobot::stop()
 {    
-    CAN_LOG_DEBUG("CANRobot::stop()");
+    CAN_LOG_INFO("CANRobot::stop()");
     can_.stop();
     running_ = false;
-    CAN_LOG_DEBUG("CANRobot::stop() done");
+    CAN_LOG_INFO("CANRobot::stop() done");
 }
 
 void CANRobot::loopOnce()

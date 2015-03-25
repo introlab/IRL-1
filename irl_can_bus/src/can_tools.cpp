@@ -5,6 +5,7 @@
 #include <cstdarg>
 #include <cassert>
 
+
 namespace {
     static irl_can_bus::log::LoggerFunction logger_fun_ =
         &irl_can_bus::log::loggerFunctionDefault;

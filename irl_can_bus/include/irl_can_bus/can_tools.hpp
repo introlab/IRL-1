@@ -66,6 +66,7 @@ namespace irl_can_bus
         enum LogID
         {
             CAN_LOG_DEBUG = 0,
+            CAN_LOG_INFO,
             CAN_LOG_WARN,
             CAN_LOG_ERROR
         };
@@ -77,6 +78,9 @@ namespace irl_can_bus
             switch (id) {
                 case CAN_LOG_DEBUG:
                     return "DEBUG";
+                    break;
+                case CAN_LOG_INFO:
+                    return "INFO";
                     break;
                 case CAN_LOG_WARN:
                     return "WARNING";
@@ -103,6 +107,7 @@ namespace irl_can_bus
 #define CAN_LOG_DEBUG(...)
 #endif
 
+#define CAN_LOG_INFO(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_INFO, __VA_ARGS__);
 #define CAN_LOG_WARN(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_WARN, __VA_ARGS__);
 #define CAN_LOG_ERROR(...) irl_can_bus::log::logLineFormat(irl_can_bus::log::CAN_LOG_ERROR, __VA_ARGS__);
 

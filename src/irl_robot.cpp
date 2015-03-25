@@ -96,6 +96,7 @@ void IRLRobot::control()
 
 void IRLRobot::rtThread()
 {
+    ROS_INFO("enter rtThread()");
     while (ros::ok())
     {
         ros::Time start = ros::Time::now();
@@ -108,5 +109,7 @@ void IRLRobot::rtThread()
                            left.toSec()  * 1e6);
         left.sleep();
     }
+
+    ROS_INFO("terminate rtThread()");
 }
 
