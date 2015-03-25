@@ -25,16 +25,26 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
     vel_conv_from_(1.0), 
     tqe_conv_to_(1.0),
     tqe_conv_from_(1.0),
-    transmission_(1.0) //DEFAULT TRANSMISSION 1:1
+    transmission_pos_(1.0), //DEFAULT TRANSMISSION 1:1
+    transmission_vel_(1.0), //DEFAULT TRANSMISSION 1:1
+    transmission_eff_(1.0)  //DEFAULT TRANSMISSION 1:1
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v3_joint"));
 
     std::string cmd_var;
     np.param("command_variable", cmd_var, std::string("position"));
 
+    //TRANSMISSIONS...
     double transmission_ratio = 1.0;
-    np.param("transmission_ratio", transmission_ratio, 1.0);
-    transmission_ = transmission_interface::SimpleTransmission(transmission_ratio);
+    np.param("pos_transmission_ratio", transmission_ratio, 1.0);
+    transmission_pos_ = transmission_interface::SimpleTransmission(transmission_ratio);
+
+    np.param("vel_transmission_ratio", transmission_ratio, 1.0);
+    transmission_vel_ = transmission_interface::SimpleTransmission(transmission_ratio);
+
+    np.param("eff_transmission_ratio", transmission_ratio, 1.0);
+    transmission_eff_ = transmission_interface::SimpleTransmission(transmission_ratio);
+
 
     // TODO: Get/Set this from/to the drive.
     if (cmd_var == "position")
@@ -57,7 +67,13 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
     }
 
     np.param("polling", polling_, true);
-    ROS_INFO("Joint name : %s, type: %s, polling: %i ratio: %f",joint_name_.c_str(), cmd_var.c_str(), polling_, transmission_ratio);
+    ROS_INFO("Joint name : %s, type: %s, polling: %i ratios: %f, %f, %f",
+        joint_name_.c_str(), 
+        cmd_var.c_str(), 
+        polling_, 
+        transmission_pos_.getActuatorReduction() ,
+        transmission_vel_.getActuatorReduction() ,
+        transmission_eff_.getActuatorReduction() );
 }
 
 UniDriveV3::~UniDriveV3()
@@ -82,9 +98,9 @@ void UniDriveV3::registerCtrlIfaces(IRLRobot& robot)
     joint_data_.velocity.push_back(&velocity_[TRANS_DATA_INDEX]);
     joint_data_.effort.push_back(&torque_[TRANS_DATA_INDEX]);
 
-    act_to_jnt_pos_.registerHandle(transmission_interface::ActuatorToJointPositionHandle("trans_position", &transmission_, actuator_data_, joint_data_));
-    act_to_jnt_vel_.registerHandle(transmission_interface::ActuatorToJointVelocityHandle("trans_velocity", &transmission_, actuator_data_, joint_data_));
-    act_to_jnt_eff_.registerHandle(transmission_interface::ActuatorToJointEffortHandle("trans_effort", &transmission_, actuator_data_, joint_data_));
+    act_to_jnt_pos_.registerHandle(transmission_interface::ActuatorToJointPositionHandle("trans_position", &transmission_pos_, actuator_data_, joint_data_));
+    act_to_jnt_vel_.registerHandle(transmission_interface::ActuatorToJointVelocityHandle("trans_velocity", &transmission_vel_, actuator_data_, joint_data_));
+    act_to_jnt_eff_.registerHandle(transmission_interface::ActuatorToJointEffortHandle("trans_effort", &transmission_eff_, actuator_data_, joint_data_));
 
 
     //JOINT STATE INTERFACE

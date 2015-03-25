@@ -119,7 +119,9 @@ namespace irl_can_ros_ctrl
         double torque_[DATA_INDEX_SIZE];
 
         /// Transmission state(ratio applied).
-        transmission_interface::SimpleTransmission  transmission_;
+        transmission_interface::SimpleTransmission  transmission_pos_;
+        transmission_interface::SimpleTransmission  transmission_vel_;
+        transmission_interface::SimpleTransmission  transmission_eff_;
 
         /// Conversion from actuator to joint
         transmission_interface::ActuatorToJointPositionInterface act_to_jnt_pos_;

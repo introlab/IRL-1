@@ -15,17 +15,23 @@
                 can_device_type: UniDriveV3
                 can_device_id:   3
                 joint_name: "ermasa_x_linear_joint"
-                transmission_ratio: 69.81317007977319
+                pos_transmission_ratio: 209.43951023931956
+                vel_transmission_ratio: 209.43951023931956
+                eff_transmission_ration: 3.0
             dev2:
                 can_device_type: UniDriveV3
                 can_device_id:   2
                 joint_name: "ermasa_y_linear_joint"
-                transmission_ratio: 69.81317007977319
+                pos_transmission_ratio: -69.81317007977319
+                vel_transmission_ratio: -69.81317007977319
+                eff_transmission_ration: -1.0
             dev1:
                 can_device_type: UniDriveV3
                 can_device_id:   1
                 joint_name: "ermasa_z_linear_joint"
-                transmission_ratio: 69.81317007977319
+                pos_transmission_ratio: 69.81317007977319
+                vel_transmission_ratio: 69.81317007977319
+                eff_transmission_ration: 1.0
         </rosparam>
     </node>
   
@@ -39,6 +45,16 @@
 
  
     <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
+    
+    <!--
+    <node name="ermasa_rviz" 
+          pkg="rqt_rviz"
+          type="rqt_rviz"
+          output="screen"
+    />
+    -->
+
+    
   
 
 </launch>
