@@ -11,7 +11,10 @@
 #include <cassert>
 #include <cerrno>
 
+#include <linux/can/error.h>
+
 using namespace irl_can_bus;
+
 
 CANManager::CANManager(const std::vector<std::string> if_names): 
     running_(false),
@@ -56,6 +59,11 @@ CANManager::CANManager(const std::vector<std::string> if_names):
         }
 
         fcntl(fd, F_SETFL, O_NONBLOCK);
+
+        //Enable error receiving
+        can_err_mask_t err_mask = 0x000001FF; //All errors
+        setsockopt(fd, SOL_CAN_RAW, CAN_RAW_ERR_FILTER,&err_mask, sizeof(err_mask));
+
         
         struct ifreq ifr;
         memset(&ifr, 0, sizeof(struct ifreq));
@@ -98,8 +106,10 @@ CANManager::CANManager(const std::vector<std::string> if_names):
 
 CANManager::~CANManager()
 {
+    std::cerr<<"~CANManager"<<std::endl;
     stop();
     main_thread_.join();
+    sched_thread_.join();
     for (auto& i: fds_) { 
         close(i);
     }
@@ -138,7 +148,21 @@ void CANManager::processFrame(const CANFrame& frame)
         QueueLock lock(msg_recv_queue_mtx_);
         if (msg_recv_queue_.size() < MAX_MSG_QUEUE_SIZE) {
             CANFramePtr frame_ptr(new CANFrame(frame));
-            msg_recv_queue_.push(frame_ptr);
+    
+            //Look for error frames
+            if (frame_ptr->can_id & CAN_ERR_FLAG)
+            {
+                CAN_LOG_WARN("ERROR FRAME CAUGHT id: %x data %x %x %x %x",
+                    frame_ptr->can_id, 
+                    frame_ptr->data[0],
+                    frame_ptr->data[1],
+                    frame_ptr->data[2],
+                    frame_ptr->data[3]);
+            }
+            else
+            {
+                msg_recv_queue_.push(frame_ptr);
+            }
         } else {
             CAN_LOG_WARN("Reception queue full!");
         }
@@ -275,7 +299,7 @@ void CANManager::mainLoop()
         // Internal events pipe, just flush the buffer if there's anything.
         if (pollfds[0].revents & POLLIN) {
 
-            //CAN_LOG_DEBUG("Got internal event.");
+            CAN_LOG_DEBUG("Got internal event.");
             char v;
             while (read(fds_[0], &v, sizeof(v)) == sizeof(v));
         }
@@ -331,6 +355,8 @@ void CANManager::mainLoop()
             }
         }
     };
+
+    CAN_LOG_WARN("CANManager main loop done");
 }
 
 void CANManager::throttling(int dev_id, const ThrottlingDef& td)
@@ -421,6 +447,8 @@ void CANManager::schedLoop()
             std::this_thread::sleep_for(rem);
         }
     }
+
+    CAN_LOG_WARN("CANManager sched loop done");
 }
 
 void CANManager::requestMem(unsigned int device_id,

@@ -7,6 +7,13 @@ CANRobot::CANRobot(const std::vector<std::string>& ifaces):
 {
 }
 
+
+CANRobot::~CANRobot()
+{
+    std::cerr<<"~CANRobot"<<std::endl;
+    stop();
+}
+
 void CANRobot::addDevice(const CANRobotDevicePtr& dev)
 {
     int dev_id = dev->deviceID();
@@ -38,6 +45,13 @@ void CANRobot::start()
 void CANRobot::stop()
 {    
     CAN_LOG_INFO("CANRobot::stop()");
+
+    for (auto dev: devices_) {
+        if (dev) {
+            dev->disable(can_);
+        }
+    }
+
     can_.stop();
     running_ = false;
     CAN_LOG_INFO("CANRobot::stop() done");

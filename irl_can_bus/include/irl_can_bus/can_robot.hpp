@@ -46,6 +46,8 @@ namespace irl_can_bus
         /// \param ifaces A vector of names of CAN interfaces to use. 
         CANRobot(const std::vector<std::string>& ifaces);
 
+        ~CANRobot();
+
         /// \brief Return a reference to the CANManager for this robot.
         CANManager&       canManager()       { return can_; }
         const CANManager& canManager() const { return can_; }

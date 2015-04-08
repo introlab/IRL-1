@@ -4,7 +4,7 @@
 using namespace irl_can_ros_ctrl;
 
 IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
-    rc_cm_(this)
+    rc_cm_(this), running_(false)
 {
     std::vector<std::string> ifaces;
     if (np.hasParam("ifaces")) {
@@ -56,7 +56,26 @@ IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
     double p;
     np.param("period", p, 0.01);
     period_ = ros::Duration(p);
+    running_ = true;
     rt_thread_ = std::thread(std::bind(&IRLRobot::rtThread, this));
+}
+
+IRLRobot::~IRLRobot()
+{
+    std::cerr<<"~IRLRobot"<<std::endl;
+    stop();
+}
+
+void IRLRobot::stop()
+{
+    if (running_)
+    {
+        running_ = false;
+        can_robot_->stop();
+
+        //wait for rtThread
+        rt_thread_.join();
+    }
 }
 
 void IRLRobot::addDevice(const ros::NodeHandle& np)
@@ -97,7 +116,7 @@ void IRLRobot::control()
 void IRLRobot::rtThread()
 {
     ROS_INFO("enter rtThread()");
-    while (ros::ok())
+    while (ros::ok() && running_)
     {
         ros::Time start = ros::Time::now();
         can_robot_->loopOnce();

@@ -48,6 +48,8 @@ namespace irl_can_ros_ctrl
 
         // Real-time thread
         std::thread rt_thread_;
+
+        bool running_;
          
     public:
         /// \brief Constructor.
@@ -55,6 +57,9 @@ namespace irl_can_ros_ctrl
         /// \param n  Node handle for topics and services.
         /// \param np Node handle for parameters.
         IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np);
+
+
+        ~IRLRobot();
 
         /// \brief Create and add a new device based on its ROS namespace
         ///        parameters.
@@ -70,6 +75,8 @@ namespace irl_can_ros_ctrl
         void addDevice(const ros::NodeHandle& np);
         
         
+        void stop();
+
         /// \brief Return, or create and register, a pointer to an instance of a
         ///        specific ros_control interface.
         ///
