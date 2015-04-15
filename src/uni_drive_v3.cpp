@@ -390,7 +390,32 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
 
 void UniDriveV3::sendCommand(CANManager& can)
 {
-    //ROS_INFO("Dev: %i, SendCommand : %f",deviceID(), set_point_);
-    //MUST USE cmd_conv_to_ * set_point_;
+    
+    //MUST USE cmd_conv_to_ * set_point_ * transmission_ratio;
+    //cmd_conv_to_ is initialized according to ratios and type (position, vel, eff)
+    //set_point_ is modified by the command interface
+    
+    int setPointConv = 0;
+
+    if (cmd_var_type_ == CMD_VAR_POSITION)
+    {
+        setPointConv = (int) (transmission_pos_.getActuatorReduction() *  *cmd_conv_to_ * set_point_);
+    }
+    else if (cmd_var_type_ == CMD_VAR_VELOCITY)
+    {
+        setPointConv = (int) (transmission_vel_.getActuatorReduction() *  *cmd_conv_to_ * set_point_);
+    }
+    else if (cmd_var_type_ == CMD_VAR_TORQUE)
+    {
+        setPointConv = (int) (transmission_eff_.getActuatorReduction() *  *cmd_conv_to_ * set_point_);
+    }
+    else
+    {
+        ROS_ERROR("Unhandled cmd_var_type_ : %i",cmd_var_type_);
+        return;
+    }
+
+    //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
+    can.writeMem(deviceID(), SETPOINT_VARIABLE_OFFSET, (unsigned char*) &setPointConv, sizeof(int)); 
 }
 

@@ -108,11 +108,14 @@ CANManager::~CANManager()
 {
     std::cerr<<"~CANManager"<<std::endl;
     stop();
-    main_thread_.join();
-    sched_thread_.join();
+
+    //Close all fds
     for (auto& i: fds_) { 
         close(i);
     }
+    main_thread_.join();
+    sched_thread_.join();
+ 
 }
 
 void CANManager::pushInternalEvent(const char v)

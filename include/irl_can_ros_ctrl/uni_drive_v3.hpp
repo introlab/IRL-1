@@ -153,6 +153,7 @@ namespace irl_can_ros_ctrl
                            VEL_RECEIVED | 
                            TQE_RECEIVED | 
                            STA_RECEIVED
+
         };
 		/// \brief Indicate if a new state has been obtained from the actuator.
 		unsigned int new_state_;

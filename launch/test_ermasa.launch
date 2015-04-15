@@ -40,10 +40,10 @@
           pkg="robot_state_publisher"
           type="robot_state_publisher"/>
 
-    <!--     
+        
     <include file="$(find joint_state_controller)/joint_state_controller.launch"/>      
     <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
-    -->
+    
 
     <!--
     <node name="ermasa_rviz" 
