@@ -12,6 +12,7 @@ CANRobot::~CANRobot()
 {
     std::cerr<<"~CANRobot"<<std::endl;
     stop();
+    std::cerr<<"~CANRobot done!"<<std::endl;  
 }
 
 void CANRobot::addDevice(const CANRobotDevicePtr& dev)
@@ -51,24 +52,81 @@ void CANRobot::stop()
             dev->disable(can_);
         }
     }
-
-    can_.stop();
     running_ = false;
+    can_.stop();    
     CAN_LOG_INFO("CANRobot::stop() done");
 }
 
 void CANRobot::loopOnce()
 {
+    ///Request state
     int  enabled_count = 0;
     for (auto& dev: devices_) {
         if (dev) {
-            if (dev->state() != CANRobotDevice::STATE_DISABLED) {
+            if (dev->state() != CANRobotDevice::STATE_DISABLED) 
+            {
+                //CAN_LOG_INFO("REQUESTING STATE FOR DEV : %i",dev->deviceID());
                 dev->requestState(can_);
                 ++enabled_count;
             }
         }
     }
 
+    ///Read messages
+    LaboriusMessage msg_in;
+    while (can_.popOneMessage(msg_in)) {
+        //CAN_LOG_WARN("Got one message from %i.",
+        //              msg_in.msg_dest);
+        CANRobotDevicePtr& dev = devices_[msg_in.msg_dest];
+        if (dev && dev->state() != CANRobotDevice::STATE_DISABLED) {
+            dev->processMsg(msg_in);
+        }
+    }
+
+    bool all_ready = true;
+    for (auto& dev: devices_) 
+    {
+        if (dev && ((dev->state() == CANRobotDevice::STATE_ENABLED)  || 
+                    (dev->state() == CANRobotDevice::STATE_CONTROL))   ) 
+        {
+            if (!dev->stateReady()) 
+            {
+                all_ready = false;
+                
+                //CAN_LOG_WARN("NOT READY, Will request state again for %i.",
+                //             dev->deviceID());
+
+                if (dev->state() == CANRobotDevice::STATE_CONTROL) 
+                {
+                    dev->disableCtrl(can_);                   
+                }
+            } 
+            else if (dev->state() == CANRobotDevice::STATE_ENABLED) 
+            {
+                CAN_LOG_DEBUG("READY, Enabling control on %i", dev->deviceID());
+                dev->enableCtrl(can_);
+            }
+        }
+    }
+    
+    if (all_ready)
+    {
+        for (const auto& cb : ctrl_cbs_) {
+            cb();
+        }
+        
+        for (auto dev: devices_) {
+            if (dev && (dev->state() == CANRobotDevice::STATE_CONTROL)) {
+                dev->sendCommand(can_);
+            }
+        }
+    }
+    else
+    {
+        //CAN_LOG_WARN("WAITING FOR ALL MODULES READY");        
+    }
+
+#if 0
     bool all_ready = false;
     bool timed_out = false;
     int cycles = 0;
@@ -82,12 +140,12 @@ void CANRobot::loopOnce()
         }
 
         if (!running_)
-            return; // Stop has been requested.
+            return;//return // Stop has been requested.
 
         LaboriusMessage msg_in;
         while (can_.popOneMessage(msg_in)) {
-            //CAN_LOG_DEBUG("Got one message from %i.",
-            //              msg_in.msg_dest);
+            CAN_LOG_WARN("Got one message from %i.",
+                          msg_in.msg_dest);
             CANRobotDevicePtr& dev = devices_[msg_in.msg_dest];
             if (dev && dev->state() != CANRobotDevice::STATE_DISABLED) {
                 dev->processMsg(msg_in);
@@ -101,7 +159,7 @@ void CANRobot::loopOnce()
                 if (!dev->stateReady()) {
                     all_ready = false;
                     if (timed_out) {
-                        CAN_LOG_WARN("Requesting state again for %i.",
+                        CAN_LOG_WARN("NOT READY, Requesting state again for %i.",
                                      dev->deviceID());
 
                         dev->requestState(can_);
@@ -112,7 +170,7 @@ void CANRobot::loopOnce()
                         break;
                     }
                 } else if (dev->state() == CANRobotDevice::STATE_ENABLED) {
-                    CAN_LOG_DEBUG("Enabling control on %i", dev->deviceID());
+                    CAN_LOG_DEBUG("READY, Enabling control on %i", dev->deviceID());
                     dev->enableCtrl(can_);
                 }
             }
@@ -120,6 +178,9 @@ void CANRobot::loopOnce()
 
         // TODO: Detect if something has timed out.
         ++cycles;
+
+        //if (cycles > 2)
+          //  break;
     } while (!all_ready);
 
     if (cycles > 100) {
@@ -135,5 +196,7 @@ void CANRobot::loopOnce()
             dev->sendCommand(can_);
         }
     }
+
+    #endif
 }
 

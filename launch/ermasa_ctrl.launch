@@ -19,7 +19,7 @@
     <node name="ermasa_ctrl_spawner" 
           pkg="controller_manager" 
           type="spawner"
-          args="xaxis_pos_ctrl yaxis_pos_ctrl zaxis_pos_ctrl"
+          args="xaxis_pos_ctrl yaxis_pos_ctrl zaxis_pos_ctrl ermasa_linear_ctrl"
           output="screen"
     />
 </launch>

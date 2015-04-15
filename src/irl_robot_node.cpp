@@ -43,8 +43,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    //ros::init(argc, argv, "irl_robot_node", ros::init_options::NoSigintHandler);
-    ros::init(argc, argv, "irl_robot_node");
+    ros::init(argc, argv, "irl_robot_node", ros::init_options::NoSigintHandler);
+    //ros::init(argc, argv, "irl_robot_node");
     signal(SIGINT, mySigIntHandler);
 
     irl_can_bus::log::loggerFunction(&::loggerFunction);

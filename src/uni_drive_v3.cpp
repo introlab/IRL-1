@@ -174,8 +174,8 @@ void UniDriveV3::enable(CANManager& can)
     torque_offset_ = 0.0;
     pos_offset_    = 0.0;
 
-    //SETPOINT = CURRENT VALUE
-    set_point_     = *cmd_var_;
+
+  
 
     admittance_changed_ = true;
     pos_offset_changed_ = false;
@@ -188,15 +188,6 @@ void UniDriveV3::enable(CANManager& can)
     can.requestMem(deviceID(), MAX_SETPOINT_VARIABLE_OFFSET,    sizeof(int));
     can.requestMem(deviceID(), MIN_SETPOINT_VARIABLE_OFFSET,    sizeof(int));
     can.requestMem(deviceID(), POSITION_OFFSET_OFFSET,          sizeof(int));
-}
-
-void UniDriveV3::enableCtrl(CANManager& can)
-{
-    req_state_ = STATE_CONTROL;
-    CANRobotDevice::enableCtrl(can);
-
-    // TODO: Start motor.
-    ROS_INFO("enableCtrl %i",deviceID());
 
     // Start the motor:
     // ENABLE MOTOR CTRL_MODE = 1, Will do init phase
@@ -204,14 +195,28 @@ void UniDriveV3::enableCtrl(CANManager& can)
     can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char));   
 }
 
+void UniDriveV3::enableCtrl(CANManager& can)
+{
+    req_state_ = STATE_CONTROL;
+    CANRobotDevice::enableCtrl(can);
+    ROS_INFO("enableCtrl %i",deviceID());   
+
+    //SETPOINT = CURRENT VALUE
+    set_point_     = *cmd_var_;
+}
+
 void UniDriveV3::disableCtrl(CANManager& can)
 {
     req_state_ = STATE_ENABLED;
     CANRobotDevice::disableCtrl(can);
+    ROS_INFO("disableCtrl %i",deviceID());  
+}
 
-
-    ROS_INFO("disableCtrl %i",deviceID());
-
+void UniDriveV3::disable(CANManager& can)
+{
+    ROS_INFO("disable %i",deviceID());  
+    req_state_ = STATE_DISABLED;
+    CANRobotDevice::disable(can);
 
     // Stop motor.
     // ENABLE MOTOR CTRL_MODE = 0
@@ -219,28 +224,24 @@ void UniDriveV3::disableCtrl(CANManager& can)
     can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char)); 
 }
 
-void UniDriveV3::disable(CANManager& can)
-{
-    req_state_ = STATE_DISABLED;
-    CANRobotDevice::disable(can);
-}
-
 void UniDriveV3::requestState(CANManager& can)
 {
 
-    //ROS_INFO("Drive: %i STATE: %i",deviceID(),state());
-
+    //ROS_INFO("Drive: %i STATE: 0x%2.2x",deviceID(),new_state_);
     new_state_ = 0;
 
     // In non-polling mode, messages should come by themselves.
     // Do not send an extra request.
-    if (!polling_)
-        return;
+    if (polling_)
+    {
+        can.requestMem(deviceID(), POSITION_VARIABLE_OFFSET, sizeof(int));
+        can.requestMem(deviceID(), SPEED_VARIABLE_OFFSET,    sizeof(int));
+        can.requestMem(deviceID(), TORQUE_VARIABLE_OFFSET,   sizeof(int)); 
+    }
 
-    can.requestMem(deviceID(), POSITION_VARIABLE_OFFSET, sizeof(int));
-    can.requestMem(deviceID(), SPEED_VARIABLE_OFFSET,    sizeof(int));
-    can.requestMem(deviceID(), TORQUE_VARIABLE_OFFSET,   sizeof(int));
+    //Those variables need to be polled all the time
     can.requestMem(deviceID(), DRIVE_STATE_OFFSET,       sizeof(short));
+    can.requestMem(deviceID(), MODE_VARIABLE_OFFSET,     sizeof(unsigned char));
 
     //last_request_ = ros::Time::now();
 
@@ -250,19 +251,27 @@ void UniDriveV3::requestState(CANManager& can)
 
 bool UniDriveV3::stateReady()
 {
-
     //ROS_INFO("DEVICE: %i, STATE_READY : %i",deviceID(), new_state_ == ALL_RECEIVED);
 
     if (new_state_ == ALL_RECEIVED) 
     {
         //Actuator to joint propagation
-        act_to_jnt_pos_.propagate();
-        act_to_jnt_vel_.propagate();
-        act_to_jnt_eff_.propagate();
-        return true;
-    } else {
-        return false;
+        if (drive_mode_ == 1)
+        {
+            act_to_jnt_pos_.propagate();
+            act_to_jnt_vel_.propagate();
+            act_to_jnt_eff_.propagate();
+            return true;
+        }
+        ROS_WARN_THROTTLE(1.0,"DEVICE: %i E-STOP ENABLED ? CURRENT MODE : %i", deviceID(),drive_mode_);                 
     }
+    else
+    {
+         ROS_WARN_THROTTLE(1.0,"NOT ALL_RECEIVED from %i",deviceID());
+    } 
+      
+    //Not ready
+    return false;
 }
 
 void UniDriveV3::calcConvRatios()
@@ -291,6 +300,8 @@ void UniDriveV3::processMsg(const LaboriusMessage& msg)
     {
         case MODE_VARIABLE_OFFSET:
             // TODO: Check, and if necessary, switch command variable.
+            drive_mode_ = msg.msg_data[0];
+            new_state_ |= MOD_RECEIVED;
         break;
 
         case SETPOINT_VARIABLE_OFFSET:
@@ -415,7 +426,11 @@ void UniDriveV3::sendCommand(CANManager& can)
         return;
     }
 
-    //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
-    can.writeMem(deviceID(), SETPOINT_VARIABLE_OFFSET, (unsigned char*) &setPointConv, sizeof(int)); 
+    //ROS_INFO_THROTTLE(0.5,"Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
+    if (drive_mode_ == 1)
+    {
+        //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
+        can.writeMem(deviceID(), SETPOINT_VARIABLE_OFFSET, (unsigned char*) &setPointConv, sizeof(int)); 
+    }
 }
 

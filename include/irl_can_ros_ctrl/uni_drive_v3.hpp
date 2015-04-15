@@ -143,16 +143,20 @@ namespace irl_can_ros_ctrl
         bool pos_offset_changed_;
         unsigned short drive_state_; // Drive operation state.
 
+        unsigned char drive_mode_;
+
         enum
         {
             POS_RECEIVED = 1,
             VEL_RECEIVED = 2,
             TQE_RECEIVED = 4,
             STA_RECEIVED = 8,
+            MOD_RECEIVED = 16,
             ALL_RECEIVED = POS_RECEIVED | 
                            VEL_RECEIVED | 
                            TQE_RECEIVED | 
-                           STA_RECEIVED
+                           STA_RECEIVED |
+                           MOD_RECEIVED
 
         };
 		/// \brief Indicate if a new state has been obtained from the actuator.

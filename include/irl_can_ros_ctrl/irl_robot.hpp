@@ -74,7 +74,8 @@ namespace irl_can_ros_ctrl
         /// See their respective documentation for details.
         void addDevice(const ros::NodeHandle& np);
         
-        
+        virtual bool checkForConflict(const std::list<hardware_interface::ControllerInfo>& info) const;        
+
         void stop();
 
         /// \brief Return, or create and register, a pointer to an instance of a

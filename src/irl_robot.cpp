@@ -64,6 +64,7 @@ IRLRobot::~IRLRobot()
 {
     std::cerr<<"~IRLRobot"<<std::endl;
     stop();
+    std::cerr<<"~IRLRobot done"<<std::endl;
 }
 
 void IRLRobot::stop()
@@ -73,8 +74,10 @@ void IRLRobot::stop()
         running_ = false;
         can_robot_->stop();
 
+        std::cerr<<"Waiting for rtTrhread"<<std::endl;
         //wait for rtThread
         rt_thread_.join();
+        std::cerr<<"Join successfull"<<std::endl;
     }
 }
 
@@ -119,7 +122,10 @@ void IRLRobot::rtThread()
     while (ros::ok() && running_)
     {
         ros::Time start = ros::Time::now();
+        
         can_robot_->loopOnce();
+   
+
         ros::Duration spent = ros::Time::now() - start;
         ros::Duration left  = period_          - spent;
         ROS_DEBUG_THROTTLE(1.0,
@@ -129,6 +135,13 @@ void IRLRobot::rtThread()
         left.sleep();
     }
 
+    std::cerr<<"terminate rtThread()"<<std::endl;
     ROS_INFO("terminate rtThread()");
+}
+
+bool IRLRobot::checkForConflict(const std::list<hardware_interface::ControllerInfo>& info) const
+{
+    ROS_WARN("NO CONTROLLER CONFLICTS WILL BE DETECTED, BE CAREFUL");
+    return false;
 }
 

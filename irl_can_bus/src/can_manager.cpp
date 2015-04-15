@@ -116,6 +116,7 @@ CANManager::~CANManager()
     main_thread_.join();
     sched_thread_.join();
  
+    std::cerr<<"~CANManager done!"<<std::endl;
 }
 
 void CANManager::pushInternalEvent(const char v)
@@ -194,22 +195,26 @@ bool CANManager::popOneMessage(LaboriusMessage& msg)
 
 bool CANManager::waitForMessages()
 {
+    if (running_)
     {
+        
         QueueLock lock(msg_recv_queue_mtx_);
         if (!msg_recv_queue_.empty()) {
             return true;
         }
+        
+        
+        std::unique_lock<std::mutex> wait_lock(wait_msgs_mtx_);
+    #ifdef CAN_NO_TIMEOUT
+        wait_msgs_cond_.wait(wait_lock);
+        return true;
+    #else
+        return wait_msgs_cond_.wait_for(wait_lock, 
+                                        std::chrono::seconds(1)) !=
+               std::cv_status::timeout;
+    #endif
     }
-    
-    std::unique_lock<std::mutex> wait_lock(wait_msgs_mtx_);
-#ifdef CAN_NO_TIMEOUT
-    wait_msgs_cond_.wait(wait_lock);
-    return true;
-#else
-    return wait_msgs_cond_.wait_for(wait_lock, 
-                                    std::chrono::seconds(1)) !=
-           std::cv_status::timeout;
-#endif
+    return false;
 }
 
 void CANManager::pushOnCANSendQueue(const CANFramePtr& frame_ptr)
@@ -360,6 +365,7 @@ void CANManager::mainLoop()
     };
 
     CAN_LOG_WARN("CANManager main loop done");
+    std::cerr<<"CANManager main loop done"<<std::endl;
 }
 
 void CANManager::throttling(int dev_id, const ThrottlingDef& td)
@@ -452,6 +458,7 @@ void CANManager::schedLoop()
     }
 
     CAN_LOG_WARN("CANManager sched loop done");
+    std::cerr<<"CANManager sched loop done"<<std::endl;
 }
 
 void CANManager::requestMem(unsigned int device_id,
