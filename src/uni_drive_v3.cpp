@@ -20,6 +20,10 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
     cmd_var_(&position_[TRANS_DATA_INDEX]),
     cmd_conv_to_(&pos_conv_to_),
     polling_(true),
+    admittance_m_(0.0),
+    admittance_b_(0.0),
+    admittance_k_(0.0),
+    admittance_changed_(false),
     pos_conv_to_(1.0),
     pos_conv_from_(1.0),
     vel_conv_to_(1.0),  
@@ -78,9 +82,11 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
 
     //Create services     
     admittance_changed_ = false;
+ 
     srv_admittance_ = 
         nh_.advertiseService("set_admittance", 
         &UniDriveV3::admittanceCB, this);
+
 
 }
 
@@ -185,7 +191,7 @@ void UniDriveV3::enable(CANManager& can)
 
   
 
-    admittance_changed_ = true;
+    admittance_changed_ = false;
     pos_offset_changed_ = false;
 
     ready_ = NONE_READY; 
