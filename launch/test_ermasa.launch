@@ -44,6 +44,12 @@
     <include file="$(find joint_state_controller)/joint_state_controller.launch"/>      
     <include file="$(find irl_can_ros_ctrl)/launch/ermasa_ctrl.launch"/>
     
+    <node name="ermasa_ft_sensor" 
+          pkg="ft_sensor"
+          type="ft_sensor_node"
+          output="screen"
+    />
+
 
     <!--
     <node name="ermasa_rviz" 
