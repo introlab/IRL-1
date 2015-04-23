@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   hardware_interface
   controller_manager
   roscpp
+  message_generation
 )
 
 # NOTE: These flags assume G++-4.8 is available.
@@ -58,11 +59,10 @@ set(IRL_CAN_BUS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/irl_can_bus/include)
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+ add_service_files(
+   FILES
+   SetAdmittance.srv
+ )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -76,6 +76,8 @@ set(IRL_CAN_BUS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/irl_can_bus/include)
 #   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
 # )
+
+generate_messages()
 
 ###################################
 ## catkin specific configuration ##

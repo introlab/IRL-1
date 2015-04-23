@@ -6,6 +6,7 @@
 #include <irl_can_bus/can_robot_device.hpp>
 #include <transmission_interface/simple_transmission.h>
 #include <transmission_interface/transmission_interface.h>
+#include <irl_can_ros_ctrl/SetAdmittance.h>
 
 namespace irl_can_ros_ctrl
 {
@@ -145,6 +146,9 @@ namespace irl_can_ros_ctrl
 
         unsigned char drive_mode_;
 
+        ros::NodeHandle nh_;
+        ros::ServiceServer srv_admittance_;
+
         enum
         {
             POS_RECEIVED = 1,
@@ -228,6 +232,10 @@ namespace irl_can_ros_ctrl
     protected:
 
         void calcConvRatios();
+
+        bool admittanceCB(SetAdmittance::Request& req, SetAdmittance::Response&);
+
+        void setAdmittance(irl_can_bus::CANManager& can);
         
     };
 }

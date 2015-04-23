@@ -15,6 +15,7 @@ namespace {
 
 UniDriveV3::UniDriveV3(const ros::NodeHandle& np): 
     RCDevice(np),
+    nh_(np),
     cmd_var_type_(CMD_VAR_POSITION),
     cmd_var_(&position_[TRANS_DATA_INDEX]),
     cmd_conv_to_(&pos_conv_to_),
@@ -74,6 +75,13 @@ UniDriveV3::UniDriveV3(const ros::NodeHandle& np):
         transmission_pos_.getActuatorReduction() ,
         transmission_vel_.getActuatorReduction() ,
         transmission_eff_.getActuatorReduction() );
+
+    //Create services     
+    admittance_changed_ = false;
+    srv_admittance_ = 
+        nh_.advertiseService("set_admittance", 
+        &UniDriveV3::admittanceCB, this);
+
 }
 
 UniDriveV3::~UniDriveV3()
@@ -432,5 +440,34 @@ void UniDriveV3::sendCommand(CANManager& can)
         //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
         can.writeMem(deviceID(), SETPOINT_VARIABLE_OFFSET, (unsigned char*) &setPointConv, sizeof(int)); 
     }
+
+    if (admittance_changed_)
+    {
+        setAdmittance(can);
+        admittance_changed_ = false;
+    }
+
 }
+
+bool UniDriveV3::admittanceCB(SetAdmittance::Request& req, SetAdmittance::Response&)
+{
+    ROS_INFO("admittanceCB : M: %f B: %f K: %f",req.m, req.b, req.k);
+    //TODO VERIFY MIN/MAX RANGE
+    admittance_m_ = req.m;
+    admittance_b_ = req.b;
+    admittance_k_ = req.k;
+    admittance_changed_ = true;
+    return true;
+}
+
+
+void UniDriveV3::setAdmittance(CANManager& can)
+{  
+    ROS_INFO("Changing Admittance for dev: %i, M: %f, B: %f, K: %f",deviceID(),admittance_m_,admittance_b_,admittance_k_);
+    //TODO VERIFY MIN/MAX RANGE
+    can.writeMem(deviceID(),ADMITTANCE_M_OFFSET, (unsigned char*)&admittance_m_, sizeof(float));
+    can.writeMem(deviceID(),ADMITTANCE_B_OFFSET, (unsigned char*)&admittance_b_, sizeof(float));
+    can.writeMem(deviceID(),ADMITTANCE_K_OFFSET, (unsigned char*)&admittance_k_, sizeof(float));
+}
+
 

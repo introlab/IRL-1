@@ -9,23 +9,23 @@
     >
         <rosparam>
             ifaces: [can0]
-            devices: [dev3, dev2, dev1]
+            devices: [ermasa_x_linear_joint, ermasa_y_linear_joint, ermasa_z_linear_joint]
 
-            dev3:
+            ermasa_x_linear_joint:
                 can_device_type: UniDriveV3
                 can_device_id:   3
                 joint_name: "ermasa_x_linear_joint"
                 pos_transmission_ratio: 209.43951023931956
                 vel_transmission_ratio: 209.43951023931956
                 eff_transmission_ration: 3.0
-            dev2:
+            ermasa_y_linear_joint:
                 can_device_type: UniDriveV3
                 can_device_id:   2
                 joint_name: "ermasa_y_linear_joint"
                 pos_transmission_ratio: -69.81317007977319
                 vel_transmission_ratio: -69.81317007977319
                 eff_transmission_ration: -1.0
-            dev1:
+            ermasa_z_linear_joint:
                 can_device_type: UniDriveV3
                 can_device_id:   1
                 joint_name: "ermasa_z_linear_joint"
@@ -51,13 +51,13 @@
     />
 
 
-    <!--
+    
     <node name="ermasa_rviz" 
           pkg="rqt_rviz"
           type="rqt_rviz"
           output="screen"
     />
-    -->
+    
 
     
   
