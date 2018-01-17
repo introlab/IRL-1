@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       name="johnny_0" >
+
+    <!-- Johnny-0 (the torso and arms) macro -->
+    <include filename="$(find jn0_description)/robots/johnny_0.urdf.xacro" />
+
+    <property name="base_height"  value="0.25" />
+
+    <!-- Defines everything from base_link and up. -->
+    <xacro:johnny_0 base_height="${base_height}" />
+
+</robot>

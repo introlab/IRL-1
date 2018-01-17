@@ -1,0 +1,16 @@
+<package>
+  <description brief="Johnny-0_description">
+
+     Ce package contient la description du robot Johnny-0 sous forme de fichier xacro
+
+  </description>
+  <author>Arnaud AUMONT</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>none</url>
+  <depend package="convex_decomposition"/>
+  <depend package="ivcon"/>
+  <depend package="urdf" />
+</package>
+
+
