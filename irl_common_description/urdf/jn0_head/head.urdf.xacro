@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+
+	<xacro:macro name="jn0_head" params="name parent offset_x offset_y offset_z">
+
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_link"/>
+			<origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0 0 0" />
+		</joint>
+		<xacro:_jn0_head_link
+			name="${name}_link"
+			xyz="0.04 0 0.08"
+			rpy="${M_PI/2} 0 ${M_PI/2}"
+			mass="0.5"
+			mesh="head"
+			/>
+
+		<xacro:_jn0_head_eye name="${name}_l_eye" parent="${name}_link" reflect="1" />
+		<xacro:_jn0_head_eye name="${name}_r_eye" parent="${name}_link" reflect="-1"/>
+
+	</xacro:macro>
+
+	<xacro:macro name="_jn0_head_eye" params="name parent reflect">
+
+		<joint name="${name}" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_link"/>
+			<origin xyz="0.06 ${reflect*0.04} 0.09" rpy="0 0 0" />
+		</joint>
+		<xacro:_jn0_head_link
+			name="${name}_link"
+			xyz="0 -0.02 0.02"
+			rpy="0 ${M_PI/2} 0"
+			mass="0.001"
+			mesh="eye"
+			/>
+
+		<joint name="${name}_pupil" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_pupil_link"/>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+		</joint>
+		<xacro:simple_cylinder
+			name="${name}_pupil_link"
+			mass="0.001"
+			xyz="0.02 0 0"
+			rpy="0 ${M_PI/2} 0"
+			radius="0.01"
+			length="0.005"
+			rviz_rgba="0 0 0 1"
+			material="Gazebo/Black"
+			/>
+
+		<joint name="${name}_eyebrow" type="fixed">
+			<parent link="${name}_link"/>
+			<child link="${name}_eyebrow_link"/>
+			<!-- yaw = 0 when reflect = 1, M_PI when reflect = -1 !  -->
+			<origin xyz="0.028 0 0.035" rpy="0 0 ${M_PI*(reflect-1)/2}" />
+		</joint>
+		<xacro:_jn0_head_link
+			name="${name}_eyebrow_link"
+			xyz="0.0015 0.03 -0.015"
+			rpy="${M_PI/2} 0 ${-M_PI/2}"
+			mass="0.001"
+			mesh="eyebrow"
+			/>
+
+	</xacro:macro>
+
+	<xacro:macro name="_jn0_head_link" params="name mass xyz rpy mesh">
+		<link name="${name}">
+			<xacro:simple_inertial mass="${mass}"/>
+			<visual>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/jn0_head/${mesh}.dae" />
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<mesh filename="package://irl_common_description/meshes/jn0_head/${mesh}.STL" />
+				</geometry>
+			</collision>
+		</link>
+	</xacro:macro>
+
+</robot>

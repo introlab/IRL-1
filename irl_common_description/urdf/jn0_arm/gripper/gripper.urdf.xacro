@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+
+<!-- XML namespaces -->
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- Things that are needed only for Gazebo (not the physical robot).  These include
+	sensor and controller plugin specifications -->
+	<include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.gazebo.xacro" />
+	<include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.transmission.xacro" />
+	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+
+	<!-- ============================   gripper   ============================ -->
+
+	<xacro:macro name="johnny_0_gripper" params="side parent reflect">
+	<!--xacro:macro name="johnny_0_gripper" params="side parent reflect *origin"-->
+
+		<!-- Gripper up revolute joint -->
+
+		<joint name="${side}_gripper_up_joint" type="revolute">
+		<!--joint name="${side}_gripper_up_joint" type="fixed"-->
+			<axis xyz="0 0 1"/>
+			<origin xyz="0.0254 0.21844 ${reflect*0.01039}" rpy="0 0 ${M_PI/2}"/>
+			<parent link="${parent}"/>
+			<child link="${side}_gripper_up_link"/>
+			
+			<!-- This parameters have to be modified -->
+			<limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/10}" />
+			<!--safety_controller k_position="20" k_velocity="10" soft_upper_limit="1" soft_lower_limit="-1" /-->
+		</joint>
+
+		<!-- Gripper up link -->
+
+		<link name="${side}_gripper_up_link">
+			<inertial>
+				<mass value="0.21180172" />
+				<origin xyz="0.05877696 0.00139214 -0.00602003" rpy="0 0 0"/>
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+				<!--inertia  	ixx="0.00003889" 	ixy="0.00000916"  	ixz="-0.00003123"
+										iyy="0.00026591" 	iyz="0.00000146"
+														izz="0.00026384" /-->
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_gripper_up_link_visual_geom">
+					<mesh filename="package://irl_common_description/meshes/jn0_arm/gripper/${side}_gripper_up.dae"  />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_gripper_up_link_collision_geom">
+					<!--mesh filename="package://irl_common_description/meshes/jn0_arm/gripper/${side}_gripper_up.stl"  /-->
+					<sphere radius="0.01" />
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- Gripper down revolute joint -->
+
+		<joint name="${side}_gripper_down_joint" type="revolute">
+		<!--joint name="${side}_gripper_down_joint" type="fixed"-->
+			<axis xyz="0 0 1"/>
+			<origin xyz="-0.0254 0.21844 ${reflect*0.01039}" rpy="${M_PI} 0 ${M_PI/2}"/>
+			<parent link="${parent}"/>
+			<child link="${side}_gripper_down_link"/>
+			
+			<!-- This parameters have to be modified -->
+			<limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/10}" />
+			<!--safety_controller k_position="20" k_velocity="10" soft_upper_limit="1" soft_lower_limit="-1" /-->
+		</joint>
+
+		<!-- Gripper down link -->
+
+		<link name="${side}_gripper_down_link">
+			<inertial>
+				<mass value="0.19772070" />
+				<origin xyz="0.06212355 0.00111307 0.00727599" rpy="0 0 0"/>
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+				<!--inertia  	ixx="0.00003272" 	ixy="0.00001291"  	ixz="0.00001859"
+										iyy="0.00022630" 	iyz="-0.00000033"
+														izz="0.00022754" /-->
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_gripper_down_link_visual_geom">
+					<mesh filename="package://irl_common_description/meshes/jn0_arm/gripper/${side}_gripper_down.dae"  />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_gripper_down_link_collision_geom">
+					<!--mesh filename="package://irl_common_description/meshes/jn0_arm/gripper/${side}_gripper_down.stl"  /-->
+					<sphere radius="0.01" />
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- Tool Frame -->
+
+		<joint name="${side}_frame_tool_joint" type="fixed">
+		<!--joint name="${side}_gripper_down_joint" type="fixed"-->
+			<origin xyz="0 0.2686564 ${reflect*0.007977}" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+			<parent link="${parent}"/>
+			<child link="${side}_frame_tool_link"/>
+		</joint>
+
+		<!-- Gripper down link -->
+
+		<link name="${side}_frame_tool_link">
+			<inertial>
+				<mass value="0.01" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_frame_tool_link_visual_geom">
+					 <sphere radius="0.005" />
+
+				</geometry>
+			</visual>
+			
+		</link>
+		
+		<!-- The following is only for the kinematic stuff -->
+		
+		<joint name="${side}_frame_tool_x_joint" type="continuous">
+		<!--joint name="${side}_gripper_down_joint" type="fixed"-->
+			<axis xyz="1 0 0"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<parent link="${side}_frame_tool_link"/>
+			<child link="${side}_frame_tool_x_link"/>
+		</joint>
+
+		<!-- Gripper down link -->
+
+		<link name="${side}_frame_tool_x_link">
+			<inertial>
+				<mass value="0.01" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_frame_tool_x_link_visual_geom">
+					 <sphere radius="0.005" />
+
+				</geometry>
+			</visual>
+			
+		</link>
+		
+		<joint name="${side}_frame_tool_y_joint" type="continuous">
+		<!--joint name="${side}_gripper_down_joint" type="fixed"-->
+			<axis xyz="0 1 0"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<parent link="${side}_frame_tool_x_link"/>
+			<child link="${side}_frame_tool_y_link"/>
+		</joint>
+
+		<!-- Gripper down link -->
+
+		<link name="${side}_frame_tool_y_link">
+			<inertial>
+				<mass value="0.01" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_frame_tool_y_link_visual_geom">
+					 <sphere radius="0.005" />
+
+				</geometry>
+			</visual>
+			
+		</link>
+		
+		<joint name="${side}_frame_tool_z_joint" type="continuous">
+		<!--joint name="${side}_gripper_down_joint" type="fixed"-->
+			<axis xyz="0 0 1"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<parent link="${side}_frame_tool_y_link"/>
+			<child link="${side}_frame_tool_z_link"/>
+		</joint>
+
+		<!-- Gripper down link -->
+
+		<link name="${side}_frame_tool_z_link">
+			<inertial>
+				<mass value="0.01" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				<inertia  ixx="0" ixy="0"  ixz="0"
+					iyy="0" iyz="0"
+					izz="0" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${side}_frame_tool_z_link_visual_geom">
+					 <sphere radius="0.005" />
+
+				</geometry>
+			</visual>			
+		</link>
+
+		<!-- extensions -->
+		<xacro:johnny_0_gripper_transmission side="${side}" />
+		
+	</xacro:macro>
+
+
+</robot>

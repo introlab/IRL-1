@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<!-- XML namespaces -->
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- Things that are needed only for Gazebo (not the physical robot).  These include
+	sensor and controller plugin specifications -->
+	<include filename="$(find irl_common_description)/urdf/jn0_arm/upper_arm/upper_arm.gazebo.xacro" />
+	<include filename="$(find irl_common_description)/urdf/jn0_arm/upper_arm/upper_arm.transmission.xacro" />
+	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+
+	<!-- ============================   Upper arm   ============================ -->
+
+	<xacro:macro name="johnny_0_upper_arm" params="side parent reflect *origin">
+
+		<!-- Shoulder revolute joint - axis 3 : roll -->
+		
+		<joint name="${side}_shoulder_roll_joint" type="revolute">
+		<!--joint name="${side}_shoulder_roll_joint" type="continuous"-->
+		<!--joint name="${side}_shoulder_roll_joint" type="fixed"-->
+			<axis xyz="0 0 1"/> 
+			<insert_block name="origin" />
+			
+			<parent link="${parent}"/>
+			<child link="${side}_upper_arm_link"/>
+			
+			<!-- This parameters have to be modified -->
+			<limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}"/>
+			<!-- limit effort="30" velocity="2.0" lower="${-3*M_PI/4}" upper="${3*M_PI/4}" /-->
+			<!--safety_controller k_position="100" k_velocity="2" soft_lower_limit="${-M_PI/2}" soft_upper_limit="${M_PI/2}"  /-->
+		</joint>
+		
+		<!-- Upper arm link -->
+		
+		<link name="${side}_upper_arm_link">
+			<inertial>
+				<mass value="3.18827858" />
+				<origin xyz="0.01378839 -0.00550664 0.10178050" rpy="0 0 0"/> 
+				<inertia  	ixx="0.01926870" 	ixy="0.00025868"  	ixz="-0.00128573"
+										iyy="0.01935202" 	iyz="0.00117889"
+														izz="0.00721747" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="${M_PI} 0 0"/>
+				<geometry name="${side}_upper_arm_link_visual_geom">
+					<mesh filename="package://irl_common_description/meshes/jn0_arm/upper_arm/${side}_upper_arm_link.dae"  />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry name="${side}_upper_arm_link_collision_geom">
+					<mesh filename="package://irl_common_description/meshes/jn0_arm/upper_arm/${side}_upper_arm_link.stl"  />
+				</geometry>
+			</collision>
+		</link>
+
+ <!--  <gazebo>
+    <controller:gazebo_ros_force name="gazebo_ros_force" plugin="libgazebo_ros_force.so">
+      <alwaysOn>true</alwaysOn>
+      <update>100</update>
+      <updateRate>100.0</updateRate>
+      <bodyName>${side}_upper_arm_link</bodyName>
+      <topicName>${side}_upper_arm_link_force</topicName>
+    </controller:gazebo_ros_force>
+  </gazebo> -->
+
+		
+		<!-- extensions -->
+		<xacro:johnny_0_upper_arm_transmission side="${side}" reflect="${reflect}" />
+		
+	</xacro:macro>
+
+
+</robot>

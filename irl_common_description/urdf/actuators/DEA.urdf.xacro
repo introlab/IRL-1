@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+
+	<!--
+		Differential Elastic Actuator
+
+		    origin v
+		___________
+		|          |-+
+		|   z < - -x |
+		|__________|-+
+		
+		  stator ^   ^ rotor / shaft
+
+		FIXME Masses, dimensions, limits etc. are very approximative
+		
+	-->
+
+	<property name="_DEA_stator_length"  value="0.09" />
+
+	<xacro:macro name="DEA" params="name parent xyz rpy shaft_length">
+
+		<joint name="${name}_stator_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_link"/>
+			<origin xyz="${xyz}" rpy="${rpy}" />
+		</joint>
+
+		<xacro:simple_cylinder
+			name="${name}_link"
+			xyz="0 0 ${_DEA_stator_length/2}"
+			rpy="0 0 0"
+			mass="0.2"
+			radius="0.04"
+			length="${_DEA_stator_length}"
+			rviz_rgba="0 0 1 1"
+			material="Gazebo/Blue"
+			/>
+
+		<joint name="${name}_rotor_joint" type="revolute">
+			<parent link="${parent}"/>
+			<child link="${name}_rotor_link"/>
+			<origin xyz="${xyz}" rpy="${rpy}" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
+		</joint>
+
+		<xacro:simple_cylinder
+			name="${name}_rotor_link"
+			xyz="0 0 ${-shaft_length/2}"
+			rpy="0 0 0"
+			mass="0.2"
+			radius="0.03"
+			length="${shaft_length}"
+			rviz_rgba="0.5 0.5 0.5 1"
+			material="Gazebo/Grey"
+			/>
+
+		<!-- Frame at the end of the output shaft -->
+
+		<joint name="${name}_end_joint" type="fixed">
+			<parent link="${name}_rotor_link"/>
+			<child link="${name}_end_frame"/>
+			<origin xyz="0 0 ${-shaft_length}" rpy="0 0 0" />
+		</joint>
+
+		<link name="${name}_end_frame" />
+
+		<!-- Transmission for the actuator -->
+		<transmission type="pr2_mechanism_model/SimpleTransmission"
+			name="$name}_transmission">
+			<actuator name="${name}_motor"/>
+			<joint name="${name}_rotor_joint"/>
+			<mechanicalReduction>1.0</mechanicalReduction>
+		</transmission>
+	</xacro:macro>
+
+</robot>
+

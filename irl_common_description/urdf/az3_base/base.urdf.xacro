@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Include files for extensions -->
+	<include filename="$(find irl_common_description)/urdf/az3_base/base.gazebo.xacro" />
+	
+	<xacro:macro name="az3_base" params="name">
+		<link name="${name}_link">
+
+		  <inertial>
+			<mass value="${base_mass}" />
+			<origin xyz="${base_cg_x} ${base_cg_y} ${base_cg_z}" />
+			<inertia ixx="${base_ixx}" ixy="${base_ixy}" ixz="${base_ixz}"
+					 iyy="${base_iyy}" iyz="${base_iyz}" izz="${base_izz}" />
+		  </inertial>
+
+		  <visual name="${name}_visual">
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry name="${name}_visual_geom">
+				<mesh filename="package://irl_common_description/meshes/az3_base/base.stl"  />
+				<!--box size="0.3638921 0.3638921 0.25" /-->
+			</geometry>
+		  </visual>
+
+		  <collision name="${name}_collision">
+		  <!-- 0.01 can we remove this ? -->
+			<origin xyz="0 0 0.01" rpy="0 0 0" />
+			<geometry name="${name}_collision_geom">
+				<mesh filename="package://irl_common_description/meshes/az3_base/base.stl"  />
+				<!--box size="0.3638921 0.3638921 0.25" /-->
+			</geometry>
+		  </collision>
+		</link>
+
+		<joint name="${name}_footprint_joint" type="fixed">
+		  <origin xyz="0 0 ${base_footprint_height}" rpy="0 0 0" />
+		  <child link="${name}_link" />
+		  <parent link="${name}_footprint"/>
+		</joint>
+		
+		<!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin,
+			navigation stack dedpends on this frame -->
+		<link name="${name}_footprint">
+		  <inertial>
+			<mass value="1.0" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.01" ixy="0.0" ixz="0.0"
+					iyy="0.01" iyz="0.0" izz="0.01" />
+		  </inertial>
+		  <visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+			  <box size="0.01 0.01 0.01" />
+			</geometry>
+			
+			<material name="Green" />
+		  </visual>
+		  <collision>
+			<!-- represent base collision with a simple rectangular model, positioned by base_size_z s.t. top
+				surface of the collision box matches the top surface of the AZ3 base -->
+			<origin xyz="0 0 ${0.251+base_collision_size_z/2}" rpy="0 0 0" />
+			<geometry>
+			  <box size="0.001 0.001 0.001" />
+			</geometry>
+		  </collision>
+		</link>
+
+		<!-- gazebo extensions -->
+		<xacro:az3_base_gazebo name="${name}" />
+		
+		<gazebo reference="${name}_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+		
+	</xacro:macro>
+
+
+</robot>

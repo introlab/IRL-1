@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<!-- XML namespaces -->
+<robot
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:xacro="http://ros.org/wiki/xacro"
+	>
+
+	<!-- TODO check simple_inertial and simple gazebo -->
+
+	<xacro:macro name="simple_inertial" params="mass">
+		<inertial>
+			<mass value="${mass}" />
+			<inertia
+				ixx="0.001" ixy="0.0" ixz="0.0"
+				iyy="0.001" iyz="0.0"
+				izz="0.001" />
+			</inertial>
+	</xacro:macro>
+
+	<xacro:macro name="simple_gazebo" params="name material">
+		<gazebo reference="${name}">
+			<material>${material}</material>
+			<selfCollide>false</selfCollide>
+			<turnGravityOff>true</turnGravityOff>
+		</gazebo>
+	</xacro:macro>
+
+	<xacro:macro name="simple_color" params="name rgba">
+		<material name="${}">
+			<color rgba="0.9 0.9 0.9 1.0"/>
+		</material>
+	</xacro:macro>
+
+	<!-- Generic shape -->
+
+	<xacro:macro name="simple_shape" params="name xyz rpy mass rviz_rgba material *shape">
+		<link name="${name}">
+			<visual>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<xacro:insert_block name="shape" />
+				</geometry>
+				<material name="${name}_color">
+					<color rgba="${rviz_rgba}"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="${xyz}" rpy="${rpy}" />
+				<geometry>
+					<xacro:insert_block name="shape" />
+				</geometry>
+			</collision>
+			<xacro:simple_inertial mass="${mass}" />
+		</link>
+		<xacro:simple_gazebo name="${name}" material="${material}" />
+	</xacro:macro>
+
+	<!-- Shapes specializations -->
+
+	<xacro:macro name="simple_box" params="lwh name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<box size="${lwh}" />
+		</xacro:simple_shape>
+	</xacro:macro>
+
+	<xacro:macro name="simple_cylinder" params="radius length name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<cylinder radius="${radius}" length="${length}" />
+		</xacro:simple_shape>
+	</xacro:macro>
+
+	<xacro:macro name="simple_sphere" params="radius name xyz rpy mass rviz_rgba material">
+		<xacro:simple_shape
+			name="${name}" xyz="${xyz}" rpy="${rpy}"
+			mass="${mass}" rviz_rgba="${rviz_rgba}" material="${material}">
+			<sphere radius="${radius}" />
+		</xacro:simple_shape>
+	</xacro:macro>
+
+</robot>

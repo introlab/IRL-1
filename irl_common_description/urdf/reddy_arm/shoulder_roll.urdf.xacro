@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+	   
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.transmission.xacro" />
+
+	<xacro:macro name="reddy_arm_shoulder_roll" params="name reflect parent offset_x offset_y offset_z">
+
+		<joint name="${name}_fixed_origine_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_box"/>
+			<origin xyz="${offset_x} ${reflect*offset_y} ${offset_z}" rpy="0 0 ${(reflect-1)*M_PI/2+M_PI/2}" />
+		</joint>
+
+		<link name="${name}_box">
+			<inertial>
+				<mass value="1.105" />
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia  ixx="0.002790566518" ixy="0.00"  ixz="0.00"
+						  iyy="0.002862829183" iyz="0.00"
+						  izz="0.001375984901" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_box_visual_geom">
+					<box size="0.084137 0.088678 0.1524" />
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="${name}_box_collision_geom">
+					<box size="0.084137 0.088678 0.1524" />
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="${name}_fixed_joint" type="fixed">
+			<parent link="${name}_box"/>
+			<child link="${name}_cylinder"/>
+			<origin xyz="0.0500285 0 0.0491765" rpy="0 1.5708 0" />
+		</joint>
+
+		<link name="${name}_cylinder">
+			<inertial>
+				<mass value="0.117" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				 <inertia  ixx="0.00" ixy="0.00"  ixz="0.00"
+									 iyy="0.00" iyz="0.00"
+									 izz="0.00" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_cylinder_visual_geom">
+					<cylinder radius="0.0270235" length="0.011379"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="${name}_cylinder_collision_geom">
+					<cylinder radius="0.0270235" length="0.011379"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- On peut ajouter safety_controller -->
+		<joint name="${name}_revolute_joint" type="revolute">
+			<parent link="${name}_cylinder"/>
+			<child link="${name}_link"/>
+			<origin xyz="0 0 0.013" rpy="0 0 0" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="30" velocity="0.1" lower="-2.8" upper="2.8" />
+
+			<!-- calibration reference_position="0.0"/ -->
+		</joint>
+
+		<link name="${name}_link">
+			<inertial>
+				<mass value="0.1" />
+				<origin xyz="0 0 0" rpy="0 0 0"/> 
+				 <inertia  ixx="0.00" ixy="0.00"  ixz="0.00"
+									 iyy="0.00" iyz="0.00"
+									 izz="0.00" />
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="${name}_link_visual_geom">
+					<cylinder radius="0.015" length="0.015847"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0 " />
+				<geometry name="${name}_link_collision_geom">
+					<cylinder radius="0.015" length="0.015847"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- extensions -->
+		<xacro:reddy_arm_shoulder_roll_transmission name="${name}_shoulder_trans" />
+	
+		<gazebo reference="${name}_box">
+			<material>Gazebo/Blue</material>
+		</gazebo>
+
+		<gazebo reference="${name}_cylinder">
+			<material>Gazebo/Blue</material>
+		</gazebo>
+
+		<gazebo reference="${name}_link">
+			<material>Gazebo/Red</material>
+		</gazebo>
+	</xacro:macro>
+
+</robot>

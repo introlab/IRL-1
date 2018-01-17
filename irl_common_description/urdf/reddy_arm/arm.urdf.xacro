@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       name="arm">
+
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/shoulder_roll.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/shoulder_pitch.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/elbow_pitch.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/forearm.urdf.xacro" />
+	<include filename="$(find irl_common_description)/urdf/reddy_arm/hand.urdf.xacro" />
+
+	<xacro:macro name="reddy_arm" params="name reflect parent offset_x offset_y offset_z">
+		
+		<xacro:reddy_arm_shoulder_roll
+			name="${name}_shoulder_roll"
+			reflect="${reflect}"
+			parent="${parent}"
+			offset_x="${offset_x}"
+			offset_y="${offset_y}"
+			offset_z="${offset_z}"
+			/>
+		<xacro:reddy_arm_shoulder_pitch
+			name="${name}_shoulder_pitch"
+			reflect="${reflect}"
+			parent="${name}_shoulder_roll_link"
+			/>
+		<xacro:reddy_arm_elbow_pitch
+			name="${name}_elbow_pitch"
+			reflect="${reflect}"
+			parent="${name}_shoulder_pitch_box"
+			/>
+		<xacro:forearm
+			name="${name}_forearm"
+			reflect="${reflect}"
+			parent="${name}_elbow_pitch_link"
+			/>
+		<xacro:hand
+			name="${name}_hand"
+			reflect="${reflect}"
+			parent="${name}_forearm"
+			/>
+		
+	</xacro:macro>
+</robot>

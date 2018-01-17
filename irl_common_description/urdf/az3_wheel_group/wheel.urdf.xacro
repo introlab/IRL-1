@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://ros.org/wiki/xacro">
+	
+	<!-- Include files for extensions -->
+	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.gazebo.xacro" />
+	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.transmission.xacro" />
+
+	<xacro:macro name="az3_wheel_group" params="side reflectSide face reflectFace parent">
+		
+		<joint name="wheel${side}${face}_revolute_joint" type="revolute">
+			<parent link="${parent}"/>
+			<child link="wheel${side}${face}_linkWheel_link"/>
+			<origin xyz="${reflectFace*dX0} ${reflectSide*dY0} ${dZ0}" rpy="0 0 ${reflectSide*(M_PI/4+(1-reflectFace)*M_PI/4)}" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="1.8" lower="${-M_PI/2-0.1}" upper="${M_PI/2+0.1}" />
+		</joint>
+		
+		<link name="wheel${side}${face}_linkWheel_link">
+
+			<inertial>
+				<mass value="${linkWheel_mass}" />
+				<origin xyz="${linkWheel_cg_x} ${linkWheel_cg_y} ${linkWheel_cg_z}" />
+				<inertia ixx="${linkWheel_ixx}" ixy="${linkWheel_ixy}" ixz="${linkWheel_ixz}"
+						 iyy="${linkWheel_iyy}" iyz="${linkWheel_iyz}" izz="${linkWheel_izz}" />
+			</inertial>
+
+			<visual name="wheel${side}${face}_linkWheel_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="wheel${side}${face}_linkWheel_visual_geom">
+					<mesh filename="package://irl_common_description/meshes/az3_wheel_group/linkWheel.stl"  />
+				</geometry>
+			</visual>
+
+			<collision name="wheel${side}${face}_linkWheel_collision">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="wheel${side}${face}_linkWheel_collision_geom">
+					<mesh filename="package://irl_common_description/meshes/az3_wheel_group/linkWheel.stl"  />
+				</geometry>
+			</collision>
+		</link>
+		
+		<joint name="wheel${side}${face}_wheel_continuous_joint" type="continuous">
+			<parent link="wheel${side}${face}_linkWheel_link"/>
+			<child link="wheel${side}${face}_wheel_link"/>
+			<origin xyz="${dX1} 0 0" rpy="0 0 0" />
+			<axis xyz="1 0 0"/>
+		</joint>
+		
+		<link name="wheel${side}${face}_wheel_link">
+
+			<inertial>
+				<mass value="${wheel_mass}" />
+				<origin xyz="${wheel_cg_x} ${wheel_cg_y} ${wheel_cg_z}" />
+				<inertia ixx="${wheel_ixx}" ixy="${wheel_ixy}" ixz="${wheel_ixz}"
+						 iyy="${wheel_iyy}" iyz="${wheel_iyz}" izz="${wheel_izz}" />
+			</inertial>
+
+			<visual name="wheel${side}${face}_wheel_visual">
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry name="wheel${side}${face}_wheel_visual_geom">
+					<mesh filename="package://irl_common_description/meshes/az3_wheel_group/wheel.stl"  />
+				</geometry>
+			</visual>
+
+			<collision name="wheel${side}${face}_wheel_collision">
+				<origin xyz="0 0 0" rpy="0 ${M_PI/2} 0" />
+				<geometry name="wheel${side}${face}_wheel_collision_geom">
+                    <cylinder radius="${wheel_diameter/2}" length="${wheel_width}"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- extensions -->
+		<xacro:az3_wheel_group_gazebo side="${side}" face="${face}" />
+		<xacro:az3_wheel_group_transmission side="${side}" face="${face}" />
+		<xacro:az3_wheel_group_ADE_transmission side="${side}" face="${face}" />
+
+
+		<gazebo reference="wheel${side}${face}_linkWheel_link">
+			<material>Gazebo/Green</material>
+		</gazebo>
+
+		<gazebo reference="wheel${side}${face}_wheel_link">
+			<material>Gazebo/Black</material>
+		</gazebo>
+
+	</xacro:macro>
+
+
+</robot>

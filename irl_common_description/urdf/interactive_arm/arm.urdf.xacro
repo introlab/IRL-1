@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+       name="arm">
+
+	   <!--
+			Axis :
+			  z => joint
+			  x => link direction
+			  (cf. Mémoire M.-A. Lavoie)
+
+		FIXME Masses, dimensions, limits etc. are very approximative
+	-->
+
+	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<include filename="$(find irl_common_description)/urdf/actuators/DEA.urdf.xacro" />
+
+	<property name="_interactive_arm_shoulder_yaw_offset"  value="0.1" />
+	<property name="_interactive_arm_shoulder_pitch_offset"  value="0.055" />
+	<property name="_interactive_arm_elbow_offset"  value="0.198" />
+	<property name="_interactive_arm_forearm_length"  value="0.145" />
+	<property name="_interactive_arm_hand_length"  value="0.2" />
+
+	<xacro:macro name="interactive_arm" params="name parent offset_x offset_y offset_z">
+
+		<joint name="${name}_side_offset_fixed" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_shoulder_yaw_offset_link"/>
+			<origin xyz="${offset_x} ${offset_y} ${offset_z}" rpy="0 0 0" />
+		</joint>
+
+		<xacro:simple_box
+			name="${name}_shoulder_yaw_offset_link"
+			xyz="0 ${(_interactive_arm_shoulder_yaw_offset+0.04)/2} 0"
+			rpy="0 0 0"
+			mass="0.2"
+			lwh="0.1 ${_interactive_arm_shoulder_yaw_offset+0.04} 0.01"
+			rviz_rgba="0 1 0 1"
+			material="Gazebo/Green"
+			/>
+
+		<!-- Shoulder -->
+
+		<xacro:DEA
+			name="${name}_shoulder_yaw_dea"
+			parent="${name}_shoulder_yaw_offset_link"
+			xyz="0 ${_interactive_arm_shoulder_yaw_offset} 0"
+			rpy="0 0 0"
+			shaft_length="0.03"
+			/>
+
+		<joint name="${name}_shoulder_pitch_offset_fixed" type="fixed">
+			<parent link="${name}_shoulder_yaw_dea_end_frame"/>
+			<child link="${name}_shoulder_pitch_offset_link"/>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+		</joint>
+
+		<xacro:simple_box
+			name="${name}_shoulder_pitch_offset_link"
+			xyz="0 0 ${-(_interactive_arm_shoulder_pitch_offset+0.04)/2}"
+			rpy="0 0 0"
+			mass="0.2"
+			lwh="0.1 0.01 ${_interactive_arm_shoulder_pitch_offset+0.04}"
+			rviz_rgba="0 1 0 1"
+			material="Gazebo/Green"
+			/>
+
+		<xacro:DEA
+			name="${name}_shoulder_pitch_dea"
+			parent="${name}_shoulder_pitch_offset_link"
+			xyz="0 0 ${-_interactive_arm_shoulder_pitch_offset}"
+			rpy="${-M_PI/2} ${M_PI/2} 0"
+			shaft_length="0.03"
+			/>
+
+		<!-- Arm -->
+
+		<joint name="${name}_elbow_offset_fixed" type="fixed">
+			<parent link="${name}_shoulder_pitch_dea_end_frame"/>
+			<child link="${name}_elbow_dea_offset_link"/>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+		</joint>
+
+		<xacro:simple_box
+			name="${name}_elbow_dea_offset_link"
+			xyz="${(_interactive_arm_elbow_offset-0.04)/2} 0 0"
+			rpy="0 0 0"
+			mass="0.2"
+			lwh="${_interactive_arm_elbow_offset+0.04} 0.1 0.01"
+			rviz_rgba="0 1 0 1"
+			material="Gazebo/Green"
+			/>
+
+		<xacro:DEA
+			name="${name}_elbow_dea"
+			parent="${name}_elbow_dea_offset_link"
+			xyz="0.085 0 0"
+			rpy="0 0 0"
+			shaft_length="0.03"
+			/>
+
+		<!-- Forearm -->
+
+		<joint name="${name}_elbow_joint" type="fixed">
+			<parent link="${name}_elbow_dea_end_frame"/>
+			<child link="${name}_forearm_link"/>
+			<origin xyz="${_interactive_arm_elbow_offset} 0 0" rpy="0 0 0" />
+			<axis xyz="0 0 1" rpy="0 0 0"/>
+			<limit effort="100" velocity="0.1" lower="-0.7" upper="0.7" />
+		</joint>
+
+		<xacro:simple_cylinder
+			name="${name}_forearm_link"
+			xyz="${_interactive_arm_forearm_length/2} 0 0"
+			rpy="0 ${M_PI/2} 0"
+			mass="0.01"
+			length="${_interactive_arm_forearm_length}"
+			radius="0.02"
+			rviz_rgba="0 0 1 1"
+			material="Gazebo/Blue"
+			/>
+
+		<!-- Hand -->
+
+		<joint name="${name}_wrist_joint" type="fixed">
+			<parent link="${name}_forearm_link"/>
+			<child link="${name}_hand_link"/>
+			<origin xyz="${_interactive_arm_forearm_length} 0 0" rpy="0 0 ${-M_PI/3}" />
+		</joint>
+
+		<xacro:simple_cylinder
+			name="${name}_hand_link"
+			xyz="${_interactive_arm_hand_length/2} 0 0"
+			rpy="0 ${M_PI/2} 0"
+			mass="0.01"
+			length="${_interactive_arm_hand_length}"
+			radius="0.02"
+			rviz_rgba="0 0 1 1"
+			material="Gazebo/Blue"
+			/>
+
+	</xacro:macro>
+</robot>
