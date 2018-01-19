@@ -6,9 +6,9 @@
        name="johnny_0" >
 
     <!-- Johnny-0 (the torso and arms) macro -->
-    <include filename="$(find jn0_description)/robots/johnny_0.urdf.xacro" />
+    <xacro:include filename="$(find jn0_description)/robots/johnny_0.urdf.xacro" />
 
-    <property name="base_height"  value="0.25" />
+    <xacro:property name="base_height"  value="0.25" />
 
     <!-- Defines everything from base_link and up. -->
     <xacro:johnny_0 base_height="${base_height}" />
