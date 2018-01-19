@@ -5,12 +5,12 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.gazebo.xacro" />
+  <xacro:include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.gazebo.xacro" />
 
   <xacro:macro name="hokuyo_lx04_laser_v0" params="name parent *origin ros_topic update_rate min_angle max_angle">
     <joint name="${name}_joint" type="fixed">
       <axis xyz="0 1 0" />
-      <insert_block name="origin" />
+      <xacro:insert_block name="origin" />
       <parent link="${parent}_link"/>
       <child link="${name}_link"/>
     </joint>

@@ -8,9 +8,9 @@
 
 	<!-- Things that are needed only for Gazebo (not the physical robot).  These include
 	sensor and controller plugin specifications -->
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.gazebo.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.transmission.xacro" />
-	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.gazebo.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common.xacro" />
 
 	<!-- ============================   forearm   ============================ -->
 
@@ -22,7 +22,7 @@
 		<joint name="${side}_elbow_tilt_joint" type="revolute">
 		<!--joint name="${side}_elbow_tilt_joint" type="continuous"-->
 			<axis xyz="0 0 1"/>
-			<insert_block name="origin" />
+			<xacro:insert_block name="origin" />
 			<parent link="${parent}"/>
 			<child link="${side}_forearm_link"/>
 			

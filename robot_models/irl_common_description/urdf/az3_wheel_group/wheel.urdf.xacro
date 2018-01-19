@@ -5,8 +5,8 @@
        xmlns:xacro="http://ros.org/wiki/xacro">
 	
 	<!-- Include files for extensions -->
-	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.gazebo.xacro" />
-	<include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.gazebo.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/az3_wheel_group/wheel.transmission.xacro" />
 
 	<xacro:macro name="az3_wheel_group" params="side reflectSide face reflectFace parent">
 		

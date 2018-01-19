@@ -4,7 +4,7 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/reddy_arm/arm.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/reddy_arm/arm.transmission.xacro" />
 	
 	<xacro:macro name="reddy_arm_shoulder_pitch" params="name reflect parent">
 

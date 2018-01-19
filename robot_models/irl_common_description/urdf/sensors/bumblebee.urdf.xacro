@@ -4,13 +4,13 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-<property name="bumblebee_size_z" value="0.035" />
+<xacro:property name="bumblebee_size_z" value="0.035" />
 
 <xacro:macro name="bumblebee" params="name parent *origin">
 		<joint name="${name}_fixed_joint" type="fixed">
 				<parent link="${parent}"/>
 				<child link="${name}_link"/>
-				<insert_block name="origin" />
+				<xacro:insert_block name="origin" />
 				<!--origin xyz="0 -0.06009 0.078965" rpy="0 0 0" /-->
 		</joint>
 

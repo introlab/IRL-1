@@ -8,9 +8,9 @@
 
 	<!-- Things that are needed only for Gazebo (not the physical robot).  These include
 	sensor and controller plugin specifications -->
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.gazebo.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.transmission.xacro" />
-	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.gazebo.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common.xacro" />
 
 	<!-- ============================   gripper   ============================ -->
 

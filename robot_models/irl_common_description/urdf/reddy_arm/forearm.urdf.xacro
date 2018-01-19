@@ -4,7 +4,7 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
 
 	<xacro:macro name="forearm" params="name reflect parent">
 

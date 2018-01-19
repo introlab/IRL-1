@@ -4,7 +4,7 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
 
 	<!--
 		Differential Elastic Actuator
@@ -21,7 +21,7 @@
 		
 	-->
 
-	<property name="_DEA_stator_length"  value="0.09" />
+	<xacro:property name="_DEA_stator_length"  value="0.09" />
 
 	<xacro:macro name="DEA" params="name parent xyz rpy shaft_length">
 

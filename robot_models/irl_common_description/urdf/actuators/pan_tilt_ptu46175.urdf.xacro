@@ -4,8 +4,8 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
-	<include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/actuators/pan_tilt_ptu46175.transmission.xacro" />
 
 	<!--
 		Directed Perception pan tilt PTU 46-17-5

@@ -5,10 +5,10 @@
 	   xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	   name="arm" >
 	   
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.urdf.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/upper_arm/upper_arm.urdf.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.urdf.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.urdf.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.urdf.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/upper_arm/upper_arm.urdf.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/forearm/forearm.urdf.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/gripper/gripper.urdf.xacro" />
 
 	<xacro:macro name="arm" params="side reflect parent">
 		

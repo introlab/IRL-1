@@ -8,7 +8,7 @@
 		<joint name="${name}_fixed_joint" type="fixed">
 				<parent link="${parent}"/>
 				<child link="${name}_link"/>
-				<insert_block name="origin" />
+				<xacro:insert_block name="origin" />
 				<!--origin xyz="0.13 0 0.38" rpy="0 0 0" /-->
 		</joint>
 

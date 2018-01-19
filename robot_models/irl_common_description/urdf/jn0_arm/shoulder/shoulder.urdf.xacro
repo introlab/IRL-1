@@ -8,9 +8,9 @@
 
 	<!-- Things that are needed only for Gazebo (not the physical robot).  These include
 	sensor and controller plugin specifications -->
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.gazebo.xacro" />
-	<include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.transmission.xacro" />
-	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.gazebo.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/jn0_arm/shoulder/shoulder.transmission.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common.xacro" />
 
 	<!-- ============================   Shoulder   ============================ -->
 
@@ -19,7 +19,7 @@
 		<!-- Shoulder fixed joint -->
 
 		<joint name="${side}_shoulder_fixed_joint" type="fixed">
-			<insert_block name="origin" />
+			<xacro:insert_block name="origin" />
 			<parent link="${parent}"/>
 			<child link="${side}_shoulder_fixed_link"/>
 		</joint>

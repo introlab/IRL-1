@@ -7,7 +7,7 @@
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<include filename="$(find irl_common_description)/urdf/common.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common.xacro" />
 
 	<!-- Macro for a static kinect (fixed camera joint) -->
 	<xacro:macro name="kinect_static" params="name parent xyz rpy angle">

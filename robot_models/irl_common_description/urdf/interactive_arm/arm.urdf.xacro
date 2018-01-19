@@ -14,14 +14,14 @@
 		FIXME Masses, dimensions, limits etc. are very approximative
 	-->
 
-	<include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
-	<include filename="$(find irl_common_description)/urdf/actuators/DEA.urdf.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/common_geometry.xacro" />
+	<xacro:include filename="$(find irl_common_description)/urdf/actuators/DEA.urdf.xacro" />
 
-	<property name="_interactive_arm_shoulder_yaw_offset"  value="0.1" />
-	<property name="_interactive_arm_shoulder_pitch_offset"  value="0.055" />
-	<property name="_interactive_arm_elbow_offset"  value="0.198" />
-	<property name="_interactive_arm_forearm_length"  value="0.145" />
-	<property name="_interactive_arm_hand_length"  value="0.2" />
+	<xacro:property name="_interactive_arm_shoulder_yaw_offset"  value="0.1" />
+	<xacro:property name="_interactive_arm_shoulder_pitch_offset"  value="0.055" />
+	<xacro:property name="_interactive_arm_elbow_offset"  value="0.198" />
+	<xacro:property name="_interactive_arm_forearm_length"  value="0.145" />
+	<xacro:property name="_interactive_arm_hand_length"  value="0.2" />
 
 	<xacro:macro name="interactive_arm" params="name parent offset_x offset_y offset_z">
 
