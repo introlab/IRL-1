@@ -1,13 +1,9 @@
 <?xml version="1.0"?>
 
-<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
-       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
-       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
-       xmlns:xacro="http://ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.gazebo.xacro" />
-
-  <xacro:macro name="hokuyo_lx04_laser_v0" params="name parent *origin ros_topic update_rate min_angle max_angle">
+    <xacro:include filename="$(find irl_common_description)/urdf/sensors/hokuyo_lx04_laser.gazebo.xacro" />
+    <xacro:macro name="hokuyo_lx04_laser_v0" params="name parent *origin ros_topic update_rate min_angle max_angle">
     <joint name="${name}_joint" type="fixed">
       <axis xyz="0 1 0" />
       <xacro:insert_block name="origin" />
@@ -34,7 +30,7 @@
         </geometry>
       </collision>
     </link>
-    <!-- gazebo extensions -->
+    <!-- gazebo extensions  -->
     <xacro:hokuyo_lx04_laser_gazebo_v0 name="${name}" ros_topic="${ros_topic}" update_rate="${update_rate}" min_angle="${min_angle}" max_angle="${max_angle}" />
   </xacro:macro>
 </robot>
