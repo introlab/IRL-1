@@ -6,7 +6,7 @@
   <arg name="jspgui" default="true"/>
   <arg name="rviz"   default="true"/>
 
-  <include file="$(find jn0_description)/robots/upload_jn0_standalone.launch"/>
+  <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="paused" value="$(arg paused)"/>
