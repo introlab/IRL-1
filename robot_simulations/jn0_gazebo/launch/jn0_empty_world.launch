@@ -3,33 +3,15 @@
 
   <arg name="paused" default="false"/>
   <arg name="gui"    default="false"/>
-  <arg name="jspgui" default="true"/>
   <arg name="rviz"   default="true"/>
 
-  <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui"    value="$(arg gui)"/>
   </include>
   
-  <node name="jn0_gazebo_model"
-         pkg="gazebo_ros"
-        type="spawn_model"
-        args="-z 0.05 -urdf -param robot_description jn0"
-  />
-
-  <node name="joint_state_publisher"
-         pkg="joint_state_publisher"
-        type="joint_state_publisher"
-  >
-    <param name="use_gui" value="$(arg jspgui)"/>
-  </node>
-
-  <node name="robot_state_publisher"
-         pkg="robot_state_publisher"
-        type="robot_state_publisher"
-  />
+  <include file="$(find jn0_gazebo)/launch/jn0_standalone.launch"/>
 
   <node name="rviz"
          pkg="rviz"

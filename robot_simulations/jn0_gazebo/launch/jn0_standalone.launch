@@ -1,0 +1,33 @@
+<launch>
+  <!-- Launches the Johnny-0 model and basic controllers (no Gazebo) -->
+
+  <arg name="use_jsp"   default="false"/>
+  <arg name="jsp_gui"   default="true"/>
+
+  <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
+
+  <node name="jn0_gazebo_model"
+         pkg="gazebo_ros"
+        type="spawn_model"
+        args="-z 0.05 -urdf -param robot_description jn0"
+  />
+
+  <node name="joint_state_publisher"
+         pkg="joint_state_publisher"
+        type="joint_state_publisher"
+          if="$(arg use_jsp)"
+  >
+    <param name="use_gui" value="$(arg jsp_gui)"/>
+  </node>
+
+  <node name="robot_state_publisher"
+         pkg="robot_state_publisher"
+        type="robot_state_publisher"
+  />
+
+  <!-- Default controllers -->
+  <group unless="$(arg use_jsp)">
+    <include file="$(find jn0_control_gazebo)/launch/jn0_control_gazebo.launch"/>
+  </group>
+
+</launch>
