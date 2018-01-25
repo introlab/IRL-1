@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"
-       name="johnny_0" >
+       name="jn0" >
 
 	<!-- The following included files set up definitions of parts of the robot body -->
 	<xacro:include filename="$(find irl_common_description)/urdf/common.xacro" />
@@ -27,7 +27,7 @@
 		   {xxx}_msgs
 		 -->
 	
-    <xacro:macro name="johnny_0" params="base_height">
+    <xacro:macro name="jn0" params="base_height">
         <link name="base_link">
             <!--
             <inertial>
@@ -132,5 +132,10 @@
             <origin xyz="0.1 0.0 ${base_height}" rpy="0 0 0" />
         </xacro:hokuyo_lx04_laser_v0>
 
+        <!-- For ros_control in Gazebo, disregard otherwise -->
+        <gazebo>
+              <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+              </plugin>
+        </gazebo>
     </xacro:macro>
 </robot>

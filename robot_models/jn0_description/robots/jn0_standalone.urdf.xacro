@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"
-       name="johnny_0" >
+       name="jn0" >
 
     <!-- Johnny-0 (the torso and arms) macro -->
-    <xacro:include filename="$(find jn0_description)/robots/johnny_0.urdf.xacro" />
+    <xacro:include filename="$(find jn0_description)/robots/jn0_0.urdf.xacro" />
 
     <xacro:property name="base_height"  value="0.25" />
 
     <!-- Defines everything from base_link and up. -->
-    <xacro:johnny_0 base_height="${base_height}" />
+    <xacro:jn0 base_height="${base_height}" />
 
 </robot>
