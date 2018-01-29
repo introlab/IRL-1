@@ -7,5 +7,6 @@
          pkg="controller_manager"
         type="spawner"
         args="joint_state_controller"
+          ns="/jn0"
   />
 </launch>
