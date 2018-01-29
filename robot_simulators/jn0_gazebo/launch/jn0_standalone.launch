@@ -9,7 +9,7 @@
   <node name="jn0_gazebo_model"
          pkg="gazebo_ros"
         type="spawn_model"
-        args="-z 0.05 -urdf -param robot_description jn0"
+        args="-z 0.05 -urdf -model jn0 -param robot_description"
   />
 
   <node name="joint_state_publisher"
