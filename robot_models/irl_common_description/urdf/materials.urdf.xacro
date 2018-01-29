@@ -26,19 +26,19 @@
   </material>
   
   <material name="Caster">
-    <texture filename="package://pr2_ogre/Media/materials/textures/pr2_caster_texture.png" />
+    <color rgba="0.4 0.4 0.4 1.0"/>
   </material>
   
   <material name="Wheel_l">
-    <texture filename="package://pr2_ogre/Media/materials/textures/pr2_wheel_left.png" />
+    <color rgba="0.4 0.4 0.4 1.0"/>
   </material>
   
   <material name="Wheel_r">
-    <texture filename="package://pr2_ogre/Media/materials/textures/pr2_wheel_right.png" />
+    <color rgba="0.4 0.4 0.4 1.0"/>
   </material>
 
   <material name="RollLinks">
-    <texture filename="package://pr2_ogre/Media/materials/textures/pr2_wheel_left.png" />
+    <color rgba="0.4 0.4 0.4 1.0"/>
   </material>
 
 </robot>
