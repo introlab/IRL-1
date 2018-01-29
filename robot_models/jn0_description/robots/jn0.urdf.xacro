@@ -132,10 +132,5 @@
             <origin xyz="0.1 0.0 ${base_height}" rpy="0 0 0" />
         </xacro:hokuyo_lx04_laser_v0>
 
-        <!-- For ros_control in Gazebo, disregard otherwise -->
-        <gazebo>
-              <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-              </plugin>
-        </gazebo>
     </xacro:macro>
 </robot>
