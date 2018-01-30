@@ -30,7 +30,7 @@
 			<child link="${name}_tilt_link"/>
 			<origin xyz="0 0 0.041" rpy="0 0 0" />
 			<axis xyz="0 0 1" rpy="0 0 0"/>
-            <limit effort="100" velocity="0.1" lower="${-M_PI/2}" upper="${M_PI/2}" />
+            <limit effort="100" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}" />
 		</joint>
 
         <xacro:simple_box
@@ -48,7 +48,7 @@
 			<child link="${name}_bracket_link"/>
             <origin xyz="0.013 0 0.025" rpy="0 0 0" />
 			<axis xyz="0 1 0" rpy="0 0 0"/>
-			<limit effort="100" velocity="0.1" lower="-0.170" upper="0.7854" />
+			<limit effort="100" velocity="2.0" lower="-0.170" upper="0.7854" />
 		</joint>
 
         <xacro:simple_box
