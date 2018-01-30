@@ -6,7 +6,9 @@
   <node name="controller_spawner"
          pkg="controller_manager"
         type="spawner"
-        args="joint_state_controller"
+        args="joint_state_controller
+              head_controller
+             "
           ns="/jn0"
   />
 </launch>
