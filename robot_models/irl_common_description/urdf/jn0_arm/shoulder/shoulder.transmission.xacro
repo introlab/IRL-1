@@ -4,16 +4,26 @@
 	<xacro:macro name="johnny_0_shoulder_transmission" params="reflect side">
 		
 		<!-- Shoulder pan -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_shoulder_pan_trans">
-			<actuator name="${side}_shoulder_pan_motor" />
-			<joint name="${side}_shoulder_pan_joint" />
+		<transmission name="${side}_shoulder_pan_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+			<actuator name="${side}_shoulder_pan_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_shoulder_pan_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>1.0</mechanicalReduction>
 		</transmission>
 		
 		<!-- Shoulder tilt -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_shoulder_tilt_trans">
-			<actuator name="${side}_shoulder_tilt_motor" />
-			<joint name="${side}_shoulder_tilt_joint" />
+		<transmission name="${side}_shoulder_tilt_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+			<actuator name="${side}_shoulder_tilt_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_shoulder_tilt_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>${reflect}</mechanicalReduction>
 		</transmission>
 

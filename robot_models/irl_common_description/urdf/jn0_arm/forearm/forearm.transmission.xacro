@@ -4,9 +4,14 @@
 	<xacro:macro name="johnny_0_forearm_transmission" params="side">
 		
 		<!-- Elbow tilt -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_elbow_tilt_trans">
-			<actuator name="${side}_elbow_tilt_motor" />
-			<joint name="${side}_elbow_tilt_joint" />
+		<transmission name="${side}_elbow_tilt_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+            <actuator name="${side}_elbow_tilt_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_elbow_tilt_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>1.0</mechanicalReduction>
 		</transmission>
 		

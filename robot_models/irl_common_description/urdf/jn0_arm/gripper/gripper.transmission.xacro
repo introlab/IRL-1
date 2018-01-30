@@ -4,16 +4,26 @@
 	<xacro:macro name="johnny_0_gripper_transmission" params="side">
 		
 		<!-- Gripper up transmission -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_gripper_up_trans">
-			<actuator name="${side}_gripper_up_motor" />
-			<joint name="${side}_gripper_up_joint" />
+		<transmission name="${side}_gripper_up_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+			<actuator name="${side}_gripper_up_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_gripper_up_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>1.0</mechanicalReduction>
 		</transmission>
 		
 		<!-- Gripper down transmission -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_gripper_down_trans">
-			<actuator name="${side}_gripper_down_motor" />
-			<joint name="${side}_gripper_down_joint" />
+		<transmission name="${side}_gripper_down_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+			<actuator name="${side}_gripper_down_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_gripper_down_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>1.0</mechanicalReduction>
 		</transmission>
 		

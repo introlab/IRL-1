@@ -4,9 +4,14 @@
 	<xacro:macro name="johnny_0_upper_arm_transmission" params="side reflect">
 		
 		<!-- Shoulder roll -->
-		<transmission type="pr2_mechanism_model/SimpleTransmission" name="${side}_shoulder_roll_trans">
-			<actuator name="${side}_shoulder_roll_motor" />
-			<joint name="${side}_shoulder_roll_joint" />
+		<transmission name="${side}_shoulder_roll_trans">
+            <type>hardware_interface/SimpleTransmission</type>
+			<actuator name="${side}_shoulder_roll_motor">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
+			<joint name="${side}_shoulder_roll_joint">
+              <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
 			<mechanicalReduction>${reflect * -1.0}</mechanicalReduction>
 		</transmission>
 
