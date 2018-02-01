@@ -3,7 +3,7 @@
 
   <xacro:macro name="az3_base_gazebo" params="name">
     <gazebo reference="${name}_link">
-      <selfCollide>true</selfCollide>
+      <selfCollide>false</selfCollide>
 	  <!-- No bumper -->
       <!--sensor:contact name="${name}_contact_sensor">
         <geom>${name}_link_geom</geom>

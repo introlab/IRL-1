@@ -16,8 +16,6 @@
 		<!-- Shoulder revolute joint - axis 3 : roll -->
 		
 		<joint name="${side}_shoulder_roll_joint" type="revolute">
-		<!--joint name="${side}_shoulder_roll_joint" type="continuous"-->
-		<!--joint name="${side}_shoulder_roll_joint" type="fixed"-->
 			<axis xyz="0 0 1"/> 
 			<xacro:insert_block name="origin" />
 			
@@ -25,9 +23,8 @@
 			<child link="${side}_upper_arm_link"/>
 			
 			<!-- This parameters have to be modified -->
-			<limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}"/>
-			<!-- limit effort="30" velocity="2.0" lower="${-3*M_PI/4}" upper="${3*M_PI/4}" /-->
-			<!--safety_controller k_position="100" k_velocity="2" soft_lower_limit="${-M_PI/2}" soft_upper_limit="${M_PI/2}"  /-->
+			<limit effort="10" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}"/>
+            <dynamics damping="0.1"/>
 		</joint>
 		
 		<!-- Upper arm link -->

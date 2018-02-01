@@ -58,7 +58,8 @@
 			<child link="${side}_shoulder_pan_link"/>
 		
 			<!-- This parameters have to be modified -->
-			<limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}" />
+			<limit effort="10" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI/2}" />
+            <dynamics damping="0.1"/>
 			<!--safety_controller k_position="100" k_velocity="10" soft_lower_limit="${-M_PI/2+0.15}" soft_upper_limit="${M_PI/2-0.15}"  /-->
 		</joint>
 
@@ -91,17 +92,14 @@
 		<!-- Shoulder revolute joint - axis 2 : tilt -->
 		
 		<joint name="${side}_shoulder_tilt_joint" type="revolute">
-		<!--joint name="${side}_shoulder_tilt_joint" type="continuous"-->
-		<!--joint name="${side}_shoulder_tilt_joint" type="fixed"-->
 			<axis xyz="0 0 1" />
 			<origin xyz="0 ${reflect*0.09471141} 0" rpy="${-M_PI/2} 0 0"/>
 			<parent link="${side}_shoulder_pan_link"/>
 			<child link="${side}_shoulder_tilt_link"/>
 		
 			<!-- This parameters have to be modified -->
-			<!--limit effort="30" velocity="2.0" lower="${-M_PI/2}" upper="${M_PI}" /-->
-			<limit effort="30" velocity="2.0" lower="${-M_PI}" upper="${M_PI/2}" />
-			<!--safety_controller k_position="100" k_velocity="10" soft_lower_limit="${-M_PI/2}" soft_upper_limit="${M_PI}"/-->
+			<limit effort="20" velocity="1.0" lower="${-M_PI}" upper="${M_PI/2}" />
+            <dynamics damping="0.1"/>
 		</joint>
 		
 		<!-- Shoulder link -->

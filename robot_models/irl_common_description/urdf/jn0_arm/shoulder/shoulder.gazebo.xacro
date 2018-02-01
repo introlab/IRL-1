@@ -3,8 +3,7 @@
 
 	<xacro:macro name="johnny_0_shoulder_gazebo" params="name">
 		<gazebo reference="${name}_link">
-			<selfCollide>true</selfCollide>
-			<material value="PR2/Green" />
+			<selfCollide>false</selfCollide>
 		</gazebo>
 	</xacro:macro>
 
