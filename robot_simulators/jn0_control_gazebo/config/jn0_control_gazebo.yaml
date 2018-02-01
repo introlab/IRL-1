@@ -40,3 +40,23 @@ jn0:
       R_shoulder_tilt_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
       R_shoulder_roll_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
       R_elbow_tilt_joint:       {p:  60, d: 5.0, i: 10, i_clamp: 4}
+
+  left_gripper_up_controller:
+      type: "effort_controllers/JointPositionController"
+      joint: L_gripper_up_joint
+      pid: {p: 10, d: 1.0, i: 0, i_clamp: 4}
+       
+  left_gripper_down_controller:
+      type: "effort_controllers/JointPositionController"
+      joint: L_gripper_down_joint
+      pid: {p: 10, d: 1.0, i: 0, i_clamp: 4}
+
+  right_gripper_up_controller:
+      type: "effort_controllers/JointPositionController"
+      joint: R_gripper_up_joint
+      pid: {p: 10, d: 1.0, i: 0, i_clamp: 4}
+       
+  right_gripper_down_controller:
+      type: "effort_controllers/JointPositionController"
+      joint: R_gripper_down_joint
+      pid: {p: 10, d: 1.0, i: 0, i_clamp: 4}

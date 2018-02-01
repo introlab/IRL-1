@@ -10,6 +10,10 @@
               head_controller
               left_arm_controller
               right_arm_controller
+              left_gripper_up_controller
+              left_gripper_down_controller
+              right_gripper_up_controller
+              right_gripper_down_controller
              "
           ns="/jn0"
   />

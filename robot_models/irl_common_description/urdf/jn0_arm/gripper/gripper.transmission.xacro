@@ -3,6 +3,12 @@
 
 	<xacro:macro name="johnny_0_gripper_transmission" params="side">
 		
+        <!-- NOTE: The actual gripper on JN0 is actuated by a single motor
+             pulling two revolute joints through a split cable.
+             This dual actuator setup in URDF will be kept until we write
+             a custom transmission plugin for it.
+        -->
+
 		<!-- Gripper up transmission -->
 		<transmission name="${side}_gripper_up_trans">
             <type>hardware_interface/SimpleTransmission</type>
