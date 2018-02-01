@@ -13,7 +13,7 @@ The main dependencies are:
 
  - ROS Kinetic, with ros_control_gazebo
 
-Normally, a base install of Ubuntu 16.04 and ROS Kinetic ('Desktop full' plus
+Normally, a base install of Ubuntu 16.04 and ROS Kinetic ('Desktop full') plus
 ros-kinetic-gazebo-ros-control should be enough to start the model.
 
 To run the Johnny-0 torso in an empty world, run:
