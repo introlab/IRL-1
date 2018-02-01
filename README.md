@@ -3,6 +3,23 @@ IRL-1
 
 The main repository for the IRL-1 robot at Université de Sherbrooke's IntRoLab.
 
+Getting Started
+---------------
+
+The repository is currently quite empty, but a model of Johnny-0 robot, the
+torso part of IRL-1, is available. 
+
+The main dependencies are:
+
+ - ROS Kinetic, with ros_control_gazebo
+
+Normally, a base install of Ubuntu 16.04 and ROS Kinetic ('Desktop full' plus
+ros-kinetic-gazebo-ros-control should be enough to start the model.
+
+To run the Johnny-0 torso in an empty world, run:
+
+  roslaunch jn0_gazebo jn0_empty_world.launch
+
 History
 -------
 
