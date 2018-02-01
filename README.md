@@ -18,7 +18,9 @@ ros-kinetic-gazebo-ros-control should be enough to start the model.
 
 To run the Johnny-0 torso in an empty world, run:
 
+```
   roslaunch jn0_gazebo jn0_empty_world.launch
+```
 
 History
 -------
