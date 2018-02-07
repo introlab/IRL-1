@@ -9,7 +9,8 @@ project(jn0_control_gazebo)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   controller_manager
-  joint_state_manager
+  joint_state_controller
+  joint_trajectory_controller
   robot_state_publisher
 )
 
