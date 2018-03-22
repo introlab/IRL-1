@@ -21,6 +21,22 @@ RCDevicePtr RCDeviceFactory::create(const std::string&     name,
     RCDevicePtr ptr;
     if (map_.find(name) != map_.end()) {
         ptr = map_[name](np);
+    } else {
+        std::stringstream ss;
+        int msize = map_.size();
+        auto i = map_.begin();
+        int c = 0;
+        while (i != map_.end()) {
+            ss << i->first.c_str();
+            ++i;
+            if (++c < msize) {
+                ss << ", ";
+            }
+        }
+        ROS_ERROR("Cannot find device type %s, "
+                  "available devices are: %s",
+                  name.c_str(),
+                  ss.str().c_str());
     }
     return ptr;
 }

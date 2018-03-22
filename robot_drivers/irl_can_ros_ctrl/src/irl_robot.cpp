@@ -105,8 +105,10 @@ void IRLRobot::addDevice(const ros::NodeHandle& np)
         can_robot_->addDevice(dev);
         dev->registerCtrlIfaces(*this);
     } else {
-        ROS_ERROR("Error creating device from namespace %s.",
-                  np.getNamespace().c_str());
+        ROS_ERROR("Error creating device from namespace %s, "
+                  "device type: %s.",
+                  np.getNamespace().c_str(),
+                  dev_type.c_str());
     }
 }
 
