@@ -1,0 +1,4 @@
+float32 m # Inertia
+float32 b # Damping
+float32 k # Elasticity
+

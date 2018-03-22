@@ -1,0 +1,41 @@
+<launch>
+    <rosparam>
+        dir1_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: wheelRF_revolute_joint
+        prop1_vel_ctrl:
+            type:  velocity_controllers/JointVelocityController
+            joint: wheelRF_wheel_continuous_joint
+        dir2_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: wheelLF_revolute_joint
+        prop2_vel_ctrl:
+            type:  velocity_controllers/JointVelocityController
+            joint: wheelLF_wheel_continuous_joint
+        dir3_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: wheelLB_revolute_joint
+        prop3_vel_ctrl:
+            type:  velocity_controllers/JointVelocityController
+            joint: wheelLB_wheel_continuous_joint
+        dir4_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: wheelRB_revolute_joint
+        prop4_vel_ctrl:
+            type:  velocity_controllers/JointVelocityController
+            joint: wheelRB_wheel_continuous_joint
+    </rosparam>
+    <node name="dir1_ctrl_spawner" 
+          pkg="controller_manager" 
+          type="spawner"
+          args="dir1_pos_ctrl
+                prop1_vel_ctrl 
+                dir2_pos_ctrl 
+                prop2_vel_ctrl
+                dir3_pos_ctrl
+                prop3_vel_ctrl
+                dir4_pos_ctrl
+                prop4_vel_ctrl"
+          output="screen"
+    />
+</launch>

@@ -1,0 +1,25 @@
+<launch>
+    <rosparam>
+        xaxis_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: ermasa_x_linear_joint
+        yaxis_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: ermasa_y_linear_joint
+        zaxis_pos_ctrl:
+            type:  position_controllers/JointPositionController
+            joint: ermasa_z_linear_joint        
+        ermasa_linear_ctrl:
+            type: ermasa_ctrl/LinearController
+            joint_x: ermasa_x_linear_joint
+            joint_y: ermasa_y_linear_joint
+            joint_z: ermasa_z_linear_joint
+
+    </rosparam>
+    <node name="ermasa_ctrl_spawner" 
+          pkg="controller_manager" 
+          type="spawner"
+          args="xaxis_pos_ctrl yaxis_pos_ctrl zaxis_pos_ctrl ermasa_linear_ctrl"
+          output="screen"
+    />
+</launch>

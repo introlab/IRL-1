@@ -1,0 +1,6 @@
+irl_can_ros_ctrl
+----------------
+
+ROS Control-based system for controlling CAN bus-based robots at IntRoLab.
+
+Based on previous projects, with input from Dominic Létourneau.
