@@ -1,0 +1,13 @@
+<launch>
+  <rosparam file="$(find jn0_controller_configuration)/config/jn0_default_controllers.yaml"
+            command="load"
+  />
+
+  <!-- TODO: Add single joint controllers back. -->
+  <node name="controller_spawner"
+         pkg="controller_manager"
+        type="spawner"
+        args="joint_state_controller "
+          ns="/jn0"
+  />
+</launch>
