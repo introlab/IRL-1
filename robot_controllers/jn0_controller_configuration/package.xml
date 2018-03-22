@@ -53,9 +53,9 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>ros_controllers</build_depend>
-  <build_export_depend>ros_controllers</build_export_depend>
-  <exec_depend>ros_controllers</exec_depend>
+  <build_depend>joint_state_controller</build_depend>
+  <build_export_depend>joint_state_controller</build_export_depend>
+  <exec_depend>joint_state_controller</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

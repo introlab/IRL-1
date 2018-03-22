@@ -3,6 +3,11 @@
 
   <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
 
+  <!-- CAN Bus controller and hardware interface -->
+  <include file="$(find jn0_bringup)/launch/jn0_can_drivers.launch"
+             ns="jn0"
+  />
+
   <node name="robot_state_publisher"
          pkg="robot_state_publisher"
         type="robot_state_publisher"

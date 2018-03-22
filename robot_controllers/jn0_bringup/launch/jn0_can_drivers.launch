@@ -1,0 +1,13 @@
+<launch>
+<!-- CAN Bus manager and devices for both arms and head (TODO) -->
+
+    <node   name="jn0_driver"
+             pkg="irl_can_ros_ctrl"
+            type="irl_robot_node"
+          output="screen">
+        <rosparam    file="$(find jn0_bringup)/config/jn0_can_drivers.yaml"
+                  command="load"
+        />
+    </node>
+
+</launch>

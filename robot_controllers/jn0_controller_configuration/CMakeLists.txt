@@ -8,7 +8,7 @@ project(jn0_controller_configuration)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ros_controllers
+    joint_state_controller
 )
 
 ## System dependencies are found with CMake's conventions
