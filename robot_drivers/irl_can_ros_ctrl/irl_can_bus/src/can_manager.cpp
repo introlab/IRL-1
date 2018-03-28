@@ -318,13 +318,13 @@ void CANManager::mainLoop()
         const size_t frame_size = sizeof(CANFrame);
         for (int i = 1; i < fds_.size(); ++i) {
             if (pollfds[i].revents & POLLIN) {
-                CAN_LOG_DEBUG("POLLIN on %i.", i);
+                // CAN_LOG_DEBUG("POLLIN on %i.", i);
                 CANFrame frame_in;
 
                 while (read(fds_[i], &frame_in, frame_size) == frame_size) {
-                    CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
-                                  deviceIDFromFrame(frame_in),
-                                  deviceCmdFromFrame(frame_in));
+                    // CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
+                    //              deviceIDFromFrame(frame_in),
+                    //              deviceCmdFromFrame(frame_in));
                     processFrame(frame_in);
                 }
                 // Update the send queue map.
@@ -475,7 +475,7 @@ void CANManager::writeMem(unsigned int device_id,
                             unsigned int size,
                             unsigned int priority)
 {
-    CAN_LOG_DEBUG("Mem write for %i, offset %i", device_id, offset);
+    // CAN_LOG_DEBUG("Mem write for %i, offset %i", device_id, offset);
     LaboriusMessage msg;
     irl_can_bus::writeMem(msg, device_id, offset, data, size, priority);
     pushOneMessage(msg);

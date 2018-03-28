@@ -15,6 +15,7 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     RCDevice(np),
     cmd_var_(&position_),
     cmd_conv_to_(&pos_conv_to_),
+    cmd_var_type_(CMD_VAR_POSITION),
     polling_(true)
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v2_joint"));
@@ -25,18 +26,21 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     // TODO: Get/Set this from/to the drive.
     if (cmd_var == "position")
     {
-        cmd_var_ = &position_;
-        cmd_conv_to_ = &pos_conv_to_;
+        cmd_var_        = &position_;
+        cmd_conv_to_    = &pos_conv_to_;
+        cmd_var_type_   = CMD_VAR_POSITION;
     }
     else if (cmd_var == "velocity")
     {
-        cmd_var_ = &velocity_;
-        cmd_conv_to_ = &vel_conv_to_;
+        cmd_var_        = &velocity_;
+        cmd_conv_to_    = &vel_conv_to_;
+        cmd_var_type_   = CMD_VAR_VELOCITY; 
     }
     else if (cmd_var == "torque")
     {
-        cmd_var_ = &torque_;
-        cmd_conv_to_ = &tqe_conv_to_;
+        cmd_var_        = &torque_;
+        cmd_conv_to_    = &tqe_conv_to_;
+        cmd_var_type_   = CMD_VAR_TORQUE; 
     }
 
     np.param("polling", polling_, true);
@@ -53,12 +57,41 @@ RCDevicePtr UniDriveV2::create(const ros::NodeHandle& np)
 
 void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
 {
+    // State interface
     hardware_interface::JointStateHandle sh(joint_name_, 
                                             &position_,
                                             &velocity_, 
                                             &torque_);
     robot.jsi().registerHandle(sh);
 
+    // Command interface
+    hardware_interface::JointCommandInterface* jci = nullptr;
+
+    if (cmd_var_type_ == CMD_VAR_POSITION)
+    {
+        using HWI = hardware_interface::PositionJointInterface;
+        jci = robot.getHWI<HWI>();
+    }    
+    else if (cmd_var_type_ == CMD_VAR_VELOCITY)
+    {
+        using HWI = hardware_interface::VelocityJointInterface;
+        jci = robot.getHWI<HWI>();
+    }
+    else if (cmd_var_type_ == CMD_VAR_TORQUE)
+    {
+        using HWI = hardware_interface::EffortJointInterface;
+        jci = robot.getHWI<HWI>();
+    }
+    
+ 
+    if (jci != nullptr) {
+        jci->registerHandle(hardware_interface::JointHandle(sh,
+                                                            &set_point_));
+    }
+    else
+    {
+        ROS_ERROR("JointCommandInterface unknown for device : %i",deviceID());
+    }
 }
 
 ThrottlingDef UniDriveV2::throttled(const TimeBase& p) const
@@ -84,6 +117,8 @@ void UniDriveV2::enable(CANManager& can)
     torque_        = 0.0;
     torque_offset_ = 0.0;
     pos_offset_    = 0.0;
+
+    set_point_     = *cmd_var_;
 
     admittance_changed_ = true;
     pos_offset_changed_ = false;
@@ -164,6 +199,9 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
     {
         case MODE_VARIABLE_OFFSET:
             // TODO: Check, and if necessary, switch command variable.
+            drive_mode_ = msg.msg_data[0];
+            // new_state_ |= MOD_RECEIVED;
+
         break;
 
         case SETPOINT_VARIABLE_OFFSET:
@@ -250,6 +288,9 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
     if (state() == STATE_STARTING) {
         //ROS_WARN("Received, ready: %i (conv: %i).", ready_, CONV_READY);
         if (ready_ == CONV_READY) {
+            // All ratios were received, ready to convert.
+            calcConvRatios();
+
             ROS_DEBUG("Switching UniDriveV2 %i to ENABLED.", deviceID());
             //ROS_WARN("Switching to ENABLED");
             CANRobotDevice::state(STATE_ENABLED);
@@ -258,3 +299,58 @@ void UniDriveV2::processMsg(const LaboriusMessage& msg)
 
 }
 
+void UniDriveV2::calcConvRatios()
+{
+    pos_conv_to_ = 1.0 / pos_conv_from_;	
+    vel_conv_to_ = pos_conv_to_ * timebase_;
+    vel_conv_from_ = 1.0 / vel_conv_to_;
+    tqe_conv_to_ = 1.0 / tqe_conv_from_;
+}
+
+void UniDriveV2::sendCommand(CANManager& can)
+{
+    int setPointConv = 0;
+
+    if (cmd_var_type_ == CMD_VAR_POSITION)
+    {
+        setPointConv = (int) *cmd_conv_to_ * set_point_;
+    }
+    else if (cmd_var_type_ == CMD_VAR_VELOCITY)
+    {
+        setPointConv = (int) *cmd_conv_to_ * set_point_;
+    }
+    else if (cmd_var_type_ == CMD_VAR_TORQUE)
+    {
+        setPointConv = (int) *cmd_conv_to_ * set_point_;
+    }
+    else
+    {
+        ROS_ERROR("Unhandled cmd_var_type_ : %i",cmd_var_type_);
+        return;
+    }
+
+    ROS_DEBUG_THROTTLE(0.5,
+                       "Dev: %i, SendCommand : %f (%i), mode: %i",
+                       deviceID(), 
+                       set_point_,
+                       setPointConv,
+                       drive_mode_);
+
+    if (drive_mode_ == 1)
+    {
+        //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
+        
+        can.writeMem(deviceID(),
+                     SETPOINT_VARIABLE_OFFSET, 
+                     (unsigned char*) &setPointConv, 
+                     sizeof(int)); 
+        
+    }
+
+    if (admittance_changed_)
+    {
+        // TODO: setAdmittance(can);
+        admittance_changed_ = false;
+    }
+
+}

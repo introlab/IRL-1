@@ -48,6 +48,15 @@ namespace irl_can_ros_ctrl
             TIMEBASE_VARIABLE_OFFSET        = 238
         };
 
+        // Type of command variable
+        typedef enum
+        {
+            CMD_VAR_NONE,
+            CMD_VAR_VELOCITY,
+            CMD_VAR_POSITION,
+            CMD_VAR_TORQUE
+        } CmdVarType;
+
         // ROS parameters
         std::string joint_name_;
 
@@ -86,6 +95,12 @@ namespace irl_can_ros_ctrl
         /// Defaults to pos_conv_to_. 
         float* cmd_conv_to_;
 
+        /// \brief Type of command variable (see enum)
+        CmdVarType cmd_var_type_;
+
+        /// \brief Set point value from higher-level controllers.
+        double set_point_;
+
         /// \brief The drive's loop time base, used in speed conversions.
         float timebase_;
 
@@ -104,6 +119,7 @@ namespace irl_can_ros_ctrl
         bool pos_offset_changed_;
         unsigned short drive_state_; // Drive operation state.
 
+        unsigned char drive_mode_; // Drive mode (1: running)
         enum
         {
             POS_RECEIVED = 1,
@@ -179,9 +195,13 @@ namespace irl_can_ros_ctrl
         void requestState(irl_can_bus::CANManager& can);
         bool stateReady();
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
+        void sendCommand(irl_can_bus::CANManager& can);
 
         // TEMP
         double pos() const { return position_; }
+
+    private:
+        void calcConvRatios();
     };
 }
 
