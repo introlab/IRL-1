@@ -71,7 +71,8 @@ namespace irl_can_bus
         CANRobotDevice(int dev_id = -1): 
             dev_id_(dev_id),
             state_(STATE_DISABLED)
-        {}
+        {
+        }
 
         virtual ~CANRobotDevice() {}
 

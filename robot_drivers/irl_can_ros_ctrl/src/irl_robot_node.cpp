@@ -8,7 +8,7 @@ namespace {
     {
         switch (id) {
             case irl_can_bus::log::CAN_LOG_DEBUG:
-                ROS_INFO_STREAM(str);
+                ROS_DEBUG_STREAM(str);
                 break;
             case irl_can_bus::log::CAN_LOG_INFO:
                 ROS_INFO_STREAM(str);

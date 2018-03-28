@@ -90,7 +90,7 @@ CANManager::CANManager(const std::vector<std::string> if_names):
 
         fds_.push_back(fd);
 
-        CAN_LOG_DEBUG("Socket ready on %s.", if_name.c_str());
+        CAN_LOG_INFO("Socket ready on %s.", if_name.c_str());
 
     }
 
@@ -272,6 +272,8 @@ void CANManager::mainLoop()
         pfd.events = POLLPRI | POLLIN | POLLERR | POLLHUP | POLLNVAL;
     }
 
+    CAN_LOG_INFO("fds count: %d", fds_.size());
+
     while (shouldRun()) {
         // First step: distribute new messages into device queues while
         // respecting throttling.
@@ -307,7 +309,7 @@ void CANManager::mainLoop()
         // Internal events pipe, just flush the buffer if there's anything.
         if (pollfds[0].revents & POLLIN) {
 
-            CAN_LOG_DEBUG("Got internal event.");
+            //CAN_LOG_DEBUG("Got internal event.");
             char v;
             while (read(fds_[0], &v, sizeof(v)) == sizeof(v));
         }
@@ -316,15 +318,13 @@ void CANManager::mainLoop()
         const size_t frame_size = sizeof(CANFrame);
         for (int i = 1; i < fds_.size(); ++i) {
             if (pollfds[i].revents & POLLIN) {
-                //CAN_LOG_DEBUG("POLLIN on %i.", i);
+                CAN_LOG_DEBUG("POLLIN on %i.", i);
                 CANFrame frame_in;
 
                 while (read(fds_[i], &frame_in, frame_size) == frame_size) {
-                    /*
                     CAN_LOG_DEBUG("Got frame from %i, cmd: %i.",
                                   deviceIDFromFrame(frame_in),
                                   deviceCmdFromFrame(frame_in));
-                    */
                     processFrame(frame_in);
                 }
                 // Update the send queue map.
@@ -365,7 +365,6 @@ void CANManager::mainLoop()
     };
 
     CAN_LOG_WARN("CANManager main loop done");
-    std::cerr<<"CANManager main loop done"<<std::endl;
 }
 
 void CANManager::throttling(int dev_id, const ThrottlingDef& td)
@@ -458,7 +457,6 @@ void CANManager::schedLoop()
     }
 
     CAN_LOG_WARN("CANManager sched loop done");
-    std::cerr<<"CANManager sched loop done"<<std::endl;
 }
 
 void CANManager::requestMem(unsigned int device_id,
@@ -466,7 +464,6 @@ void CANManager::requestMem(unsigned int device_id,
                             unsigned int size,
                             unsigned int priority)
 {
-    //CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
     LaboriusMessage msg;
     irl_can_bus::requestMem(msg, device_id, offset, size, priority);
     pushOneMessage(msg);
@@ -478,7 +475,7 @@ void CANManager::writeMem(unsigned int device_id,
                             unsigned int size,
                             unsigned int priority)
 {
-    //CAN_LOG_DEBUG("Mem request for %i, offset %i", device_id, offset);
+    CAN_LOG_DEBUG("Mem write for %i, offset %i", device_id, offset);
     LaboriusMessage msg;
     irl_can_bus::writeMem(msg, device_id, offset, data, size, priority);
     pushOneMessage(msg);

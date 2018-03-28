@@ -7,6 +7,9 @@ RCDevice::RCDevice(const ros::NodeHandle& np)
 {
     int dev_id;
     np.param("can_device_id", dev_id, -1);
+    ROS_INFO("Creating ros_control device with namespace %s, dev_id: %d.",
+             np.getNamespace().c_str(),
+             dev_id);
     CANRobotDevice::deviceID(dev_id);
 }
 

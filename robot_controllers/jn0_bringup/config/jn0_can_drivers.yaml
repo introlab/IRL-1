@@ -1,10 +1,11 @@
 ifaces: [can0, can1, can2]
 devices:
  - L_shoulder_pan_motor
+period: 0.01
 
 L_shoulder_pan_motor:
   can_device_type       : UniDriveV2
-  can_device_id         : 38
+  can_device_id         : 19
   joint_name            : "L_shoulder_pan_motor"
   command_variable      : "position"
   polling               : true
