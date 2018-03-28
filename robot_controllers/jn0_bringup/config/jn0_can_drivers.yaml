@@ -10,7 +10,7 @@ period: 0.01
 L_shoulder_pan_motor:
   can_device_type       : UniDriveV2
   can_device_id         : 19
-  joint_name            : "L_shoulder_pan_motor"
+  joint_name            : "L_shoulder_pan_joint"
   command_variable      : "position"
   polling               : true
   active_torque_offset  : true
@@ -19,7 +19,7 @@ L_shoulder_pan_motor:
 L_shoulder_tilt_motor:
   can_device_type       : UniDriveV2
   can_device_id         : 20
-  joint_name            : "L_shoulder_tilt_motor"
+  joint_name            : "L_shoulder_tilt_joint"
   command_variable      : "position"
   polling               : true
   active_torque_offset  : true
@@ -28,7 +28,7 @@ L_shoulder_tilt_motor:
 L_shoulder_roll_motor:
   can_device_type       : UniDriveV2
   can_device_id         : 3
-  joint_name            : "L_shoulder_roll_motor"
+  joint_name            : "L_shoulder_roll_joint"
   command_variable      : "position"
   polling               : true
   active_torque_offset  : true
@@ -37,7 +37,7 @@ L_shoulder_roll_motor:
 L_elbow_tilt_motor:
   can_device_type       : UniDriveV2
   can_device_id         : 6
-  joint_name            : "L_elbow_tilt_motor"
+  joint_name            : "L_elbow_tilt_joint"
   command_variable      : "position"
   polling               : true
   active_torque_offset  : true

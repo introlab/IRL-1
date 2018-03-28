@@ -1,8 +1,16 @@
 # Copied from Gazebo setup, with actual controllers commented as a start.
-jn0:
-  joint_state_controller:
-    type: joint_state_controller/JointStateController
-    publish_rate: 100
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 100
+
+left_arm_controller:
+  type: "position_controllers/JointTrajectoryController"
+  joints:
+    - L_shoulder_pan_joint
+#       - L_shoulder_tilt_joint
+#       - L_shoulder_roll_joint
+#       - L_elbow_tilt_joint
+
 
 #   head_controller:
 #     type: "effort_controllers/JointTrajectoryController"

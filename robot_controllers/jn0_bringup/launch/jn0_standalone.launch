@@ -1,20 +1,21 @@
 <launch>
   <!-- Launches the Johnny-0 model and basic controllers with CAN bus controller -->
 
-  <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
+  <group ns="jn0">
+    <include file="$(find jn0_description)/launch/upload_jn0_standalone.launch"/>
 
-  <!-- CAN Bus controller and hardware interface -->
-  <include file="$(find jn0_bringup)/launch/jn0_can_drivers.launch"
-             ns="jn0"
-  />
+    <!-- CAN Bus controller and hardware interface -->
+    <include file="$(find jn0_bringup)/launch/jn0_can_drivers.launch"/>
 
-  <node name="robot_state_publisher"
-         pkg="robot_state_publisher"
-        type="robot_state_publisher"
-          ns="jn0"
-  />
+    <node name="robot_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher"
+          output="screen"
+    />
 
-  <!-- Default controllers -->
-  <include file="$(find jn0_controller_configuration)/launch/jn0_default_controllers.launch"/>
+    <!-- Default controllers -->
+    <include file="$(find jn0_controller_configuration)/launch/jn0_default_controllers.launch"/>
+
+  </group>
 
 </launch>
