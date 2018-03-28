@@ -67,4 +67,4 @@ while(True):
             can_id, length, data = struct.unpack(fmt, pkt)
             can_id &= socket.CAN_EFF_MASK
             dev_id = 0xFF & can_id
-            print("Got response from %x" % (dev_id))
+            print("Got response from 0x%X" % (dev_id))
