@@ -16,6 +16,10 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     cmd_var_(&position_),
     cmd_conv_to_(&pos_conv_to_),
     cmd_var_type_(CMD_VAR_POSITION),
+    set_point_(0.0),
+    admittance_k_(0.0),
+    admittance_b_(0.0),
+    admittance_m_(0.0),
     polling_(true)
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v2_joint"));

@@ -7,10 +7,17 @@ left_arm_controller:
   type: "position_controllers/JointTrajectoryController"
   joints:
     - L_shoulder_pan_joint
-#       - L_shoulder_tilt_joint
+    - L_shoulder_tilt_joint
 #       - L_shoulder_roll_joint
 #       - L_elbow_tilt_joint
 
+# right_arm_controller:
+#   type: "position_controllers/JointTrajectoryController"
+#   joints:
+#    - R_shoulder_pan_joint
+#       - L_shoulder_tilt_joint
+#       - L_shoulder_roll_joint
+#       - L_elbow_tilt_joint
 
 #   head_controller:
 #     type: "effort_controllers/JointTrajectoryController"
@@ -36,19 +43,6 @@ left_arm_controller:
 #       L_shoulder_roll_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
 #       L_elbow_tilt_joint:       {p:  60, d: 5.0, i: 10, i_clamp: 4}
 # 
-#   right_arm_controller:
-#     type: "effort_controllers/JointTrajectoryController"
-#     joints:
-#       - R_shoulder_pan_joint
-#       - R_shoulder_tilt_joint
-#       - R_shoulder_roll_joint
-#       - R_elbow_tilt_joint
-# 
-#     gains:
-#       R_shoulder_pan_joint:     {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       R_shoulder_tilt_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       R_shoulder_roll_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       R_elbow_tilt_joint:       {p:  60, d: 5.0, i: 10, i_clamp: 4}
 # 
 #   left_gripper_up_controller:
 #       type: "effort_controllers/JointPositionController"
