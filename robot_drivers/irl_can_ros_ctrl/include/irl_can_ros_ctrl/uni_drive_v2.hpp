@@ -4,6 +4,7 @@
 #include "rc_device.hpp"
 #include "rc_device_factory.hpp"
 #include <irl_can_bus/can_robot_device.hpp>
+#include <irl_can_ros_ctrl/SetAdmittance.h>
 
 namespace irl_can_ros_ctrl
 {
@@ -159,6 +160,8 @@ namespace irl_can_ros_ctrl
         /// \brief Indicates if the drive is in polling mode or not.
         bool polling_;
 
+        ros::ServiceServer srv_admittance_;
+
     public:
         /// \brief Constructor.
         ///
@@ -197,11 +200,16 @@ namespace irl_can_ros_ctrl
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
         void sendCommand(irl_can_bus::CANManager& can);
 
+        // Change admittance/impedance parameters
+        bool admittanceCB(SetAdmittance::Request& req,
+                          SetAdmittance::Response&);
+
         // TEMP
         double pos() const { return position_; }
 
     private:
         void calcConvRatios();
+        void setAdmittance(irl_can_bus::CANManager& can);
     };
 }
 

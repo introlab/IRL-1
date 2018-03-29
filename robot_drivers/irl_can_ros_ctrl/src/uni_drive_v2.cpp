@@ -44,6 +44,12 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     }
 
     np.param("polling", polling_, true);
+
+    // Create a new node handle to create a service server:
+    ros::NodeHandle n(np);
+    srv_admittance_ = 
+        n.advertiseService("set_admittance", 
+        &UniDriveV2::admittanceCB, this);
 }
 
 UniDriveV2::~UniDriveV2()
@@ -138,7 +144,9 @@ void UniDriveV2::enableCtrl(CANManager& can)
     req_state_ = STATE_CONTROL;
     CANRobotDevice::enableCtrl(can);
 
-    // TODO: Start motor.
+    // Start motor.
+    unsigned char mode = MODE_VARIABLE_NORMAL;
+    can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char));
 }
 
 void UniDriveV2::disableCtrl(CANManager& can)
@@ -146,7 +154,9 @@ void UniDriveV2::disableCtrl(CANManager& can)
     req_state_ = STATE_ENABLED;
     CANRobotDevice::disableCtrl(can);
 
-    // TODO: Stop motor.
+    // Stop motor.
+    unsigned char mode = MODE_VARIABLE_IDLE;
+    can.writeMem(deviceID(), MODE_VARIABLE_OFFSET, &mode, sizeof(unsigned char));
 }
 
 void UniDriveV2::disable(CANManager& can)
@@ -349,8 +359,35 @@ void UniDriveV2::sendCommand(CANManager& can)
 
     if (admittance_changed_)
     {
-        // TODO: setAdmittance(can);
+        setAdmittance(can);
         admittance_changed_ = false;
     }
 
+}
+
+bool UniDriveV2::admittanceCB(SetAdmittance::Request& req,
+                              SetAdmittance::Response&)
+{
+    ROS_INFO("admittanceCB : M: %f B: %f K: %f",req.m, req.b, req.k);
+    //TODO VERIFY MIN/MAX RANGE
+    admittance_m_ = req.m;
+    admittance_b_ = req.b;
+    admittance_k_ = req.k;
+    admittance_changed_ = true;
+    return true;
+}
+
+void UniDriveV2::setAdmittance(CANManager& can)
+{  
+    ROS_DEBUG("Changing impedance parameters for dev: %i, M: %f, B: %f, K: %f",
+              deviceID(),
+              admittance_m_,
+              admittance_b_,
+              admittance_k_);
+
+    // TODO: VERIFY MIN/MAX RANGE
+
+    can.writeMem(deviceID(),ADMITTANCE_M_OFFSET, (unsigned char*)&admittance_m_, sizeof(float));
+    can.writeMem(deviceID(),ADMITTANCE_B_OFFSET, (unsigned char*)&admittance_b_, sizeof(float));
+    can.writeMem(deviceID(),ADMITTANCE_K_OFFSET, (unsigned char*)&admittance_k_, sizeof(float));
 }
