@@ -1,5 +1,7 @@
 # IRL-1
 
+![IRL-1](images/irl1_full.jpg)
+
 ## Introduction
 
 IRL-1 is wheeled, humanoid robot built at Université de Sherbrooke's IntRoLab.
