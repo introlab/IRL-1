@@ -30,7 +30,7 @@ Starting Johnny-0, while relatively easy, is a multistep process on the source o
 Depending on the work you plan to do, the power source you will use is important.
 Both power sources, the external one and the batteries, cannot be used at the same time.
 Furthermore, they cannot be switched seamlessly.
-Indeed, ** the Johnny-0, including the computer, has to be fully powered off before switching power sources **.
+Indeed, **Johnny-0, including the computer, has to be fully powered off before switching power sources**.
 
 For development and light payloads on a single arm, the external power source can provide enough current.
 Otherwise, the batteries are necessary.
