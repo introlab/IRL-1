@@ -39,13 +39,17 @@ means the computer will turn off and the arms might fall and collide with the re
 
 #### Using the external power source
 
-(TODO: image of the power source)
+![Johnny-0 external power supply](images/jn0_ext_power_supply.jpg)
 
 1. **Power up the source itself.** The power source does not have a on/off switch, and always provide 24V when 
  
-2. Connect the external power cable, located in the middle of the torso. **Do not plug the external power source in one of the battery inputs! (TODO: images)**
+2. Connect the external power cable to the external power terminal, located in the middle of the torso. **Do not plug the external power source in one of the battery terminals! The following image shows the Johnny-0 connectors. The external power terminal is circled in red, the battery terminals in yellow, and the power switch in blue.
 
-3. Turn on the torso power switch (TODO: Image). The display should show 24V or so (TODO: confirm, image)
+![Johnny-0 Power connectors](images/jn0_connectors.jpg)
+
+3. Turn on the torso power switch. The display should show 24V or so, as in the following picture.
+
+![Johnny-0 when powered on from an external power supply](images/jn0_ext_power_on.jpg)
 
 #### Using the batteries
 
@@ -64,16 +68,30 @@ Note that charging the batteries can be done without turning on the power manage
 
 1. **Disconnected the batteries from the torso.** You have to make sure that the batteries are not currently powering the robot before charging them. Turning the robot off is not enough, **you need to disconnect each battery**.
 
-3. Connect the chargers to an AC source, and leave them off. The chargers have their own on/off switches (TODO: confirm, image).
+3. Connect the chargers to an AC source. As with the external power supply, they do not have their own power switches.
 
-4. Connect the batteries to their chargers. (TODO: image)
+4. Connect the batteries to their chargers, as in the following picture:
 
-5. Turn on the chargers. The LEDs should turn to (TODO: colors, images).
+![Johnny-0 battery charging terminal](images/jn0_batt_connector.jpg)
+
+5. Turn on the chargers. Both LEDs should turn red:
+
+![Johnny-0 battery chargers on](images/jn0_batt_chargers_on.jpg)
+
+When both batteries are full, the second LED on each charger should turn green.
+**Remember to let the batteries unconnected for at least 30 minutes after charging.**
+This is part of the cell auto-balance procedure.
 
 #### Turning on the computer
 
 Once power is applied to the Johnny-0 torso, you can turn its computer on.
-The power microswitch is located below the Mini-ITX case (TODO: picture).
+
+![Johnny-0 Mini-ITX computer case](images/jn0_computer.jpg)
+
+The power microswitch is located below the Mini-ITX case, circled here in blue:
+
+![Johnny-0 computer power microswitch](images/jn0_computer_switch.jpg)
+
 Once powered on, you should see blue LEDs flashing near the microswitch, and see the CPU fan starting to turn through
 the air vents of the case.
 
@@ -82,3 +100,16 @@ the air vents of the case.
 To shutdown the robot, you simply need to revert all the steps you took to power on the robot.
 The PCs have to be shut down first, then the power management of each robot (power switch on the torso, power key on the mobile base).
 Finally, you can disconnect the power sources from the robot.
+
+## Troubleshooting
+
+**The LEDs on the Johnny-0 battery chargers do not behave normally.**
+Try unplugging them, letting them rest for 30 seconds, and replugging everything.
+The chargers are sometimes sensitive to the order in which they have been connected.
+For instance, letting them plugged in the batteries for too long before plugging them in an AC power source seems to turned their detection circuitry off.
+Letting them unplugged seems to reset this.
+
+**The LEDs on the Johnny-0 battery chargers do not turn on at all**
+Each charger has two fuses: one external and one internal.
+Check both fuses, as they tend to burn out easily.
+
