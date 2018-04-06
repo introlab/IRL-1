@@ -11,10 +11,8 @@ It is a combination of two fully independent robots:
 The software is entirely based on ROS with custom packages found in this repository.
 The aim of this guide is to describe how to use the robot, from startup to the development of higher-level capabilities.
 
-**
-This is a living document and is not meant to be fully complete from the beginning.
-Feel free to suggest improvements or guides of your own.
-**
+**This is a living document and is not meant to be fully complete from the beginning.
+Feel free to suggest improvements or guides of your own.**
 
 ## Startup
 
@@ -41,15 +39,15 @@ means the computer will turn off and the arms might fall and collide with the re
 
 (TODO: image of the power source)
 
-1. ** Power up the source itself. ** The power source does not have a on/off switch, and always provide 24V when 
+1. **Power up the source itself.** The power source does not have a on/off switch, and always provide 24V when 
  
-2. Connect the external power cable, located in the middle of the torso. ** Do not plug the external power source in one of the battery inputs! (TODO: images)
+2. Connect the external power cable, located in the middle of the torso. **Do not plug the external power source in one of the battery inputs! (TODO: images)**
 
 3. Turn on the torso power switch (TODO: Image). The display should show 24V or so (TODO: confirm, image)
 
 #### Using the batteries
 
-1. ** Make sure the robot is power off! **
+1. **Make sure the robot is power off!**
 
 2. Connect both batteries in their terminals (TODO: picture)
 
@@ -59,10 +57,10 @@ means the computer will turn off and the arms might fall and collide with the re
 
 Each battery has a LiFePO4 charger with its own charging connector.
 Charging can be done safely when the robot is used on the external power source.
-** Again, switching power sources first require a complete shutdown of the Johnny-0 torso ! **
+**Again, switching power sources first require a complete shutdown of the Johnny-0 torso !**
 Note that charging the batteries can be done without turning on the power management of the torso.
 
-1. ** Disconnected the batteries from the torso. ** You have to make sure that the batteries are not currently powering the robot before charging them. Turning the robot off is not enough, ** you need to disconnect each battery **.
+1. **Disconnected the batteries from the torso.** You have to make sure that the batteries are not currently powering the robot before charging them. Turning the robot off is not enough, **you need to disconnect each battery**.
 
 3. Connect the chargers to an AC source, and leave them off. The chargers have their own on/off switches (TODO: confirm, image).
 
