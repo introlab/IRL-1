@@ -134,12 +134,12 @@ Please contact François Ferland or Dominic Létourneau if you want to create an
 
 To easily access the robot through ROS, follow these instructions:
 
-1. Add an entry for 'johnny0' in your /etc/hosts file.
-This will make sure your computer knows about the "johnny0" hostname.
+1. Add an entry for 'irl1' in your /etc/hosts file.
+This will make sure your computer knows about the "irl1" hostname.
 The line should look like this:
 
 ```
-192.168.3.10 	johnny0
+192.168.3.10 	irl1
 ```
 
 2. Set your ROS_MASTER_URI environment variable.
@@ -147,12 +147,12 @@ This will indicate to ROS on your computer that the master server runs on Johnny
 Here's how to do it:
 
 ```
-$ export ROS_MASTER_URI=http://johnny0:11311/
+$ export ROS_MASTER_URI=http://irl1:11311/
 ```
 
 This has to be done in each of your terminal, or you can add it to your .bashrc file.
 Note that using the IP address instead of johnny0 will initially work if you have not changed your /etc/hosts file, but you will not be able to receive any data from the robot, except the list of topics and services (through rostopic list).
-This is because topics are still advertised with the "johnny0" hostname, and not the IP.
+This is because topics are still advertised with the "irl1" hostname, and not the IP.
 
 3. Set your ROS hostname to your IP (optional).
 
@@ -164,6 +164,6 @@ $ export ROS_HOSTNAME=192.168.3.XXX
 
 This has to be done before starting any nodes on your computer.
 This is because your own hostname will not be known to the robot, and it won't be able to locate it on the network.
-This is the reverse problem of not setting a 'johnny0' entry in your /etc/hosts file.
+This is the reverse problem of not setting a 'irl1' entry in your /etc/hosts file.
 
 
