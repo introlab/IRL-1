@@ -24,6 +24,9 @@ To run the Johnny-0 torso in an empty world, run:
   roslaunch jn0_gazebo jn0_empty_world.launch
 ```
 
+For further information on how to use the robot in real life, look into the
+'docs' [subfolder](docs/README.md).
+
 History
 -------
 
