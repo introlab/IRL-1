@@ -118,7 +118,8 @@ Check both fuses, as they tend to burn out easily.
 ## Shutdown
 
 To shutdown the robot, you simply need to revert all the steps you took to power on the robot.
-The PCs have to be shut down first, then the power management of each robot (power switch on the torso, power key on the mobile base).
+The PCs have to be shut down first, which can be done directly from their switches.
+Then, the power management of each robot (power switch on the torso, power key on the mobile base) can be switched off.
 Finally, you can disconnect the power sources from the robot.
 
 ## Accessing the computers through the network
