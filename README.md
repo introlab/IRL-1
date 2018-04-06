@@ -11,7 +11,9 @@ torso part of IRL-1, is available.
 
 The main dependencies are:
 
- - ROS Kinetic, with ros_control_gazebo
+ - ROS Kinetic, with those packages:
+   - ros_control_gazebo
+   - ros_controllers
 
 Normally, a base install of Ubuntu 16.04 and ROS Kinetic ('Desktop full') plus
 ros-kinetic-gazebo-ros-control should be enough to start the model.
