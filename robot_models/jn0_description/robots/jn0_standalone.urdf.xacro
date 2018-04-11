@@ -10,4 +10,11 @@
     <!-- Defines everything from base_link and up. -->
     <xacro:jn0 base_height="${base_height}" />
 
+    <!-- Fixes the base_link to the world -->
+    <link name="world" />
+    <joint name="fixed" type="fixed">
+      <parent link="world"/>
+      <child link="base_link"/>
+    </joint>
+
 </robot>
