@@ -3,10 +3,21 @@
 
 using namespace irl_can_ros_ctrl;
 
+namespace {
+    static RCDeviceCreatorHelper ch_("PTUDrive", 
+                                     RCDeviceCreator(&PTUDrive::create));
+}
+
+RCDevicePtr PTUDrive::create(const ros::NodeHandle& np)
+{
+    return RCDevicePtr(new PTUDrive(np));
+}
+
 PTUDrive::PTUDrive(const ros::NodeHandle& n):
     RCDevice(n),
     cur_pos_(0.0), 
     cur_vel_(0.0), 
+    cur_eff_(0.0),
     cur_cmd_(0.0),
     state_ready_(false),
     cycle_(0)
@@ -33,7 +44,7 @@ void PTUDrive::registerCtrlIfaces(IRLRobot& robot)
     hardware_interface::JointStateHandle sh(joint_name_, 
                                             &cur_pos_,
                                             &cur_vel_, 
-                                            nullptr);
+                                            &cur_eff_);
     robot.jsi().registerHandle(sh);
 
     using HWI = hardware_interface::PositionJointInterface;
@@ -46,10 +57,11 @@ void PTUDrive::registerCtrlIfaces(IRLRobot& robot)
 
 void PTUDrive::enable(irl_can_bus::CANManager& can)
 {
-    CANRobotDevice::state(STATE_ENABLED);
+    CANRobotDevice::state(STATE_STARTING);
 
     cur_pos_ = 0.0;
     cur_vel_ = 0.0;
+    cur_eff_ = 0.0;
     cur_cmd_ = cur_pos_;
 
     state_ready_ = false; // Will turn true after receiving the current state.
@@ -62,7 +74,6 @@ void PTUDrive::enableCtrl(irl_can_bus::CANManager& can)
     if (!motor_enabled_)
         ROS_WARN("Starting PTU driver with a disabled motor.");
 
-    CANRobotDevice::state(STATE_STARTING);
     cycle_ = 0;
 }
 
@@ -71,7 +82,7 @@ void PTUDrive::disableCtrl(irl_can_bus::CANManager& can)
     setPoint(can, rest_angle_);
     if (stop_at_shutdown_)
         stopMotor(can);
-    CANRobotDevice::state(STATE_DISABLED);
+
     CANRobotDevice::disableCtrl(can);
 }
 

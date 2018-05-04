@@ -79,6 +79,7 @@ namespace irl_can_ros_ctrl
 
         double cur_pos_;
         double cur_vel_;
+        double cur_eff_; // Always 0 torque for now.
         double cur_cmd_;
 
         bool motor_enabled_;
@@ -110,6 +111,8 @@ namespace irl_can_ros_ctrl
         virtual void enableCtrl(irl_can_bus::CANManager& can);
         virtual void disableCtrl(irl_can_bus::CANManager& can);
         virtual void processMsg(const irl_can_bus::LaboriusMessage& msg);
+
+        static RCDevicePtr create(const ros::NodeHandle& np);
 
     private:
         void startMotor(irl_can_bus::CANManager& can);
