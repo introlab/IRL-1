@@ -8,6 +8,7 @@
          pkg="controller_manager"
         type="spawner"
         args="joint_state_controller
+              neck_controller
               left_arm_controller"
   />
 </launch>

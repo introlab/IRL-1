@@ -3,6 +3,12 @@ joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 100
 
+neck_controller:
+  type: "effort_controllers/JointTrajectoryController"
+  joints:
+    - neck_pan_joint
+    - neck_tilt_joint
+
 left_arm_controller:
   type: "position_controllers/JointTrajectoryController"
   joints:
@@ -19,30 +25,6 @@ left_arm_controller:
 #       - L_shoulder_roll_joint
 #       - L_elbow_tilt_joint
 
-#   head_controller:
-#     type: "effort_controllers/JointTrajectoryController"
-#     joints:
-#       - neck_pan_joint
-#       - neck_tilt_joint
-# 
-#     gains:
-#       neck_pan_joint:  {p: 60, d: 5, i: 10, i_clamp: 4}
-#       neck_tilt_joint: {p: 60, d: 5, i: 10, i_clamp: 4}
-# 
-#   left_arm_controller:
-#     type: "effort_controllers/JointTrajectoryController"
-#     joints:
-#       - L_shoulder_pan_joint
-#       - L_shoulder_tilt_joint
-#       - L_shoulder_roll_joint
-#       - L_elbow_tilt_joint
-# 
-#     gains:
-#       L_shoulder_pan_joint:     {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       L_shoulder_tilt_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       L_shoulder_roll_joint:    {p:  60, d: 5.0, i: 10, i_clamp: 4}
-#       L_elbow_tilt_joint:       {p:  60, d: 5.0, i: 10, i_clamp: 4}
-# 
 # 
 #   left_gripper_up_controller:
 #       type: "effort_controllers/JointPositionController"

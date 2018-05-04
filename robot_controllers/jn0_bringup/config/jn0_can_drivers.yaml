@@ -1,5 +1,7 @@
 ifaces: [can0, can1, can2]
 devices:
+ - neck_pan_motor
+ - neck_tilt_motor
  - L_shoulder_pan_motor
  - L_shoulder_tilt_motor
 # - L_shoulder_roll_motor
@@ -8,6 +10,33 @@ devices:
 # - R_shoulder_tilt_motor
 
 period: 0.01
+
+neck_pan_motor:
+  can_device_type       : PTUDrive
+  can_device_id         : 252
+  base_offset           : 0
+  joint_name            : "neck_pan_joint"
+
+  clock_divider         : 1
+  motor_enabled         : false
+  position_conv_ratio   : 195.3788
+  position_center       : 480
+  velocity_conv_ratio   : 0.0116
+  rest_angle            : 0.0000
+
+neck_tilt_motor:
+  can_device_type       : PTUDrive
+  can_device_id         : 252
+  base_offset           : 66
+  joint_name            : "neck_tilt_joint"
+
+  clock_divider         : 1
+  motor_enabled         : false
+  position_conv_ratio   : 935.0646
+  position_center       : 1890
+  velocity_conv_ratio   : 0.0116
+  rest_angle            : 0.1000
+  stop_at_shutdown      : false
 
 L_shoulder_pan_motor:
   can_device_type       : UniDriveV2

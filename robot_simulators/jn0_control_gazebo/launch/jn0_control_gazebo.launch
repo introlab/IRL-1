@@ -7,7 +7,7 @@
          pkg="controller_manager"
         type="spawner"
         args="joint_state_controller
-              head_controller
+              neck_controller
               left_arm_controller
               right_arm_controller
               left_gripper_up_controller
