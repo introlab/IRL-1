@@ -114,6 +114,7 @@ add_library(irl_can_ros_ctrl
   src/rc_device.cpp
   src/rc_device_factory.cpp
   src/pic_drive.cpp
+  src/ptu_drive.cpp
   src/uni_drive_v2.cpp
   src/uni_drive_v3.cpp
 )
