@@ -37,6 +37,7 @@ PTUDrive::PTUDrive(const ros::NodeHandle& n):
     n.param("stop_at_shutdown", stop_at_shutdown_, true);
     n.param("clock_divider", clock_divider_, 10);
 
+    ROS_INFO("Create PTU controller for %i:%i.", deviceID(), base_offset_);
 }
 
 void PTUDrive::registerCtrlIfaces(IRLRobot& robot)
@@ -63,6 +64,8 @@ void PTUDrive::enable(irl_can_bus::CANManager& can)
     cur_vel_ = 0.0;
     cur_eff_ = 0.0;
     cur_cmd_ = cur_pos_;
+
+    setMaxVel(can);
 
     state_ready_ = false; // Will turn true after receiving the current state.
 }
@@ -93,10 +96,14 @@ void PTUDrive::disable(irl_can_bus::CANManager& can)
 
 void PTUDrive::processMsg(const irl_can_bus::LaboriusMessage& msg)
 {
-    ROS_DEBUG_THROTTLE(1.0,
-        "Message from PTU drive, state: %i", CANRobotDevice::state());
-
     unsigned int dest = msg.msg_cmd - base_offset_;
+
+    //ROS_DEBUG(
+    //    "Message from PTU drive, state: %i, dest: %i, offset: %i", 
+    //    CANRobotDevice::state(),
+    //    dest,
+    //    base_offset_);
+
     switch (dest)
     {
         case CUR_POS_OFFSET:
@@ -108,6 +115,8 @@ void PTUDrive::processMsg(const irl_can_bus::LaboriusMessage& msg)
                 // state is ready, and sendCommand can switch on the motor
                 // and go to state 'CONTROL'.
                 state_ready_ = true;
+                cur_cmd_ = cur_pos_;
+                CANRobotDevice::state(STATE_CONTROL);
             }
             break;
         case CUR_VEL_OFFSET:
@@ -133,6 +142,7 @@ void PTUDrive::requestState(irl_can_bus::CANManager& can)
         can.requestMem(deviceID(), base_offset_ + CUR_VEL_OFFSET, sizeof(int16_t));
     }
 
+
 }
 
 void PTUDrive::sendCommand(irl_can_bus::CANManager& can)
@@ -142,15 +152,7 @@ void PTUDrive::sendCommand(irl_can_bus::CANManager& can)
     if (cycle_ == std::numeric_limits<int>::max())
         cycle_ %= clock_divider_;
 
-    if (CANRobotDevice::state() == STATE_STARTING && state_ready_) {
-        // The driver received the current motor state, can now switch to
-        // "CONTROL state".
-        setMaxVel(can);
-        setPoint(can, cur_cmd_);
-        startMotor(can);
-        CANRobotDevice::state(STATE_CONTROL);
-    }
-    else if (CANRobotDevice::state() == STATE_CONTROL) {
+    if (CANRobotDevice::state() == STATE_CONTROL) {
         // Only apply set points in the CONTROL state, the STARTING state
         // waits for a valid position from the drive before switching to the
         // CONTROL state.
@@ -177,6 +179,9 @@ void PTUDrive::setPoint(irl_can_bus::CANManager& can, double val)
     int16_t cmd = int(pos_conv_to_ * val) + pos_center_;
     can.writeMem(deviceID(), base_offset_ + SET_POINT_OFFSET, 
         (unsigned char*)&cmd, sizeof(int16_t));
+
+    ROS_DEBUG_THROTTLE(1.0, "PTU SetPoint for %i:%i: %i",
+                       deviceID(), base_offset_, cmd);
 }
 
 void PTUDrive::setMaxVel(irl_can_bus::CANManager& can)

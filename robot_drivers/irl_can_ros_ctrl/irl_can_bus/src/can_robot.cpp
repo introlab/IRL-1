@@ -65,7 +65,7 @@ void CANRobot::loopOnce()
         if (dev) {
             if (dev->state() != CANRobotDevice::STATE_DISABLED) 
             {
-                //CAN_LOG_INFO("REQUESTING STATE FOR DEV : %i",dev->deviceID());
+                // CAN_LOG_INFO("REQUESTING STATE FOR DEV : %i",dev->deviceID());
                 dev->requestState(can_);
                 ++enabled_count;
             }
