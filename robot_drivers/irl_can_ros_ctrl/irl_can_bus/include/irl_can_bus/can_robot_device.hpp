@@ -60,6 +60,9 @@ namespace irl_can_bus
             STATE_CONTROL  = 3  // Control is enabled.
         };
 
+        // Defined in can_robot.cpp:
+        static const char* StateNames[4];
+
     private:
         int   dev_id_;
         State state_;

@@ -1,7 +1,6 @@
 ifaces: [can0, can1, can2]
 devices:
- - neck_pan_motor
-# - neck_tilt_motor
+ - neck_ptu_motors
 # - L_shoulder_pan_motor
 # - L_shoulder_tilt_motor
 # - L_shoulder_roll_motor
@@ -11,32 +10,34 @@ devices:
 
 period: 0.01
 
-neck_pan_motor:
+neck_ptu_motors:        
   can_device_type       : PTUDrive
   can_device_id         : 252
-  base_offset           : 0
-  joint_name            : "neck_pan_joint"
 
-  clock_divider         : 10
-  motor_enabled         : true
-  position_conv_ratio   : 195.3788
-  position_center       : 480
-  velocity_conv_ratio   : 0.0116
-  rest_angle            : 0.0000
+  pan_motor:
+    can_device_type     : PTUMotor
+    can_device_id       : 252
+    base_offset         : 0
+    joint_name          : "neck_pan_joint"
+    motor_enabled       : true
+    position_conv_ratio : 195.3788
+    position_center     : 480
+    velocity_conv_ratio : 0.0116
+    rest_angle          : 0.0000
+    clock_divider         : 10
 
-neck_tilt_motor:
-  can_device_type       : PTUDrive
-  can_device_id         : 252
-  base_offset           : 66
-  joint_name            : "neck_tilt_joint"
-
-  clock_divider         : 10
-  motor_enabled         : true
-  position_conv_ratio   : 935.0646
-  position_center       : 1890
-  velocity_conv_ratio   : 0.0116
-  rest_angle            : 0.1000
-  stop_at_shutdown      : false
+  tilt_motor:
+    can_device_type     : PTUMotor
+    can_device_id       : 252
+    base_offset         : 66
+    joint_name          : "neck_tilt_joint"
+    motor_enabled       : true
+    position_conv_ratio : 935.0646
+    position_center     : 1890
+    velocity_conv_ratio : 0.0116
+    rest_angle          : 0.1000
+    stop_at_shutdown    : false
+    clock_divider         : 10
 
 L_shoulder_pan_motor:
   can_device_type       : UniDriveV2

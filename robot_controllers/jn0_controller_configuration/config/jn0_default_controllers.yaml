@@ -7,7 +7,7 @@ neck_controller:
   type: "position_controllers/JointTrajectoryController"
   joints:
     - neck_pan_joint
-#    - neck_tilt_joint
+    - neck_tilt_joint
 
 left_arm_controller:
   type: "position_controllers/JointTrajectoryController"

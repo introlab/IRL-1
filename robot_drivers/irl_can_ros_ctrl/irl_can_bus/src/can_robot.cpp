@@ -2,6 +2,13 @@
 
 using namespace irl_can_bus;
 
+const char* CANRobotDevice::StateNames[4] = {
+            "DISABLED",
+            "STARTING",
+            "ENABLED",
+            "CONTROL"
+};
+
 CANRobot::CANRobot(const std::vector<std::string>& ifaces):
     can_(ifaces)
 {
@@ -75,7 +82,7 @@ void CANRobot::loopOnce()
     ///Read messages
     LaboriusMessage msg_in;
     while (can_.popOneMessage(msg_in)) {
-        //CAN_LOG_WARN("Got one message from %i.",
+        //CAN_LOG_INFO("Got one message from %i.",
         //              msg_in.msg_dest);
         CANRobotDevicePtr& dev = devices_[msg_in.msg_dest];
         if (dev && dev->state() != CANRobotDevice::STATE_DISABLED) {
