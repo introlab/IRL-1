@@ -21,7 +21,6 @@ uint16_t convertAngle(float val)
 FaceCtrlBase::FaceCtrlBase(const ros::NodeHandle& np)
 {
     eyes_origin_.m_floats[3] = 0.0;
-    np.param("device_id", can_device_id_, 253);
     np.param("eyes_origin_x", eyes_origin_.m_floats[0], 0.06);
     np.param("eyes_origin_y", eyes_origin_.m_floats[1], 0.00);
     np.param("eyes_origin_z", eyes_origin_.m_floats[2], 0.09);
@@ -35,9 +34,9 @@ FaceCtrlBase::FaceCtrlBase(const ros::NodeHandle& np)
     np.param("mouth_safety", mouth_safety_, false);
 }
 
-void FaceCtrlBase::setPose(const jn0_face_msgs::FacePose::ConstPtr& cmd)
+void FaceCtrlBase::setPose(const jn0_face_msgs::FacePose& cmd)
 {
-    pose_ = *cmd; 
+    pose_ = cmd; 
 
     //Software protection for avoid TOP and BOTTOM servo to make a collision
     
@@ -86,10 +85,10 @@ void FaceCtrlBase::setPose(const jn0_face_msgs::FacePose::ConstPtr& cmd)
     }
 }
 
-void FaceCtrlBase::setEyesTarget(const geometry_msgs::Point::ConstPtr& msg)
+void FaceCtrlBase::setEyesTarget(const geometry_msgs::Point& msg)
 {
     // 1. Find the target relative to the eyes' reference point.
-    tf::Point target(msg->x, msg->y, msg->z);
+    tf::Point target(msg.x, msg.y, msg.z);
     target -= eyes_origin_;
 
     // 2. Find the tilt angle.
@@ -120,13 +119,13 @@ void FaceCtrlBase::setEyesTarget(const geometry_msgs::Point::ConstPtr& msg)
 
 }
 
-void FaceCtrlBase::generateMessages(std::vector<LaboriusMessage>& msgs)
+void FaceCtrlBase::generateMessages(std::vector<LaboriusMessage>& msgs, int id)
 {
     LaboriusMessage msg_base;
 
     msg_base.msg_priority       = 0;
     msg_base.msg_type           = CAN_TYPE_ACTUATOR_HIGH_PRIORITY;
-    msg_base.msg_dest           = can_device_id_;
+    msg_base.msg_dest           = id;
     msg_base.msg_cmd            = DRIVE_CMD_DRIVE_SETPOINT;
     msg_base.msg_boot           = 0;
     msg_base.msg_remote         = 0;

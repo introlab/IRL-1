@@ -40,8 +40,6 @@ namespace jn0_face_ctrl
     ///    CAN bus.
     ///
     /// Parameters:
-    ///  - device_id: The CAN device ID.
-    ///    Default: 253.
     ///  - eyes_origin_x: Eyes reference point in X.
     ///    Default: 0.06 m.
     ///  - eyes_origin_y: Eyes reference point in Y.
@@ -66,6 +64,7 @@ namespace jn0_face_ctrl
     ///
 	class FaceCtrlBase
 	{
+    public:
         enum
         {
             FP_LEFT_EYE_PAN         = 0,
@@ -84,7 +83,6 @@ namespace jn0_face_ctrl
         static const unsigned int DRIVE_CMD_DRIVE_SETPOINT = 0x01;
 
     private:
-        int         can_device_id_;
         tf::Point   eyes_origin_;
         double      eyes_spacing_;
         double      eyes_tilt_range_;
@@ -110,21 +108,22 @@ namespace jn0_face_ctrl
         /// Note that the eyes angles can be overwritten by the setEyeTarget
         /// method, and vice versa.
         /// \param cmd The full pose. 
-		void setPose(const jn0_face_msgs::FacePose::ConstPtr& cmd);
+		void setPose(const jn0_face_msgs::FacePose& cmd);
 
         /// \brief Sets a new target for the eyes.
         ///
         /// Overwrites internal state of the eyes with the given target.
         ///
         /// \param cmd The new target point.
-        void setEyesTarget(const geometry_msgs::Point::ConstPtr& cmd);
+        void setEyesTarget(const geometry_msgs::Point& cmd);
 
         /// \brief Generates new commands to send over the CAN bus to set the
         /// current face pose.
         ///
         /// \param msgs A vector of messages to send. Only pushes back new
         ///             messages.
-        void generateMessages(std::vector<LaboriusMessage>& msgs);
+        /// \param id   The CAN device ID (default: 253).
+        void generateMessages(std::vector<LaboriusMessage>& msgs, int id = 253);
 
     private:
         uint16_t convertAngle(float v);

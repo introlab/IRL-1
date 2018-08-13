@@ -57,16 +57,19 @@
   <build_depend>hardware_interface</build_depend>
   <build_depend>irl_can_ros_ctrl</build_depend>
   <build_depend>jn0_face_msgs</build_depend>
+  <build_depend>realtime_tools</build_depend>
   <build_depend>roscpp</build_depend>
   <build_export_depend>controller_manager</build_export_depend>
   <build_export_depend>hardware_interface</build_export_depend>
   <build_export_depend>irl_can_ros_ctrl</build_export_depend>
   <build_export_depend>jn0_face_msgs</build_export_depend>
+  <build_export_depend>realtime_tools</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
   <exec_depend>irl_can_ros_ctrl</exec_depend>
   <exec_depend>jn0_face_msgs</exec_depend>
+  <exec_depend>realtime_tools</exec_depend>
   <exec_depend>roscpp</exec_depend>
 
 

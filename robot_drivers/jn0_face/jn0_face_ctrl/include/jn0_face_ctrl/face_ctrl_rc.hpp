@@ -6,6 +6,7 @@
 #include <irl_can_ros_ctrl/rc_device_factory.hpp>
 #include <irl_can_ros_ctrl/irl_robot.hpp>
 #include <irl_can_bus/can_robot_device.hpp>
+#include <realtime_tools/realtime_buffer.h>
 
 namespace jn0_face_ctrl
 {
@@ -26,11 +27,23 @@ namespace jn0_face_ctrl
     /// 
     ///  - clock_divider: Only send pose update every N control cycles.
     ///                   Default: 10.
+    ///
+    /// Topic:
+    ///  - cmd_face:      New face pose to apply.
+    ///  - eyes_target:   New 3D point to look at (always overwrites the rest
+    ///                   of the pose).
     class FaceCtrlRC: public RCDevice, public FaceCtrlBase
     {
     private:
-        int clock_divider_;
-        int cycle_i_;
+        int     clock_divider_;
+        int     cycle_i_;
+        bool    new_pose_;
+
+        realtime_tools::RealtimeBuffer<jn0_face_msgs::FacePose> pose_buffer_;
+        realtime_tools::RealtimeBuffer<geometry_msgs::Point>    target_buffer_;
+        
+        ros::Subscriber sub_pose_;
+        ros::Subscriber sub_target_;
 
     public:
         /// \brief Constructor.
@@ -50,6 +63,10 @@ namespace jn0_face_ctrl
 
         void processMsg(const irl_can_bus::LaboriusMessage& msg);
         void sendCommand(irl_can_bus::CANManager& can);
+
+    private:
+        void poseCB(const jn0_face_msgs::FacePose& msg);
+        void targetCB(const geometry_msgs::Point& msg);
 
     };
 }
