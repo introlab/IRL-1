@@ -145,6 +145,8 @@ add_executable(expression_generator src/expression_generator.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(emotion_translator ${catkin_EXPORTED_TARGETS})
+add_dependencies(expression_generator ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(emotion_translator
