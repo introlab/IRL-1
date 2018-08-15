@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   controller_manager
   roscpp
   message_generation
+  pluginlib
 )
 
 # NOTE: These flags assume G++-4.8 is available.

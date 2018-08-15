@@ -12,6 +12,8 @@ namespace irl_can_ros_ctrl
     class RCDevice: public irl_can_bus::CANRobotDevice
     {
     public:
+        RCDevice() {}
+
         RCDevice(const ros::NodeHandle& n);
 
         ~RCDevice();

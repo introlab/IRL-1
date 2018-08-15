@@ -4,8 +4,15 @@
 using namespace irl_can_ros_ctrl;
 
 IRLRobot::IRLRobot(ros::NodeHandle& n, ros::NodeHandle& np):
-    rc_cm_(this), running_(false)
+    plugin_loader_("irl_can_ros_ctrl", "irl_can_ros_ctrl::RCDevice"),
+    rc_cm_(this),
+    running_(false)
 {
+    for (auto n: plugin_loader_.getDeclaredClasses()) {
+        ROS_INFO("IRLRobot loading plugin for: %s...", n.c_str());
+        loadPlugin(n);
+    }
+
     std::vector<std::string> ifaces;
     if (np.hasParam("ifaces")) {
         XmlRpc::XmlRpcValue ifnames_arr; 
@@ -147,3 +154,17 @@ bool IRLRobot::checkForConflict(const std::list<hardware_interface::ControllerIn
     return false;
 }
 
+bool IRLRobot::loadPlugin(const std::string& name)
+{
+    // Loading the library automatically registers the device factory.
+    try {
+        plugin_loader_.loadLibraryForClass(name);
+        return true;
+    } catch (pluginlib::LibraryLoadException e) {
+        ROS_ERROR("Error when loading library for %s: %s",
+                  name.c_str(),
+                  e.what());
+
+        return false;
+    }
+}

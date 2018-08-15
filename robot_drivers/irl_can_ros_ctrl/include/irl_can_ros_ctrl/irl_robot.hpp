@@ -7,6 +7,7 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 #include <controller_manager/controller_manager.h>
+#include <pluginlib/class_loader.h>
 #include <ros/ros.h>
 
 namespace irl_can_ros_ctrl
@@ -34,6 +35,8 @@ namespace irl_can_ros_ctrl
 
         std::unique_ptr<CANRobot> can_robot_;
         std::vector<RCDevicePtr>  devices_;
+
+        pluginlib::ClassLoader<RCDevice> plugin_loader_;
 
         // ros_control items
         using HWI    = hardware_interface::HardwareInterface;
@@ -112,6 +115,9 @@ namespace irl_can_ros_ctrl
 
         /// \brief Real-time thread loop.
         void rtThread();
+
+        /// \brief Load the library associated with the given device plugin.
+        bool loadPlugin(const std::string& name);
     };
 }
 
