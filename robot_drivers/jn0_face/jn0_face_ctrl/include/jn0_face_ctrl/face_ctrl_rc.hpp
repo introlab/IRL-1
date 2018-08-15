@@ -46,12 +46,18 @@ namespace jn0_face_ctrl
         ros::Subscriber sub_target_;
 
     public:
+        /// \brief Default constructor.
+        ///
+        /// Does not result in a working driver.
+        /// Note that pluginlib needs a defined default constructor to work.
+        FaceCtrlRC() {}
+
         /// \brief Constructor.
         ///
         /// \param np Namespace for parameters.
         FaceCtrlRC(const ros::NodeHandle& np); 
 
-        ~FaceCtrlRC();
+        ~FaceCtrlRC() {};
 
         /// \brief RCDevice factory helper function.
         static RCDevicePtr create(const ros::NodeHandle& np);

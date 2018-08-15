@@ -96,12 +96,18 @@ namespace jn0_face_ctrl
         jn0_face_msgs::FacePose pose_;
 
 	public:
+        /// \brief Default constructor.
+        ///
+        /// Does not result in a working driver.
+        /// Note that pluginlib needs a defined default constructor to work.
+        FaceCtrlBase() {}
+
         /// \brief Constructor.
         ///
         /// \param np Node handle for parameters.
 		FaceCtrlBase(const ros::NodeHandle& np);
 
-        virtual ~FaceCtrlBase();
+        virtual ~FaceCtrlBase() {};
 
         /// \brief Sets a new pose for the face.
         ///

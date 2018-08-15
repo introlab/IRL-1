@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   irl_can_ros_ctrl
   jn0_face_msgs
   roscpp
+  pluginlib
 )
 
 set(CMAKE_CXX_FLAGS "--std=c++11 -pthread ${CMAKE_CXX_FLAGS}")

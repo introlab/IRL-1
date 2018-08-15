@@ -3,21 +3,6 @@
 
 using namespace jn0_face_ctrl;
 
-uint16_t convertAngle(float val)
-{
-    if(val < -1.0)
-        val = -1.0;
-    else if (val > 1.0)
-        val = 1.0;
-    
-    // The input range for the multi-servo microcontroller is 2000,
-    // which corresponds to periods between 1100 us and 1900 us,
-    // or +/- 40 degrees.
-    val = val * 1000 + 1000;
-
-    return uint16_t(val);
-
-}
 FaceCtrlBase::FaceCtrlBase(const ros::NodeHandle& np)
 {
     eyes_origin_.m_floats[3] = 0.0;
@@ -30,7 +15,7 @@ FaceCtrlBase::FaceCtrlBase(const ros::NodeHandle& np)
     np.param("eyes_tilt_min", eyes_tilt_min_, -0.698); 
     np.param("eyes_tilt_max", eyes_tilt_max_, 0.698); 
     np.param("eyes_pan_min", eyes_pan_min_, -0.698); 
-    np.param("eyes_pan-max", eyes_pan_max_, 0.698); 
+    np.param("eyes_pan_max", eyes_pan_max_, 0.698); 
     np.param("mouth_safety", mouth_safety_, false);
 }
 
@@ -158,4 +143,20 @@ void FaceCtrlBase::msgSetData(LaboriusMessage& msg_base, int motor, float value)
     uint16_t pos = convertAngle(value);
     msg_base.msg_data[3] = pos >> 8;
     msg_base.msg_data[2] = pos & 0xff;
+}
+
+uint16_t FaceCtrlBase::convertAngle(float val)
+{
+    if(val < -1.0)
+        val = -1.0;
+    else if (val > 1.0)
+        val = 1.0;
+    
+    // The input range for the multi-servo microcontroller is 2000,
+    // which corresponds to periods between 1100 us and 1900 us,
+    // or +/- 40 degrees.
+    val = val * 1000 + 1000;
+
+    return uint16_t(val);
+
 }

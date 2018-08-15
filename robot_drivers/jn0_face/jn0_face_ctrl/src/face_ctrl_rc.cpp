@@ -1,4 +1,7 @@
 #include <jn0_face_ctrl/face_ctrl_rc.hpp>
+#include <pluginlib/class_list_macros.h>
+
+PLUGINLIB_EXPORT_CLASS(jn0_face_ctrl::FaceCtrlRC, irl_can_ros_ctrl::RCDevice)
 
 using namespace jn0_face_ctrl;
 
