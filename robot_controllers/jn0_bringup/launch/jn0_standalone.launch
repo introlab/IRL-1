@@ -16,6 +16,9 @@
     <!-- Default controllers -->
     <include file="$(find jn0_controller_configuration)/launch/jn0_default_controllers.launch"/>
 
+    <!-- Face expression nodes -->
+    <include file="$(find jn0_bringup)/launch/jn0_face.launch"/>
+
   </group>
 
 </launch>

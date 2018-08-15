@@ -1,6 +1,9 @@
 <launch>
 <!-- CAN Bus manager and devices for both arms and head (TODO) -->
 
+    <remap from="jn0_driver/face_motors/cmd_face" to="cmd_face"/>
+    <remap from="jn0_driver/face_motors/eyes_target" to="eyes_target"/>
+
     <node   name="jn0_driver"
              pkg="irl_can_ros_ctrl"
             type="irl_robot_node"

@@ -1,0 +1,40 @@
+<launch>
+    <!-- This launch file is meant to run in the jn0 namespace -->
+    <node name="expression_generator"
+           pkg="jn0_face_expression"
+          type="expression_generator"
+    />
+    <node name="emotion_translator" pkg="jn0_face_expression" type="emotion_translator">
+        <rosparam>
+            expressions: [
+             {
+                emo_type: 'Surprise',
+                pose: [-0.4, 0.4, 0.9, -0.9, -0.9, 0.9, 0.0, 0.2],
+                drift: [0.1, 0.1, 0.3, 0.3, 0.3, 0.3, 0.0, 0.0],
+                period: 3.0
+             },
+             {
+                emo_type: 'Surprise-mouth',
+                pose: [-0.4, 0.4, 0.9, -0.9, -0.9, 0.9, 0.0, 0.2],
+                mask: [ 0.0, 0.0, 1.0,  1.0,  1.0, 1.0, 0.0, 0.0],
+                drift: [0.1, 0.1, 0.3, 0.3, 0.3, 0.3, 0.0, 0.0],
+                period: 3.0
+             },
+             {
+                emo_type: 'Anger',
+                pose: [0.4, -0.4, 0.8, -0.8, 0.8, -0.8, 0.0, -0.2],
+                drift: [0.05, 0.05, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0],
+                period: 5.0
+             },
+             {
+                emo_type: 'Joy',
+                pose: [-0.2, 0.2, -0.6, 0.6, -0.6, 0.6, 0.0, 0.0],
+                drift: [0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0],
+                period: 10.0
+             }
+            ]
+        </rosparam>
+    </node>
+
+</launch>
+

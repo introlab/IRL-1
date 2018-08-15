@@ -1,6 +1,8 @@
 ifaces: [can0, can1, can2]
+
 devices:
  - neck_ptu_motors
+ - face_motors
 # - L_shoulder_pan_motor
 # - L_shoulder_tilt_motor
 # - L_shoulder_roll_motor
@@ -38,6 +40,10 @@ neck_ptu_motors:
     rest_angle          : 0.1000
     stop_at_shutdown    : false
     clock_divider         : 10
+
+face_motors:
+  can_device_type       : FaceCtrlRC
+  can_device_id         : 253
 
 L_shoulder_pan_motor:
   can_device_type       : UniDriveV2
