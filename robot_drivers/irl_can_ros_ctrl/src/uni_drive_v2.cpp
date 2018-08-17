@@ -1,6 +1,7 @@
 #include <irl_can_ros_ctrl/uni_drive_v2.hpp>
 #include <irl_can_ros_ctrl/irl_robot.hpp>
 #include <irl_can_bus/can_base_macros.h>
+#include <irl_can_ros_ctrl/pos_tq_command_interface.hpp>
 #include <ros/ros.h>
 
 using namespace irl_can_ros_ctrl;
@@ -47,7 +48,11 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
         cmd_var_type_   = CMD_VAR_TORQUE; 
     }
 
+    np.param("active_torque_offset",    active_torque_offset_,  false);
+    np.param("convert_torque_offset",   convert_torque_offset_, true);
+
     np.param("polling", polling_, true);
+
 
     // Create a new node handle to create a service server:
     ros::NodeHandle n(np);
@@ -75,32 +80,42 @@ void UniDriveV2::registerCtrlIfaces(IRLRobot& robot)
     robot.jsi().registerHandle(sh);
 
     // Command interface
-    hardware_interface::JointCommandInterface* jci = nullptr;
+    using JCI = hardware_interface::JointCommandInterface;
+    JCI* jci = nullptr;
 
-    if (cmd_var_type_ == CMD_VAR_POSITION)
-    {
+    if (active_torque_offset_) {
+        if (cmd_var_type_ == CMD_VAR_POSITION) {
+            using HWI = PosTqJointInterface;
+            HWI* hwi = robot.getHWI<HWI>();
+            hwi->registerHandle(PosTqJointHandle(sh, &set_point_, &tq_offset_));
+            ROS_INFO("Registered hybrid position-torque interface "
+                     "for device %i.",
+                     deviceID());
+        } else {
+            ROS_ERROR("UniDriveV2: torque offset used without a position "
+                      "variable on device %i, ignoring",
+                      deviceID());
+            active_torque_offset_ = false;
+        }
+    } else if (cmd_var_type_ == CMD_VAR_POSITION) {
         using HWI = hardware_interface::PositionJointInterface;
         jci = robot.getHWI<HWI>();
-    }    
-    else if (cmd_var_type_ == CMD_VAR_VELOCITY)
-    {
+    } else if (cmd_var_type_ == CMD_VAR_VELOCITY) {
         using HWI = hardware_interface::VelocityJointInterface;
         jci = robot.getHWI<HWI>();
-    }
-    else if (cmd_var_type_ == CMD_VAR_TORQUE)
-    {
+    } else if (cmd_var_type_ == CMD_VAR_TORQUE) {
         using HWI = hardware_interface::EffortJointInterface;
         jci = robot.getHWI<HWI>();
     }
-    
  
-    if (jci != nullptr) {
-        jci->registerHandle(hardware_interface::JointHandle(sh,
-                                                            &set_point_));
-    }
-    else
-    {
-        ROS_ERROR("JointCommandInterface unknown for device : %i",deviceID());
+    if (!active_torque_offset_) {
+        if (jci != nullptr) {
+            using JointHandle = hardware_interface::JointHandle;
+            jci->registerHandle(JointHandle(sh,
+                                            &set_point_));
+        } else {
+            ROS_ERROR("JointCommandInterface unknown for device : %i",deviceID());
+        }
     }
 }
 
@@ -359,6 +374,16 @@ void UniDriveV2::sendCommand(CANManager& can)
                      (unsigned char*) &setPointConv, 
                      sizeof(int)); 
         
+        if (active_torque_offset_) {
+            float offset = tq_offset_;
+            if (convert_torque_offset_) {
+                offset *= tqe_conv_to_;
+            }
+            can.writeMem(deviceID(),
+                         TORQUE_OFFSET_OFFSET,
+                         (unsigned char*)&offset,
+                         sizeof(float));
+        }
     }
 
     if (admittance_changed_)

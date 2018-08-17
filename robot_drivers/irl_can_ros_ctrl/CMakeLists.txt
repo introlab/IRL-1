@@ -119,6 +119,7 @@ add_library(irl_can_ros_ctrl
   src/ptu_motor.cpp
   src/uni_drive_v2.cpp
   src/uni_drive_v3.cpp
+  src/pos_tq_command_interface.cpp
 )
 
 ## Declare a cpp executable

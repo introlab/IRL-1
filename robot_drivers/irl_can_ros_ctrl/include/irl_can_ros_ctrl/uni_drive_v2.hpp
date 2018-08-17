@@ -14,14 +14,24 @@ namespace irl_can_ros_ctrl
     /// \brief A CANRobotDevice for the UniDriveV2 motor driver from IntRoLab.
     ///
     /// ROS Parameters:
-    ///  - joint_name:       The name of the controlled joint.
-    ///                      Default: "unidrive_v2_joint"
-    ///  - command_variable: The variable that is commanded on this drive
-    ///                      ("position, "velocity" or "torque")
-    ///                      Default: "position".
-    ///  - polling:          If the drive is configured in polling mode, where
-    ///                      state has to be requested at each cycle.
-    ///                      Default: true.
+    ///  - joint_name:              The name of the controlled joint.
+    ///                             Default: "unidrive_v2_joint"
+    ///  - command_variable:        The variable that is commanded on this drive
+    ///                             ("position, "velocity" or "torque")
+    ///                             Default: "position".
+    ///  - active_torque_offset:    If the driver should communicate torque
+    ///                             offset.
+    ///                             Only works in position commmand mode, and
+    ///                             declares an hybrid position-torque joint
+    ///                             interface in the ros_control manager.
+    ///                             Default: false.
+    ///  - convert_torque_offset:   If the torque offset should use the torque
+    ///                             conversion ratio or not.
+    ///                             Default: true.
+    ///  - polling:                 If the drive is configured in polling mode,
+    ///                             where state has to be requested at each
+    ///                             cycle.
+    ///                             Default: true.
     ///
     class UniDriveV2: public RCDevice 
     {
@@ -102,6 +112,9 @@ namespace irl_can_ros_ctrl
         /// \brief Set point value from higher-level controllers.
         double set_point_;
 
+        /// \brief Torque offset to communicate (if enabled).
+        double tq_offset_;
+
         /// \brief The drive's loop time base, used in speed conversions.
         float timebase_;
 
@@ -159,6 +172,14 @@ namespace irl_can_ros_ctrl
 
         /// \brief Indicates if the drive is in polling mode or not.
         bool polling_;
+
+        /// \brief Indicates if torque offsets are transmitted or not.
+        bool active_torque_offset_;
+
+        /// \brief Indicates if torque offsets are converted with the
+        ///        ratio obtain from the drive (same as if it was a torque set 
+        ///        point).
+        bool convert_torque_offset_;
 
         ros::ServiceServer srv_admittance_;
 
