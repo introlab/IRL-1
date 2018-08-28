@@ -3,7 +3,9 @@
 // TODO: It should be better to have a function transform which takes a vector to make the multiplication in another direction to win computational efficiency
 //       It's computationally better to make T(T(TV)) than (TTT)V (where T is a matrix of transformation and V is a vector)
 
-Jn0ArmCommon::Jn0ArmCommon(Jn0ArmCommon::ArmSide as) : as_(as)
+Jn0ArmCommon::Jn0ArmCommon(Jn0ArmCommon::ArmSide as) : 
+    as_(as),
+    joint_names_(NUM_JOINTS, "")
 {
   init();
 }

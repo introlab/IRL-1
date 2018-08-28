@@ -71,6 +71,10 @@ public:
 
   void init();
 
+  const std::vector<std::string>& getJointNames() const
+  {
+      return joint_names_;
+  }
   bool PointAt(double x, double y, double z, double& pan, double& tilt, bool constraintAware = false);
   bool PointAt(tf::Vector3 goal, double& pan, double& tilt, bool constraintAware = false);
   // TODO : add other function for other solutions or the closest one
@@ -246,7 +250,7 @@ private:
 
   std::string root_name_;
   std::string tip_name_;
-  std::string joint_names_[NUM_JOINTS];
+  std::vector<std::string> joint_names_;
 
   double limit_applied_force_;
 
