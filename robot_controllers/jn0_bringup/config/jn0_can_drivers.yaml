@@ -3,12 +3,14 @@ ifaces: [can0, can1, can2]
 devices:
  - neck_ptu_motors
  - face_motors
-# - L_shoulder_pan_motor
-# - L_shoulder_tilt_motor
-# - L_shoulder_roll_motor
-# - L_elbow_tilt_motor
-# - R_shoulder_pan_motor
-# - R_shoulder_tilt_motor
+ - L_shoulder_pan_motor
+ - L_shoulder_tilt_motor
+ - L_shoulder_roll_motor
+ - L_elbow_tilt_motor
+ - R_shoulder_pan_motor
+ - R_shoulder_tilt_motor
+ - R_shoulder_roll_motor
+ - R_elbow_tilt_motor
 
 period: 0.01
 
@@ -51,7 +53,7 @@ L_shoulder_pan_motor:
   joint_name            : "L_shoulder_pan_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 L_shoulder_tilt_motor:
@@ -60,7 +62,7 @@ L_shoulder_tilt_motor:
   joint_name            : "L_shoulder_tilt_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 L_shoulder_roll_motor:
@@ -69,7 +71,7 @@ L_shoulder_roll_motor:
   joint_name            : "L_shoulder_roll_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 L_elbow_tilt_motor:
@@ -78,7 +80,7 @@ L_elbow_tilt_motor:
   joint_name            : "L_elbow_tilt_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 R_shoulder_pan_motor:
@@ -87,7 +89,7 @@ R_shoulder_pan_motor:
   joint_name            : "R_shoulder_pan_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 R_shoulder_tilt_motor:
@@ -96,7 +98,7 @@ R_shoulder_tilt_motor:
   joint_name            : "R_shoulder_tilt_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 R_shoulder_roll_motor:
@@ -105,7 +107,7 @@ R_shoulder_roll_motor:
   joint_name            : "R_shoulder_roll_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 
 R_elbow_tilt_motor:
@@ -114,6 +116,6 @@ R_elbow_tilt_motor:
   joint_name            : "R_elbow_tilt_joint"
   command_variable      : "position"
   polling               : true
-  active_torque_offset  : true
+  active_torque_offset  : false
   convert_torque_offset : true
 

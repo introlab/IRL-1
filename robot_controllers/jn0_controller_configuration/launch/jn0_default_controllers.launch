@@ -1,3 +1,4 @@
+
 <launch>
   <rosparam file="$(find jn0_controller_configuration)/config/jn0_default_controllers.yaml"
             command="load"
@@ -9,6 +10,8 @@
         type="spawner"
         args="joint_state_controller
               neck_controller
-             "
+              left_arm_controller
+              right_arm_controller
+              "
   />
 </launch>

@@ -14,16 +14,16 @@ left_arm_controller:
   joints:
     - L_shoulder_pan_joint
     - L_shoulder_tilt_joint
-#       - L_shoulder_roll_joint
-#       - L_elbow_tilt_joint
+    - L_shoulder_roll_joint
+    - L_elbow_tilt_joint
 
-# right_arm_controller:
-#   type: "position_controllers/JointTrajectoryController"
-#   joints:
-#    - R_shoulder_pan_joint
-#       - L_shoulder_tilt_joint
-#       - L_shoulder_roll_joint
-#       - L_elbow_tilt_joint
+right_arm_controller:
+  type: "position_controllers/JointTrajectoryController"
+  joints:
+   - R_shoulder_pan_joint
+   - R_shoulder_tilt_joint
+   - R_shoulder_roll_joint
+   - R_elbow_tilt_joint
 
 # 
 #   left_gripper_up_controller:

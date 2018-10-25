@@ -21,7 +21,8 @@ UniDriveV2::UniDriveV2(const ros::NodeHandle& np):
     admittance_k_(0.0),
     admittance_b_(0.0),
     admittance_m_(0.0),
-    polling_(true)
+    polling_(true),
+    drive_mode_(0)
 {
     np.param("joint_name", joint_name_, std::string("unidrive_v2_joint"));
 
@@ -197,7 +198,7 @@ void UniDriveV2::requestState(CANManager& can)
     can.requestMem(deviceID(), SPEED_VARIABLE_OFFSET,    sizeof(int));
     can.requestMem(deviceID(), TORQUE_VARIABLE_OFFSET,   sizeof(int));
     can.requestMem(deviceID(), DRIVE_STATE_OFFSET,       sizeof(short));
-
+    can.requestMem(deviceID(), MODE_VARIABLE_OFFSET, 	 sizeof(unsigned char));
     //last_request_ = ros::Time::now();
 }
 
@@ -367,8 +368,8 @@ void UniDriveV2::sendCommand(CANManager& can)
 
     if (drive_mode_ == 1)
     {
-        //ROS_INFO("Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
-        
+        //ROS_INFO_THROTTLE(1.0, "Dev: %i, SendCommand : %f (%i)",deviceID(), set_point_,setPointConv);
+
         can.writeMem(deviceID(),
                      SETPOINT_VARIABLE_OFFSET, 
                      (unsigned char*) &setPointConv, 
