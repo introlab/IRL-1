@@ -17,10 +17,10 @@ def get_args():
     parser.add_argument("--side", "-s", default="left", choices=["left", "right"])
     parser.add_argument("--values", "-v", type=int, nargs=4, default=[0, 0, 0, 0])
 
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 def main():
-    args = get_args()
+    (args, _) = get_args()
 
     namespace = "jn0"
     package = "jn0_driver"
