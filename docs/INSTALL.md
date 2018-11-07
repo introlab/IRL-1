@@ -1,4 +1,5 @@
-# Environment Setup to Use IRL-1
+# Workstation Environment Setup to Use IRL-1
+This procedure should be used only for a workstation, not the robot's on-board computer.
 
 ## 0. Install Ubuntu 16.04 LTS
 Download ISO File: https://www.ubuntu.com/download/desktop
