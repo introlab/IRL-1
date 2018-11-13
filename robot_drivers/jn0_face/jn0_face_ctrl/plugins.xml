@@ -1,0 +1,7 @@
+<library path="lib/libjn0_face_ctrl">
+    <class type="jn0_face_ctrl::FaceCtrlRC" base_class_type="irl_can_ros_ctrl::RCDevice">
+        <description>
+            A CAN bus driver for the JN0 face.
+        </description>
+    </class>
+</library>

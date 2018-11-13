@@ -1,0 +1,121 @@
+ifaces: [can0, can1, can2]
+
+devices:
+ - neck_ptu_motors
+ - face_motors
+ - L_shoulder_pan_motor
+ - L_shoulder_tilt_motor
+ - L_shoulder_roll_motor
+ - L_elbow_tilt_motor
+ - R_shoulder_pan_motor
+ - R_shoulder_tilt_motor
+ - R_shoulder_roll_motor
+ - R_elbow_tilt_motor
+
+period: 0.01
+
+neck_ptu_motors:        
+  can_device_type       : PTUDrive
+  can_device_id         : 252
+
+  pan_motor:
+    can_device_type     : PTUMotor
+    can_device_id       : 252
+    base_offset         : 0
+    joint_name          : "neck_pan_joint"
+    motor_enabled       : true
+    position_conv_ratio : 195.3788
+    position_center     : 480
+    velocity_conv_ratio : 0.0116
+    rest_angle          : 0.0000
+    clock_divider         : 10
+
+  tilt_motor:
+    can_device_type     : PTUMotor
+    can_device_id       : 252
+    base_offset         : 66
+    joint_name          : "neck_tilt_joint"
+    motor_enabled       : true
+    position_conv_ratio : 935.0646
+    position_center     : 1890
+    velocity_conv_ratio : 0.0116
+    rest_angle          : 0.1000
+    stop_at_shutdown    : false
+    clock_divider         : 10
+
+face_motors:
+  can_device_type       : FaceCtrlRC
+  can_device_id         : 253
+
+L_shoulder_pan_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 19
+  joint_name            : "L_shoulder_pan_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+L_shoulder_tilt_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 20
+  joint_name            : "L_shoulder_tilt_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+L_shoulder_roll_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 3
+  joint_name            : "L_shoulder_roll_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+L_elbow_tilt_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 6
+  joint_name            : "L_elbow_tilt_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+R_shoulder_pan_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 1
+  joint_name            : "R_shoulder_pan_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+R_shoulder_tilt_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 2
+  joint_name            : "R_shoulder_tilt_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+R_shoulder_roll_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 8
+  joint_name            : "R_shoulder_roll_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+
+R_elbow_tilt_motor:
+  can_device_type       : UniDriveV2
+  can_device_id         : 7
+  joint_name            : "R_elbow_tilt_joint"
+  command_variable      : "position"
+  polling               : true
+  active_torque_offset  : false
+  convert_torque_offset : true
+

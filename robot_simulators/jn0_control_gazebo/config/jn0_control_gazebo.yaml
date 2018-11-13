@@ -3,7 +3,7 @@ jn0:
     type: joint_state_controller/JointStateController
     publish_rate: 100
 
-  head_controller:
+  neck_controller:
     type: "effort_controllers/JointTrajectoryController"
     joints:
       - neck_pan_joint

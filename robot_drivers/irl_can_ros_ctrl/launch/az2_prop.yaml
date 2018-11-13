@@ -1,0 +1,18 @@
+can_device_type:  PICDrive
+command_variable: "velocity" # position, velocity or torque.
+
+# 1 [turn] = 2 * pi [rad]
+# The actuator sensor gives 1200 [pulses/turn].
+# The actuator has a 30:1 gearbox ratio.
+# 1 [rad] = (1 / (2 * pi)) * 1200 * 30 [pulses]
+# Convention for positive sign is different.
+position_conv_ratio: -5729.577951
+
+# The PID regulator cycling time is 312*256*50*1e-9 [s] (~ 250 [Hz]).
+# Convention for positive sign is different.
+# 1 [rad/s] = - (1 / (2 * pi)) * 1200 * 30 * (312*256*50*1e-9) [pulses/cycle]
+velocity_conv_ratio: -22.881643
+
+# No torque measure?
+torque_conv_ratio: 1.0
+

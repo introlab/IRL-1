@@ -1,5 +1,5 @@
 <launch>
     <!-- send juniro urdf to param server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find
+    <param name="robot_description" command="$(find xacro)/xacro '$(find
 	jn0_description)/robots/junior.urdf.xacro'" />
 </launch>

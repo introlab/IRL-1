@@ -1,0 +1,66 @@
+<!-- 	
+	LipSync face expressions: See lipsync package, qt sample and
+	http://minyos.its.rmit.edu.au/aim/a_notes/anim_lipsync.html	
+-->
+<launch>
+    <!-- This launch file is meant to run in the jn0 namespace -->
+    <node name="expression_generator" pkg="jn0_face_expression" type="expression_generator">
+        <remap from="cmd_face" to="face/command"/>
+    </node>
+    <node name="emotion_translator" pkg="jn0_face_expression" type="emotion_translator">
+        <rosparam>
+            expressions: [
+             {
+                emo_type: 'A',
+                pose: [0.0, 0.0, 0.0, 0.0, -1.0, 1.0, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'E',
+                pose: [0.0, 0.0, 0.45, -0.45, 0.05, -0.05, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'O',
+                pose: [0.0, 0.0, 1.0, -1.0, -1.0, 1.0, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'M',
+                pose: [0.0, 0.0, -1.0, 1.0, 0.7, 0.5, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'S',
+                pose: [0.0, 0.0, -1.0, -0.3, -0.2, -0.35, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'L',
+                pose: [0.0, 0.0, 0.0, -1.0, 0.2, -0.1, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: 'U',
+                pose: [0.0, 0.0, 0.75, 1.0, -0.1, -0.4, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             },
+             {
+                emo_type: '_',
+                pose: [0.0, 0.0, -0.35, 0.35, 0.7, -0.7, 0.0, 0.0],
+                drift: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                period: 1.0
+             }
+            ]
+        </rosparam>
+    </node>
+
+</launch>
+
