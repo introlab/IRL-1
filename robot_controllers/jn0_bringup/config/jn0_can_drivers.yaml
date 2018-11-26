@@ -36,9 +36,9 @@ neck_ptu_motors:
     base_offset         : 66
     joint_name          : "neck_tilt_joint"
     motor_enabled       : true
-    position_conv_ratio : 935.0646
+    position_conv_ratio : -935.0646
     position_center     : 1890
-    velocity_conv_ratio : 0.0116
+    velocity_conv_ratio : -0.0116
     rest_angle          : 0.1000
     stop_at_shutdown    : false
     clock_divider         : 10
